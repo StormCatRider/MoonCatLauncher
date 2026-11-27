@@ -69,7 +69,6 @@ object Constants {
     var MAX_HOME_APPS = 20
     var MAX_HOME_PAGES = 10
 
-    const val ACCESS_FINE_LOCATION = 666
     const val READ_CONTACTS = 777
 
     fun updateMaxHomePages(context: Context) {

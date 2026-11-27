@@ -1,6 +1,5 @@
 package com.github.codeworkscreativehub.mlauncher.ui.onboarding
 
-import android.Manifest
 import android.app.role.RoleManager
 import android.content.Context
 import android.content.Intent
@@ -26,19 +25,15 @@ import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.widget.ViewPager2
 import com.github.codeworkscreativehub.common.getLocalizedString
 import com.github.codeworkscreativehub.common.openAccessibilitySettings
-import com.github.codeworkscreativehub.common.requestRuntimePermission
 import com.github.codeworkscreativehub.common.requestUsagePermission
 import com.github.codeworkscreativehub.common.showLongToast
 import com.github.codeworkscreativehub.mlauncher.MainActivity
 import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
-import com.github.codeworkscreativehub.mlauncher.data.Constants
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
 import com.github.codeworkscreativehub.mlauncher.databinding.FragmentOnboardingPageFourBinding
 import com.github.codeworkscreativehub.mlauncher.databinding.FragmentOnboardingPageOneBinding
-import com.github.codeworkscreativehub.mlauncher.databinding.FragmentOnboardingPageThreeBinding
 import com.github.codeworkscreativehub.mlauncher.databinding.FragmentOnboardingPageTwoBinding
-import com.github.codeworkscreativehub.mlauncher.helper.hasLocationPermission
 import com.github.codeworkscreativehub.mlauncher.helper.hasUsageAccessPermission
 import com.github.codeworkscreativehub.mlauncher.helper.ismlauncherDefault
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -85,9 +80,6 @@ class OnboardingPageFragment : Fragment() {
 
             R.layout.fragment_onboarding_page_two ->
                 FragmentOnboardingPageTwoBinding.inflate(inflater, container, false)
-
-            R.layout.fragment_onboarding_page_three ->
-                FragmentOnboardingPageThreeBinding.inflate(inflater, container, false)
 
             R.layout.fragment_onboarding_page_four ->
                 FragmentOnboardingPageFourBinding.inflate(inflater, container, false)
@@ -145,7 +137,6 @@ class OnboardingPageFragment : Fragment() {
 
             is FragmentOnboardingPageTwoBinding -> {
                 handler.removeCallbacks(launcherDefaultCheckRunnable)
-                handler.removeCallbacks(locationPermissionCheckRunnable)
                 handler.post(usagePermissionCheckRunnable)
 
                 binding.permissionButton.setOnClickListener { requireContext().requestUsagePermission() }
@@ -154,27 +145,9 @@ class OnboardingPageFragment : Fragment() {
                 binding.nextButton.setOnClickListener { viewPager?.currentItem = viewPager.currentItem + 1 }
             }
 
-            is FragmentOnboardingPageThreeBinding -> {
-                handler.removeCallbacks(launcherDefaultCheckRunnable)
-                handler.removeCallbacks(usagePermissionCheckRunnable)
-                handler.post(locationPermissionCheckRunnable)
-
-                binding.permissionButton.setOnClickListener {
-                    requireContext().requestRuntimePermission(
-                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                        Constants.ACCESS_FINE_LOCATION,
-                        "Location"
-                    )
-                }
-
-                binding.nextButton.text = getLocalizedString(R.string.next)
-                binding.nextButton.setOnClickListener { viewPager?.currentItem = viewPager.currentItem + 1 }
-            }
-
             is FragmentOnboardingPageFourBinding -> {
                 handler.removeCallbacks(launcherDefaultCheckRunnable)
                 handler.removeCallbacks(usagePermissionCheckRunnable)
-                handler.removeCallbacks(locationPermissionCheckRunnable)
 
                 binding.permissionButton.setOnClickListener {
                     MaterialAlertDialogBuilder(requireContext())
@@ -199,8 +172,8 @@ class OnboardingPageFragment : Fragment() {
     }
 
     private fun finishOnboarding() {
-        startActivity(Intent(requireActivity(), MainActivity::class.java))
         prefs.setOnboardingCompleted(true)
+        startActivity(Intent(requireActivity(), MainActivity::class.java))
         requireActivity().finish()
     }
 
@@ -225,30 +198,11 @@ class OnboardingPageFragment : Fragment() {
                 if (hasUsageAccessPermission(requireContext())) {
                     permissionText.text = getLocalizedString(R.string.permission_granted)
                     permissionButton.isEnabled = false
-                    nextButton.isEnabled = true
                     permissionReviewText.isVisible = false
                 } else {
                     permissionText.text = getLocalizedString(R.string.grant_usage_permission)
                     permissionButton.isEnabled = true
-                    nextButton.isEnabled = false
-                }
-            }
-            handler.postDelayed(this, 1000)
-        }
-    }
-
-    private val locationPermissionCheckRunnable = object : Runnable {
-        override fun run() {
-            (binding as? FragmentOnboardingPageThreeBinding)?.apply {
-                if (hasLocationPermission(requireContext())) {
-                    permissionText.text = getLocalizedString(R.string.permission_granted)
-                    permissionButton.isEnabled = false
-                    nextButton.isEnabled = true
-                    permissionReviewText.isVisible = false
-                } else {
-                    permissionText.text = getLocalizedString(R.string.grant_location_permission)
-                    permissionButton.isEnabled = true
-                    nextButton.isEnabled = true
+                    permissionReviewText.isVisible = true
                 }
             }
             handler.postDelayed(this, 1000)
@@ -259,7 +213,6 @@ class OnboardingPageFragment : Fragment() {
         super.onDestroyView()
         handler.removeCallbacks(launcherDefaultCheckRunnable)
         handler.removeCallbacks(usagePermissionCheckRunnable)
-        handler.removeCallbacks(locationPermissionCheckRunnable)
         _binding = null
     }
 

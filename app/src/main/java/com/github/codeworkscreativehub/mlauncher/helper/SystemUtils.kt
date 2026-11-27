@@ -96,20 +96,6 @@ fun hasUsageAccessPermission(context: Context): Boolean {
     return mode == AppOpsManager.MODE_ALLOWED
 }
 
-fun hasLocationPermission(context: Context): Boolean {
-    val fineLocationPermission = ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    )
-    val coarseLocationPermission = ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-
-    return fineLocationPermission == PackageManager.PERMISSION_GRANTED ||
-            coarseLocationPermission == PackageManager.PERMISSION_GRANTED
-}
-
 fun hasContactsPermission(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(
         context,

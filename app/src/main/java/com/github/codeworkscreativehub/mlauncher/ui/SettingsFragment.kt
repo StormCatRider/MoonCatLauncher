@@ -77,7 +77,6 @@ import com.github.codeworkscreativehub.mlauncher.helper.IconCacheTarget
 import com.github.codeworkscreativehub.mlauncher.helper.checkWhoInstalled
 import com.github.codeworkscreativehub.mlauncher.helper.emptyString
 import com.github.codeworkscreativehub.mlauncher.helper.getTrueSystemFont
-import com.github.codeworkscreativehub.mlauncher.helper.hasLocationPermission
 import com.github.codeworkscreativehub.mlauncher.helper.helpFeedbackButton
 import com.github.codeworkscreativehub.mlauncher.helper.hideNavigationBar
 import com.github.codeworkscreativehub.mlauncher.helper.hideStatusBar

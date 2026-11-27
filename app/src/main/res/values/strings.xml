@@ -16,8 +16,8 @@
     <string name="accessibility_access_permission">Accessibility Permissions</string>
 
     <string name="grant_permission">Grant Permission</string>
-    <string name="grant_usage_permission">To continue, please grant Usage Access permission.</string>
-    <string name="reason_usage_permission">This app needs Usage Access to show your most used apps, track screen time, and improve your experience.We do not collect or share any personal data.</string>
+    <string name="grant_usage_permission">Usage access is optional.</string>
+    <string name="reason_usage_permission">Grant usage access to see your most used apps and screen time on this device.</string>
     <string name="grant_location_permission">To continue, please grant Location permission.</string>
     <string name="reason_location_permission">This app needs Location Access to provide accurate weather updates based on your current location. We do not collect or share any personal data.</string>
     <string name="grant_accessibility_permission">To continue, please grant Accessibility permission.</string>
