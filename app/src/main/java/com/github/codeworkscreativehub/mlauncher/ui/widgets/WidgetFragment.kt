@@ -418,6 +418,10 @@ class WidgetFragment : Fragment() {
             orientation = LinearLayout.VERTICAL
             setPadding(16, 16, 16, 16)
         }
+        container.addView(TextView(requireContext()).apply {
+            text = getLocalizedString(R.string.mooncat_widget_privacy)
+            setPadding(8, 8, 8, 16)
+        })
         val scrollView = ScrollView(requireContext()).apply { addView(container) }
 
         activeGridDialog?.dismiss()

@@ -13,7 +13,6 @@ import com.github.codeworkscreativehub.mlauncher.data.Constants.Gravity
 import com.github.codeworkscreativehub.mlauncher.helper.emptyString
 import com.github.codeworkscreativehub.mlauncher.helper.getUserHandleFromString
 import com.github.codeworkscreativehub.mlauncher.helper.isSystemInDarkMode
-import com.github.codeworkscreativehub.mlauncher.helper.receivers.LocationResult
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -32,62 +31,6 @@ class Prefs(val context: Context) {
     internal val prefsNormal: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
     internal val prefsOnboarding: SharedPreferences = context.getSharedPreferences(PREFS_ONBOARDING_FILENAME, Context.MODE_PRIVATE)
     internal val pinnedAppsKey = PINNED_APPS
-
-    fun saveToString(): String {
-        val allPreferences = HashMap<String, Any?>(prefsNormal.all)
-
-        val moshi = Moshi.Builder().build()
-
-        val type = Types.newParameterizedType(
-            Map::class.java,
-            String::class.java,
-            Any::class.java
-        )
-
-        val adapter = moshi.adapter<Map<String, Any?>>(type).indent("  ") // Pretty-print
-
-        return adapter.toJson(allPreferences)
-    }
-
-    fun loadFromString(json: String) {
-        val moshi = Moshi.Builder().build()
-
-        val type = Types.newParameterizedType(
-            Map::class.java,
-            String::class.java,
-            Any::class.java
-        )
-
-        val adapter = moshi.adapter<Map<String, Any?>>(type)
-
-        val all = adapter.fromJson(json) ?: emptyMap()
-
-        prefsNormal.edit {
-            for ((key, value) in all) {
-                when (value) {
-                    is String -> putString(key, value)
-                    is Boolean -> putBoolean(key, value)
-                    is Double -> {
-                        if (value % 1 == 0.0) {
-                            putInt(key, value.toInt())
-                        } else {
-                            putFloat(key, value.toFloat())
-                        }
-                    }
-
-                    is List<*> -> {
-                        // Moshi deserializes sets as lists
-                        val stringSet = value.filterIsInstance<String>().toSet()
-                        putStringSet(key, stringSet)
-                    }
-
-                    else -> {
-                        AppLogger.d("backup error", "Unsupported type for key '$key': $value")
-                    }
-                }
-            }
-        }
-    }
 
     fun saveToTheme(colorNames: List<String>): String {
         val allPrefs = prefsNormal.all
@@ -437,14 +380,6 @@ class Prefs(val context: Context) {
         get() = getSetting(SHOW_BATTERY, true)
         set(value) = prefsNormal.edit { putBoolean(SHOW_BATTERY, value) }
 
-    var showWeather: Boolean
-        get() = false
-        set(value) = prefsNormal.edit { putBoolean(SHOW_WEATHER, value) }
-
-    var gpsLocation: Boolean
-        get() = false
-        set(value) = prefsNormal.edit { putBoolean(GPS_LOCATION, value) }
-
     var showBatteryIcon: Boolean
         get() = getSetting(SHOW_BATTERY_ICON, true)
         set(value) = prefsNormal.edit { putBoolean(SHOW_BATTERY_ICON, value) }
@@ -593,11 +528,6 @@ class Prefs(val context: Context) {
         }
         set(value) = prefsNormal.edit { putString(APP_THEME, value.name) }
 
-    var tempUnit: Constants.TempUnits
-        get() {
-            return getEnumSetting(TEMP_UNIT, Constants.TempUnits.Celsius)
-        }
-        set(value) = prefsNormal.edit { putString(TEMP_UNIT, value.name) }
 
     var appLanguage: Constants.Language
         get() {
@@ -952,33 +882,6 @@ class Prefs(val context: Context) {
                 putString("${appPackage}_TAG_${it.hashCode()}", appTag)
             }
         }
-    }
-
-    /** 🔹 Save selected location into SharedPreferences */
-    fun saveLocation(results: LocationResult) {
-        results.let {
-            prefsNormal.edit {
-                putString(WEATHER_LOCATION, it.region)
-                putFloat(WEATHER_LATITUDE, it.latitude.toFloat())
-                putFloat(WEATHER_LONGITUDE, it.longitude.toFloat())
-            }
-        }
-    }
-
-    /** 🔹 Load saved location */
-    fun loadLocation(): Pair<Double, Double>? {
-        val lat = prefsNormal.getFloat(WEATHER_LATITUDE, Float.NaN)
-        val lon = prefsNormal.getFloat(WEATHER_LONGITUDE, Float.NaN)
-
-        return if (!lat.isNaN() && !lon.isNaN()) {
-            Pair(lat.toDouble(), lon.toDouble())
-        } else {
-            null
-        }
-    }
-
-    fun loadLocationName(): String {
-        return prefsNormal.getString(WEATHER_LOCATION, "Select Location").toString()
     }
 
     fun remove(prefName: String) {

@@ -49,8 +49,6 @@ internal const val STATUS_BAR = "STATUS_BAR"
 internal const val NAVIGATION_BAR = "NAVIGATION_BAR"
 internal const val SHOW_BATTERY = "SHOW_BATTERY"
 internal const val SHOW_BATTERY_ICON = "SHOW_BATTERY_ICON"
-internal const val SHOW_WEATHER = "SHOW_WEATHER"
-internal const val GPS_LOCATION = "GPS_LOCATION"
 internal const val SHOW_AZSIDEBAR = "SHOW_AZSIDEBAR"
 internal const val SHOW_DATE = "SHOW_DATE"
 internal const val SHOW_DAY_OF_YEAR = "SHOW_DAY_OF_YEAR"
@@ -119,7 +117,6 @@ internal const val APP_USAGE_STATS = "APP_USAGE_STATS"
 internal const val APP_OPACITY = "APP_OPACITY"
 internal const val APP_LANGUAGE = "APP_LANGUAGE"
 internal const val APP_THEME = "APP_THEME"
-internal const val TEMP_UNIT = "TEMP_UNIT"
 
 // Short / Long Swipes
 internal const val SHORT_SWIPE_UP = "SHORT_SWIPE_UP"
@@ -167,10 +164,6 @@ internal const val BUBBLE_CATEGORY_COLOR = "BUBBLE_CATEGORY_COLOR"
 internal const val INPUT_MESSAGE_COLOR = "INPUT_MESSAGE_COLOR"
 internal const val INPUT_MESSAGEHINT_COLOR = "INPUT_MESSAGEHINT_COLOR"
 
-// Weather
-internal const val WEATHER_LATITUDE = "WEATHER_LATITUDE"
-internal const val WEATHER_LONGITUDE = "WEATHER_LONGITUDE"
-internal const val WEATHER_LOCATION = "WEATHER_LOCATION"
 
 // Notes / Messages
 internal const val NOTES_MESSAGES = "NOTES_MESSAGES"

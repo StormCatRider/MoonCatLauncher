@@ -44,7 +44,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.github.codeworkscreativehub.common.AppLogger
 import com.github.codeworkscreativehub.common.ColorIconsExtensions
-import com.github.codeworkscreativehub.common.CrashHandler
 import com.github.codeworkscreativehub.common.getLocalizedString
 import com.github.codeworkscreativehub.common.getLocalizedStringArray
 import com.github.codeworkscreativehub.common.openAccessibilitySettings
@@ -60,8 +59,6 @@ import com.github.codeworkscreativehub.mlauncher.services.ActionService
 import com.github.codeworkscreativehub.mlauncher.ui.widgets.home.HomeAppsWidgetProvider
 import com.github.codeworkscreativehub.mlauncher.ui.widgets.wordoftheday.WordOfTheDayWidget
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.xmlpull.v1.XmlPullParser
 import java.io.File
 import java.text.SimpleDateFormat
@@ -122,7 +119,6 @@ fun hasContactsPermission(context: Context): Boolean {
 
 
 fun showPermissionDialog(context: Context) {
-    CrashHandler.logUserAction("Show Usage Permission Dialog")
     val builder = MaterialAlertDialogBuilder(context)
     builder.setTitle(getLocalizedString(R.string.permission_required))
     builder.setMessage(getLocalizedString(R.string.access_usage_data_permission))
@@ -503,25 +499,7 @@ fun reloadLauncher() {
 }
 
 fun helpFeedbackButton(context: Context) {
-    val uri = "https://github.com/CodeWorksCreativeHub/mLauncher".toUri()
-    val intent = Intent(Intent.ACTION_VIEW, uri)
-    context.startActivity(intent)
-}
-
-fun themeDownloadButton(context: Context) {
-    val uri = "https://mlauncher.5646316.xyz/themes.html#themes".toUri()
-    val intent = Intent(Intent.ACTION_VIEW, uri)
-    context.startActivity(intent)
-}
-
-fun wordofthedayDownloadButton(context: Context) {
-    val uri = "https://mlauncher.5646316.xyz/themes.html#word-of-the-day".toUri()
-    val intent = Intent(Intent.ACTION_VIEW, uri)
-    context.startActivity(intent)
-}
-
-fun communitySupportButton(context: Context) {
-    val uri = "https://discord.com/invite/modmydevice".toUri()
+    val uri = "https://github.com/StormCatRider/MoonCatLauncher/issues".toUri()
     val intent = Intent(Intent.ACTION_VIEW, uri)
     context.startActivity(intent)
 }
@@ -549,10 +527,7 @@ fun checkWhoInstalled(context: Context): String {
         else -> installerPackageName // Default to the installer package name
     }
 
-    val installURL = when (installerPackageName) {
-        "com.android.vending" -> "https://play.google.com/store/apps/details?id=app.mlauncher"
-        else -> "https://play.google.com/store/apps/details?id=app.mlauncher" // Default to the Google Play Store
-    }
+    val installURL = "https://github.com/StormCatRider/MoonCatLauncher"
 
     // Format the description with the app name and install source
     return String.format(
@@ -785,141 +760,6 @@ fun sortMessages(messages: List<Message>): List<Message> {
     )
 }
 
-fun Context.openFirstWeatherApp() {
-    val pm = this.packageManager
-    AppLogger.d("WeatherAppLauncher", "Starting search for weather apps...")
-
-    // --- Option 1: Known weather apps ---
-    val knownWeatherPackages = listOf(
-        "com.accuweather.android",             // AccuWeather
-        "com.weather.Weather",                 // The Weather Channel
-        "com.windyty.android",                 // Windy.com
-        "co.windyapp.android",                 // Windy.app
-        "com.aws.android",                     // WeatherBug
-        "com.wunderground.android.weather",   // Weather Underground
-        "com.handmark.expressweather",        // 1Weather
-        "net.darksky.darksky",                 // Dark Sky (if still installed)
-        "com.luckycatlabs.sunrisesunset",     // (example: some weather apps embed this)
-        "de.mdiener.rain.usa",                 // Rain Alarm (example)
-        "com.noaa.weather",                    // Hypothetical NOAA-based app
-        "com.yahoo.mobile.client.android.weather", // Yahoo Weather
-        "org.breezyweather"                    // Breezy Weather
-    )
-
-    val installedKnownApps = knownWeatherPackages.filter {
-        try {
-            pm.getPackageInfo(it, 0)
-            AppLogger.d("WeatherAppLauncher", "Found known weather app: $it")
-            true
-        } catch (_: PackageManager.NameNotFoundException) {
-            false
-        }
-    }
-
-    if (installedKnownApps.isNotEmpty()) {
-        val intent = pm.getLaunchIntentForPackage(installedKnownApps.first())
-        if (intent != null) {
-            AppLogger.d(
-                "WeatherAppLauncher",
-                "Launching known weather app: ${installedKnownApps.first()}"
-            )
-            this.startActivity(intent)
-            return
-        } else {
-            AppLogger.d(
-                "WeatherAppLauncher",
-                "Launch intent null for: ${installedKnownApps.first()}"
-            )
-        }
-    } else {
-        AppLogger.d("WeatherAppLauncher", "No known weather apps installed.")
-    }
-
-    // --- Option 2: Try generic weather intent (rarely works) ---
-    val genericIntent = Intent(Intent.ACTION_VIEW, "weather://".toUri())
-    val resolvedApps = pm.queryIntentActivities(genericIntent, PackageManager.MATCH_DEFAULT_ONLY)
-    if (resolvedApps.isNotEmpty()) {
-        val packageName = resolvedApps.first().activityInfo.packageName
-        val intent = pm.getLaunchIntentForPackage(packageName)
-        if (intent != null) {
-            AppLogger.d(
-                "WeatherAppLauncher",
-                "Launching app via generic weather intent: $packageName"
-            )
-            this.startActivity(intent)
-            return
-        } else {
-            AppLogger.d(
-                "WeatherAppLauncher",
-                "Launch intent null for generic weather app: $packageName"
-            )
-        }
-    } else {
-        AppLogger.d("WeatherAppLauncher", "No apps found via generic weather intent.")
-    }
-
-    // --- Option 3: Scan all installed apps for "weather" in name ---
-    val weatherAppsByName = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-        .filter { app ->
-            val name = pm.getApplicationLabel(app).toString().lowercase()
-            val containsWeather = name.contains("weather")
-            if (containsWeather) AppLogger.d(
-                "WeatherAppLauncher",
-                "Found app by name: ${app.packageName} ($name)"
-            )
-            containsWeather
-        }
-
-    if (weatherAppsByName.isNotEmpty()) {
-        val intent = pm.getLaunchIntentForPackage(weatherAppsByName.first().packageName)
-        if (intent != null) {
-            AppLogger.d(
-                "WeatherAppLauncher",
-                "Launching first app found by name: ${weatherAppsByName.first().packageName}"
-            )
-            this.startActivity(intent)
-            return
-        } else {
-            AppLogger.d(
-                "WeatherAppLauncher",
-                "Launch intent null for: ${weatherAppsByName.first().packageName}"
-            )
-        }
-    } else {
-        AppLogger.d("WeatherAppLauncher", "No apps found by name containing 'weather'.")
-    }
-
-    val prefs = Prefs(this)
-
-    // --- Fallback if no weather app is found ---
-    val coords = prefs.loadLocation()
-    if (coords != null) {
-        val (lat, lon) = coords
-
-        // Use prefs.tempUnit to determine unit parameter for weather.com
-        val unitParam = when (prefs.tempUnit) {
-            Constants.TempUnits.Celsius -> "c"  // Metric
-            Constants.TempUnits.Fahrenheit -> "f"  // Fahrenheit
-        }
-
-        // Construct the URL with lat/lon and unit
-        val url = "https://weather.com/weather/today/l/$lat,$lon?unit=$unitParam"
-
-        // Open in browser
-        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-        this.startActivity(intent)
-
-        AppLogger.d(
-            "WeatherAppLauncher",
-            "Opened weather.com for coordinates: $lat,$lon with unit: $unitParam"
-        )
-    } else {
-        AppLogger.d("WeatherAppLauncher", "No coordinates found in prefs.")
-    }
-
-}
-
-
 fun formatLongToCalendar(longTimestamp: Long): String {
     // Create a Calendar instance and set it's time to the given timestamp (in milliseconds)
     val calendar = Calendar.getInstance().apply {
@@ -997,61 +837,6 @@ fun getDeviceInfo(context: Context): String {
             """.trimIndent()
     } catch (e: Exception) {
         "Device Info Unavailable: ${e.message}"
-    }
-}
-
-// 1. Define the data class
-data class DeviceInfo(
-    val manufacturer: String,
-    val model: String,
-    val brand: String,
-    val device: String,
-    val product: String,
-    val androidVersion: String,
-    val sdkInt: Int,
-    val abi: String,
-    val appVersionName: String,
-    val appVersionCode: Int,
-    val locale: String,
-    val timezone: String,
-    val installedFrom: String
-)
-
-// 2. Function to get DeviceInfo object
-fun getDeviceInfoObject(context: Context): DeviceInfo {
-    val packageManager = context.packageManager
-    val installSource = getInstallSource(packageManager, context.packageName)
-
-    return DeviceInfo(
-        manufacturer = Build.MANUFACTURER,
-        model = Build.MODEL,
-        brand = Build.BRAND,
-        device = Build.DEVICE,
-        product = Build.PRODUCT,
-        androidVersion = Build.VERSION.RELEASE,
-        sdkInt = Build.VERSION.SDK_INT,
-        abi = Build.SUPPORTED_ABIS.joinToString(),
-        appVersionName = BuildConfig.VERSION_NAME,
-        appVersionCode = BuildConfig.VERSION_CODE,
-        locale = Locale.getDefault().toString(),
-        timezone = TimeZone.getDefault().id,
-        installedFrom = installSource
-    )
-}
-
-// 3. Function to convert DeviceInfo to JSON using Moshi
-fun getDeviceInfoJson(context: Context): String {
-    return try {
-        val deviceInfo = getDeviceInfoObject(context)
-
-        val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-        val jsonAdapter = moshi.adapter(DeviceInfo::class.java).indent("    ") // pretty print
-
-        jsonAdapter.toJson(deviceInfo)
-    } catch (e: Exception) {
-        """{"error": "Device Info Unavailable: ${e.message}"}"""
     }
 }
 

@@ -46,16 +46,6 @@
         <activity
             android:name=".ui.widgets.WidgetActivity"
             android:exported="false" />
-        <!-- File provider for sharing files -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
         <!-- Init provider to run early initialization code -->
         <provider
             android:name=".init.MlauncherInitProvider"
@@ -85,12 +75,6 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTask" />
-        <!-- CRASH REPORT ACTIVITY -->
-        <activity
-            android:name=".CrashReportActivity"
-            android:enabled="true"
-            android:excludeFromRecents="true"
-            android:exported="false" />
         <!-- ICON PACK ACTIVITIES -->
         <activity
             android:name=".ui.iconpack.ApplyIconPackActivity"

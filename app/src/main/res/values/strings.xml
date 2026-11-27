@@ -326,16 +326,10 @@
     <string name="confirm_remove_favorite">Are you sure you want to remove this app from favorites?</string>
 
     <!-- Accessibility/Help Strings -->
-    <string name="accessibility_service_name">MultiLauncher Action Services</string>
+    <string name="accessibility_service_name">Moon Cat Launcher actions</string>
     <string name="accessibility_service_why_we_need">Why We Need Accessibility Permission</string>
-    <string name="accessibility_service_description">This accessibility service allows MultiLauncher to do certain actions such as locking the screen or opening the quick settings. Our accessibility service does not collect or share any data.</string>
-    <string name="accessibility_service_more_info">
-    MultiLauncher requires access to the Accessibility Service to enable features such as:\n\n
-    • Locking the screen with a gesture or shortcut\n
-    • Opening the Quick Settings panel quickly\n\n
-    This permission allows MultiLauncher to perform these actions on your behalf, but we do not collect, store, or share any personal or sensitive data through this service.\n\n
-    You can disable this access anytime from your device settings.
-    </string>
+    <string name="accessibility_service_description">Optional access that lets Moon Cat Launcher perform system actions such as locking the screen, opening Quick Settings or taking a screenshot. Enable it only if you want to use those gestures.</string>
+    <string name="accessibility_service_more_info">Optional access that lets Moon Cat Launcher perform system actions such as locking the screen, opening Quick Settings or taking a screenshot. Enable it only if you want to use those gestures.</string>
     <string name="can_not_delete_system_apps">Can\'t Delete System Apps</string>
     <string name="please_select_app">Please select an app</string>
     <string name="drawer_list_empty_hint">No apps found</string>
@@ -510,4 +504,7 @@
     </string-array>
 
 
+    <string name="mooncat_local_data_title">Local data</string>
+    <string name="mooncat_local_data_description">Clear launcher data stored on this device</string>
+    <string name="mooncat_widget_privacy">Third-party widgets can connect to the Internet independently of Moon Cat Launcher.</string>
 </resources>

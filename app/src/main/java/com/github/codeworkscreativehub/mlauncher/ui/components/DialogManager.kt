@@ -37,9 +37,7 @@ import com.github.codeworkscreativehub.mlauncher.data.Constants
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
 import com.github.codeworkscreativehub.mlauncher.helper.getDeviceInfo
 import com.github.codeworkscreativehub.mlauncher.helper.hasContactsPermission
-import com.github.codeworkscreativehub.mlauncher.helper.themeDownloadButton
 import com.github.codeworkscreativehub.mlauncher.helper.utils.AppReloader
-import com.github.codeworkscreativehub.mlauncher.helper.wordofthedayDownloadButton
 import com.github.codeworkscreativehub.mlauncher.services.HapticFeedbackService
 import com.github.creativecodecat.components.views.FontBottomSheetDialogLocked
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -85,15 +83,6 @@ class DialogManager(val context: Context, val activity: Activity) {
                 }
             }
         }
-
-        // Add the three items
-        layout.addView(createItem(getLocalizedString(R.string.advanced_settings_backup_restore_backup)) {
-            (activity as MainActivity).createFullBackup()
-        })
-
-        layout.addView(createItem(getLocalizedString(R.string.advanced_settings_backup_restore_restore)) {
-            (activity as MainActivity).restoreFullBackup()
-        })
 
         layout.addView(createItem(getLocalizedString(R.string.advanced_settings_backup_restore_clear)) {
             confirmClearData()
@@ -161,11 +150,6 @@ class DialogManager(val context: Context, val activity: Activity) {
                 }
             }
         }
-
-        // Add Download Option
-        layout.addView(createItem(getLocalizedString(R.string.advanced_settings_theme_download)) {
-            themeDownloadButton(context)
-        })
 
         // Add Export and Import options
         layout.addView(createItem(getLocalizedString(R.string.advanced_settings_theme_export)) {
@@ -260,11 +244,6 @@ class DialogManager(val context: Context, val activity: Activity) {
                 }
             }
         }
-
-        // Add Download Option
-        layout.addView(createItem(getLocalizedString(R.string.advanced_settings_wotd_download)) {
-            wordofthedayDownloadButton(context)
-        })
 
         // Add Import options
         layout.addView(createItem(getLocalizedString(R.string.advanced_settings_wotd_import)) {

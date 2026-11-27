@@ -3,7 +3,6 @@ package com.github.codeworkscreativehub.mlauncher
 import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import com.github.codeworkscreativehub.common.CrashHandler
 import com.github.codeworkscreativehub.mlauncher.data.Constants
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
 import com.github.codeworkscreativehub.mlauncher.helper.FontManager
@@ -35,7 +34,7 @@ class Mlauncher : Application() {
             }
             AppCompatDelegate.setDefaultNightMode(themeMode)
 
-            // Optional: preload icons, init crash handler, etc. if needed
+            // Optional: preload icons if needed
             val executor = Executors.newSingleThreadExecutor()
             executor.execute {
                 if (prefs.iconPackHome == Constants.IconPacks.Custom) {
@@ -47,9 +46,7 @@ class Mlauncher : Application() {
                 }
             }
 
-            Thread.setDefaultUncaughtExceptionHandler(CrashHandler(appContext!!))
 
-            CrashHandler.logUserAction("App Launched")
 
             FontManager.reloadFont(context)
         }

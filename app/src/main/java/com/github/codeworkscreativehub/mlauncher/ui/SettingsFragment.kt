@@ -75,7 +75,6 @@ import com.github.codeworkscreativehub.mlauncher.databinding.FragmentSettingsBin
 import com.github.codeworkscreativehub.mlauncher.helper.FontManager
 import com.github.codeworkscreativehub.mlauncher.helper.IconCacheTarget
 import com.github.codeworkscreativehub.mlauncher.helper.checkWhoInstalled
-import com.github.codeworkscreativehub.mlauncher.helper.communitySupportButton
 import com.github.codeworkscreativehub.mlauncher.helper.emptyString
 import com.github.codeworkscreativehub.mlauncher.helper.getTrueSystemFont
 import com.github.codeworkscreativehub.mlauncher.helper.hasLocationPermission
@@ -2688,8 +2687,8 @@ class SettingsFragment : BaseFragment() {
                     )
 
                     SettingsHomeItem(
-                        title = getLocalizedString(R.string.advanced_settings_backup_restore_title),
-                        description = getLocalizedString(R.string.advanced_settings_backup_restore_description),
+                        title = getLocalizedString(R.string.mooncat_local_data_title),
+                        description = getLocalizedString(R.string.mooncat_local_data_description),
                         iconRes = R.drawable.ic_backup_restore,
                         titleFontSize = titleFontSize,
                         descriptionFontSize = descriptionFontSize,
@@ -2733,17 +2732,6 @@ class SettingsFragment : BaseFragment() {
                         iconSize = iconSize,
                         onClick = {
                             helpFeedbackButton(requireContext())
-                        }
-                    )
-
-                    SettingsHomeItem(
-                        title = getLocalizedString(R.string.advanced_settings_community_support_title),
-                        iconRes = R.drawable.ic_community,
-                        titleFontSize = titleFontSize,
-                        descriptionFontSize = descriptionFontSize,
-                        iconSize = iconSize,
-                        onClick = {
-                            communitySupportButton(requireContext())
                         }
                     )
 
@@ -2834,7 +2822,6 @@ class SettingsFragment : BaseFragment() {
                     TitleWithHtmlLinks(
                         title = getLocalizedString(R.string.settings_credits),
                         descriptions = listOf(
-                            getLocalizedString(R.string.weather_link),
                             getLocalizedString(R.string.forked_link),
                             getLocalizedString(R.string.privacy_policy_link)
                         ),
@@ -2999,12 +2986,6 @@ class SettingsFragment : BaseFragment() {
             Bundle().apply {
                 putString("flag", AppDrawerFlag.SetHomeApp.toString())
             }
-        )
-    }
-
-    private fun showLocationSearch() {
-        findNavController().navigate(
-            R.id.action_settingsFragment_to_locationSearchFragment
         )
     }
 

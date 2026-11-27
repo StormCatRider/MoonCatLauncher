@@ -243,16 +243,10 @@
     <string name="empty_favorite">No usado</string>
     <string name="confirm_remove_favorite">¿Estás seguro de que quieres eliminar esta aplicación de tus favoritos?</string>
     <!-- Accessibility/Help Strings -->
-    <string name="accessibility_service_name">Servicios de acción MultiLauncher</string>
+    <string name="accessibility_service_name">Acciones de Moon Cat Launcher</string>
     <string name="accessibility_service_why_we_need">Por qué necesitamos permiso de accesibilidad</string>
-    <string name="accessibility_service_description">Este servicio de accesibilidad permite a MultiLauncher realizar ciertas acciones, como bloquear la pantalla o abrir los ajustes rápidos. Nuestro servicio de accesibilidad no recopila ni comparte ningún dato.</string>
-    <string name="accessibility_service_more_info">
-    MultiLauncher requiere acceso al Servicio de Accesibilidad para habilitar funciones como:\n\n
-    • Bloquear la pantalla con un gesto o acceso directo\n
-    • Abrir rápidamente el panel de Ajustes rápidos\n\n
-    Este permiso permite a MultiLauncher realizar estas acciones en su nombre, pero no recopilamos, almacenamos ni compartimos ningún dato personal o sensible a través de este servicio.\n\n
-    Puedes desactivar este acceso en cualquier momento desde la configuración de tu dispositivo.
-    </string>
+    <string name="accessibility_service_description">Acceso opcional que permite a Moon Cat Launcher ejecutar acciones del sistema, como bloquear la pantalla, abrir los ajustes rápidos o hacer una captura. Actívalo solo si deseas usar esos gestos.</string>
+    <string name="accessibility_service_more_info">Acceso opcional que permite a Moon Cat Launcher ejecutar acciones del sistema, como bloquear la pantalla, abrir los ajustes rápidos o hacer una captura. Actívalo solo si deseas usar esos gestos.</string>
     <string name="can_not_delete_system_apps">No puedo eliminar aplicaciones del sistema</string>
     <string name="please_select_app">Seleccione una aplicación</string>
     <string name="drawer_list_empty_hint">No hay aplicaciones</string>
@@ -408,4 +402,7 @@
         <item>Viajar</item>
         <item>Trabajar</item>
     </string-array>
+    <string name="mooncat_local_data_title">Datos locales</string>
+    <string name="mooncat_local_data_description">Borra los datos del launcher guardados en este dispositivo</string>
+    <string name="mooncat_widget_privacy">Los widgets de terceros pueden conectarse a Internet independientemente de Moon Cat Launcher.</string>
 </resources>

@@ -40,7 +40,6 @@ import androidx.navigation.fragment.findNavController
 import com.github.codeworkscreativehub.common.AppLogger
 import com.github.codeworkscreativehub.common.ColorIconsExtensions
 import com.github.codeworkscreativehub.common.ColorManager
-import com.github.codeworkscreativehub.common.CrashHandler
 import com.github.codeworkscreativehub.common.attachGestureManager
 import com.github.codeworkscreativehub.common.getLocalizedString
 import com.github.codeworkscreativehub.common.isGestureNavigationEnabled
@@ -74,7 +73,6 @@ import com.github.codeworkscreativehub.mlauncher.helper.getSystemIcons
 import com.github.codeworkscreativehub.mlauncher.helper.hasUsageAccessPermission
 import com.github.codeworkscreativehub.mlauncher.helper.initActionService
 import com.github.codeworkscreativehub.mlauncher.helper.ismlauncherDefault
-import com.github.codeworkscreativehub.mlauncher.helper.openFirstWeatherApp
 import com.github.codeworkscreativehub.mlauncher.helper.receivers.BatteryReceiver
 import com.github.codeworkscreativehub.mlauncher.helper.receivers.DeviceAdmin
 import com.github.codeworkscreativehub.mlauncher.helper.receivers.PrivateSpaceReceiver
@@ -172,7 +170,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         // Handle status bar once per view creation
         setTopPadding(binding.mainLayout)
 
-        binding.weather.isVisible = false
 
         // Update dynamic UI elements
         updateTimeAndInfo()
@@ -330,7 +327,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openClickClockApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("Clock Clicked")
             }
 
             R.id.date -> {
@@ -338,7 +334,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openClickDateApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("Date Clicked")
             }
 
             R.id.totalScreenTime -> {
@@ -346,52 +341,39 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openClickUsageApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("TotalScreenTime Clicked")
             }
 
             R.id.setDefaultLauncher -> {
                 viewModel.resetDefaultLauncherApp(requireContext())
-                CrashHandler.logUserAction("SetDefaultLauncher Clicked")
             }
 
             R.id.battery -> {
                 context?.openBatteryManager()
-                CrashHandler.logUserAction("Battery Clicked")
             }
 
-            R.id.weather -> {
-                context?.openFirstWeatherApp()
-                CrashHandler.logUserAction("Weather Clicked")
-            }
 
             R.id.fabPhone -> {
                 context?.openDialerApp()
-                CrashHandler.logUserAction("fabPhone Clicked")
             }
 
             R.id.fabMessages -> {
                 context?.openTextMessagesApp()
-                CrashHandler.logUserAction("fabMessages Clicked")
             }
 
             R.id.fabCamera -> {
                 context?.openCameraApp()
-                CrashHandler.logUserAction("fabCamera Clicked")
             }
 
             R.id.fabPhotos -> {
                 context?.openPhotosApp()
-                CrashHandler.logUserAction("fabPhotos Clicked")
             }
 
             R.id.fabBrowser -> {
                 context?.openWebBrowser()
-                CrashHandler.logUserAction("fabBrowser Clicked")
             }
 
             R.id.fabSettings -> {
                 trySettings()
-                CrashHandler.logUserAction("fabSettings Clicked")
             }
 
             R.id.fabAction -> {
@@ -399,7 +381,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openFabActionApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("fabAction Clicked")
             }
 
             else -> {
@@ -418,7 +399,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
 
         val n = view.id
         showAppList(AppDrawerFlag.SetHomeApp, includeHiddenApps = true, includeRecentApps = false, n)
-        CrashHandler.logUserAction("Show App List")
         return true
     }
 
@@ -448,7 +428,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             totalScreenTime.setOnClickListener(this@HomeFragment)
             setDefaultLauncher.setOnClickListener(this@HomeFragment)
             battery.setOnClickListener(this@HomeFragment)
-            weather.setOnClickListener(this@HomeFragment)
 
             fabPhone.setOnClickListener(this@HomeFragment)
             fabMessages.setOnClickListener(this@HomeFragment)
@@ -576,14 +555,12 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun homeAppClicked(location: Int) {
-        CrashHandler.logUserAction("Clicked Home App: $location")
         if (prefs.getAppName(location).isEmpty()) showLongPressToast()
         else viewModel.launchApp(prefs.getHomeAppModel(location), this)
     }
 
     private fun showAppList(flag: AppDrawerFlag, includeHiddenApps: Boolean = false, includeRecentApps: Boolean = true, n: Int = 0) {
         viewModel.getAppList(includeHiddenApps, includeRecentApps)
-        CrashHandler.logUserAction("Display App List")
         try {
             if (findNavController().currentDestination?.id == R.id.mainFragment) {
                 findNavController().navigate(
@@ -601,7 +578,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun showNotesManager() {
-        CrashHandler.logUserAction("Display Notes Manager")
         try {
             if (findNavController().currentDestination?.id == R.id.mainFragment) {
                 findNavController().navigate(R.id.action_mainFragment_to_notesManagerFragment)
@@ -621,7 +597,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             initActionService(requireContext())?.openNotifications()
             exception.printStackTrace()
         }
-        CrashHandler.logUserAction("Expand Notification Drawer")
     }
 
     @SuppressLint("PrivateApi")
@@ -634,11 +609,9 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             initActionService(requireContext())?.openQuickSettings()
             exception.printStackTrace()
         }
-        CrashHandler.logUserAction("Expand Quick Settings")
     }
 
     private fun openSwipeUpApp() {
-        CrashHandler.logUserAction("Open Swipe Up App")
         if (prefs.appShortSwipeUp.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appShortSwipeUp, this)
         else
@@ -646,7 +619,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openSwipeDownApp() {
-        CrashHandler.logUserAction("Open Swipe Down App")
         if (prefs.appShortSwipeDown.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appShortSwipeDown, this)
         else
@@ -654,7 +626,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openSwipeLeftApp() {
-        CrashHandler.logUserAction("Open Swipe Left App")
         if (prefs.appShortSwipeLeft.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appShortSwipeLeft, this)
         else
@@ -662,7 +633,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openSwipeRightApp() {
-        CrashHandler.logUserAction("Open Swipe Right App")
         if (prefs.appShortSwipeRight.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appShortSwipeRight, this)
         else
@@ -670,7 +640,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openLongSwipeUpApp() {
-        CrashHandler.logUserAction("Open Swipe Long Up App")
         if (prefs.appLongSwipeUp.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appLongSwipeUp, this)
         else
@@ -678,7 +647,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openLongSwipeDownApp() {
-        CrashHandler.logUserAction("Open Swipe Long Down App")
         if (prefs.appLongSwipeDown.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appLongSwipeDown, this)
         else
@@ -686,7 +654,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openLongSwipeLeftApp() {
-        CrashHandler.logUserAction("Open Swipe Long Left App")
         if (prefs.appLongSwipeLeft.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appLongSwipeLeft, this)
         else
@@ -694,7 +661,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openLongSwipeRightApp() {
-        CrashHandler.logUserAction("Open Swipe Long Right App")
         if (prefs.appLongSwipeRight.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appLongSwipeRight, this)
         else
@@ -702,7 +668,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openClickClockApp() {
-        CrashHandler.logUserAction("Open Clock App")
         if (prefs.appClickClock.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appClickClock, this)
         else
@@ -710,7 +675,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openClickUsageApp() {
-        CrashHandler.logUserAction("Open Usage App")
         if (prefs.appClickUsage.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appClickUsage, this)
         else
@@ -718,7 +682,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openClickDateApp() {
-        CrashHandler.logUserAction("Open Date App")
         if (prefs.appClickDate.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appClickDate, this)
         else
@@ -726,7 +689,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openDoubleTapApp() {
-        CrashHandler.logUserAction("Open Double Tap App")
         if (prefs.appDoubleTap.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appDoubleTap, this)
         else
@@ -734,7 +696,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun openFabActionApp() {
-        CrashHandler.logUserAction("Open Fab App")
         if (prefs.appFloating.activityPackage.isNotEmpty())
             viewModel.launchApp(prefs.appFloating, this)
         else
@@ -788,12 +749,10 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             // Use Device Admin if active
             dpm.isAdminActive(deviceAdmin) -> {
                 dpm.lockNow()
-                CrashHandler.logUserAction("Lock Screen via Device Admin")
             }
             // Fallback to ActionService if available
             actionService != null -> {
                 actionService.lockScreen()
-                CrashHandler.logUserAction("Lock Screen via ActionService")
             }
             // Otherwise prompt the user to enable Device Admin
             else -> {
@@ -1365,7 +1324,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openSwipeLeftApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeLeft Short Gesture")
             }
 
             override fun onLongSwipeLeft() {
@@ -1373,7 +1331,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openLongSwipeLeftApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeLeft Long Gesture")
             }
 
             override fun onShortSwipeRight() {
@@ -1381,7 +1338,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openSwipeRightApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeRight Short Gesture")
             }
 
             override fun onLongSwipeRight() {
@@ -1389,7 +1345,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openLongSwipeRightApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeRight Long Gesture")
             }
 
             override fun onShortSwipeUp() {
@@ -1397,7 +1352,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openSwipeUpApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeUp Short Gesture")
             }
 
             override fun onLongSwipeUp() {
@@ -1405,7 +1359,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openLongSwipeUpApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeUp Long Gesture")
             }
 
             override fun onShortSwipeDown() {
@@ -1413,7 +1366,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openSwipeDownApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeDown Short Gesture")
             }
 
             override fun onLongSwipeDown() {
@@ -1421,11 +1373,9 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openLongSwipeDownApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeDown Long Gesture")
             }
 
             override fun onLongPress() {
-                CrashHandler.logUserAction("LongPress Gesture")
                 trySettings()
             }
 
@@ -1434,7 +1384,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openDoubleTapApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("DoubleTap Gesture")
             }
         })
     }
@@ -1455,7 +1404,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openSwipeLeftApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeLeft Short Gesture")
             }
 
             override fun onLongSwipeLeft() {
@@ -1463,7 +1411,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openLongSwipeLeftApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeLeft Long Gesture")
             }
 
             override fun onShortSwipeRight() {
@@ -1471,7 +1418,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openSwipeRightApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeRight Short Gesture")
             }
 
             override fun onLongSwipeRight() {
@@ -1479,7 +1425,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openLongSwipeRightApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeRight Long Gesture")
             }
 
             override fun onShortSwipeUp() {
@@ -1487,7 +1432,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openSwipeUpApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeUp Short Gesture")
             }
 
             override fun onLongSwipeUp() {
@@ -1495,7 +1439,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openLongSwipeUpApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeUp Long Gesture")
             }
 
             override fun onShortSwipeDown() {
@@ -1503,7 +1446,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openSwipeDownApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeDown Short Gesture")
             }
 
             override fun onLongSwipeDown() {
@@ -1511,7 +1453,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     Action.OpenApp -> openLongSwipeDownApp()
                     else -> handleOtherAction(action)
                 }
-                CrashHandler.logUserAction("SwipeDown Long Gesture")
             }
         })
     }

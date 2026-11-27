@@ -7,12 +7,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.accessibility.AccessibilityEvent
 import com.github.codeworkscreativehub.common.AppLogger
-import com.github.codeworkscreativehub.common.CrashHandler
 import java.lang.ref.WeakReference
 
 @SuppressLint("AccessibilityPolicy")
 class ActionService : AccessibilityService() {
-    private var suppressEventsUntil = 0L
 
     override fun onServiceConnected() {
         instance = WeakReference(this)
@@ -35,50 +33,40 @@ class ActionService : AccessibilityService() {
             return false
         }
         lastActionTime = now
-        suppressEventsUntil = now + actionCooldown
         return true
     }
 
     fun lockScreen(): Boolean {
         if (!canPerformAction()) return false
-        CrashHandler.logUserAction("Lock Screen")
         return performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
     }
 
     fun showRecents(): Boolean {
         if (!canPerformAction()) return false
-        CrashHandler.logUserAction("Show Recents")
         return performGlobalAction(GLOBAL_ACTION_RECENTS)
     }
 
     fun openNotifications(): Boolean {
         if (!canPerformAction()) return false
-        CrashHandler.logUserAction("Open Notifications")
         return performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
     }
 
     fun openQuickSettings(): Boolean {
         if (!canPerformAction()) return false
-        CrashHandler.logUserAction("Open Quick Settings")
         return performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
     }
 
     fun openPowerDialog(): Boolean {
         if (!canPerformAction()) return false
-        CrashHandler.logUserAction("Open Power Dialog")
         return performGlobalAction(GLOBAL_ACTION_POWER_DIALOG)
     }
 
     fun takeScreenShot(): Boolean {
         if (!canPerformAction()) return false
-        CrashHandler.logUserAction("Take Screen Shot")
         return performGlobalAction(GLOBAL_ACTION_TAKE_SCREENSHOT)
     }
 
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (event == null) return
-        if (System.currentTimeMillis() < suppressEventsUntil) return
-    }
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) = Unit
 
     fun getLauncherPackageName(context: Context): String? {
         val intent = Intent(Intent.ACTION_MAIN)

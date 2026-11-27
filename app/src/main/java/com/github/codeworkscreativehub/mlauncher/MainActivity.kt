@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import com.github.codeworkscreativehub.common.CrashHandler
 import com.github.codeworkscreativehub.common.LauncherLocaleManager
 import com.github.codeworkscreativehub.common.showLongToast
 import com.github.codeworkscreativehub.mlauncher.data.Constants
@@ -56,8 +55,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var performFullBackup: ActivityResultLauncher<Intent>
-    private lateinit var performFullRestore: ActivityResultLauncher<Intent>
 
     private lateinit var performThemeBackup: ActivityResultLauncher<Intent>
     private lateinit var performThemeRestore: ActivityResultLauncher<Intent>
@@ -143,8 +140,6 @@ class MainActivity : AppCompatActivity() {
         prefs = Prefs(this)
         migration = Migration(this)
 
-        // Initialize com.github.codeworkscreativehub.common.CrashHandler to catch uncaught exceptions
-        Thread.setDefaultUncaughtExceptionHandler(CrashHandler(applicationContext))
 
         requestedOrientation = if (prefs.lockOrientation) {
             if (prefs.lockOrientationPortrait) {
@@ -191,51 +186,6 @@ class MainActivity : AppCompatActivity() {
         viewModel.getAppList(includeHiddenApps = true)
 
         window.addFlags(FLAG_LAYOUT_NO_LIMITS)
-
-        performFullBackup = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    applicationContext.contentResolver.openFileDescriptor(uri, "w")?.use { file ->
-                        FileOutputStream(file.fileDescriptor).use { stream ->
-                            val prefs = Prefs(applicationContext).saveToString()
-                            stream.channel.truncate(0)
-                            stream.write(prefs.toByteArray())
-                        }
-                    }
-                }
-            }
-        }
-
-        performFullRestore = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == RESULT_OK) {
-                result.data?.data?.let { uri ->
-                    try {
-                        applicationContext.contentResolver.openInputStream(uri).use { inputStream ->
-                            val stringBuilder = StringBuilder()
-                            BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                                var line: String? = reader.readLine()
-                                while (line != null) {
-                                    stringBuilder.append(line)
-                                    line = reader.readLine()
-                                }
-                            }
-
-                            val string = stringBuilder.toString()
-                            val prefs = Prefs(applicationContext)
-                            prefs.clear()
-                            prefs.loadFromString(string)
-                            AppReloader.restartApp(applicationContext)
-                        }
-                    } catch (e: FileNotFoundException) {
-                        e.printStackTrace()
-                        showLongToast("Selected file could not be opened")
-                    } catch (e: SecurityException) {
-                        e.printStackTrace()
-                        showLongToast("Permission denied")
-                    }
-                }
-            }
-        }
 
         performThemeBackup = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -403,26 +353,6 @@ class MainActivity : AppCompatActivity() {
             e.printStackTrace()
             null
         }
-    }
-
-    fun createFullBackup() {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val fileName = "backup_$timeStamp.json"
-
-        val createFileIntent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/json"
-            putExtra(Intent.EXTRA_TITLE, fileName)
-        }
-        performFullBackup.launch(createFileIntent)
-    }
-
-    fun restoreFullBackup() {
-        val openFileIntent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "application/json"
-        }
-        performFullRestore.launch(openFileIntent)
     }
 
     fun createThemeBackup() {

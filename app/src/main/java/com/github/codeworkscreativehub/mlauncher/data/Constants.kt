@@ -468,21 +468,6 @@ object Constants {
         }
     }
 
-    enum class TempUnits : EnumOption {
-        Celsius,
-        Fahrenheit;
-
-        // Keep this for Composable usage
-        @Composable
-        override fun string(): String {
-            return when (this) {
-                Celsius -> getLocalizedString(R.string.celsius)
-                Fahrenheit -> getLocalizedString(R.string.fahrenheit)
-            }
-        }
-    }
-
-
     enum class FontFamily : EnumOption {
         System,
         Custom,

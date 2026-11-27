@@ -15,7 +15,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.codeworkscreativehub.common.CrashHandler
 import com.github.codeworkscreativehub.common.getCurrentTimestamp
 import com.github.codeworkscreativehub.common.getLocalizedString
 import com.github.codeworkscreativehub.common.getLocalizedStringArray
@@ -221,7 +220,6 @@ class NotesManagerFragment : BaseFragment() {
                         hideButtons()
                     }, 500)
                 }
-                CrashHandler.logUserAction("Notes sendButton Clicked")
             }
         }
     }
