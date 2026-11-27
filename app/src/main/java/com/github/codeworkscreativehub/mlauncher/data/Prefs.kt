@@ -438,11 +438,11 @@ class Prefs(val context: Context) {
         set(value) = prefsNormal.edit { putBoolean(SHOW_BATTERY, value) }
 
     var showWeather: Boolean
-        get() = getSetting(SHOW_WEATHER, true)
+        get() = false
         set(value) = prefsNormal.edit { putBoolean(SHOW_WEATHER, value) }
 
     var gpsLocation: Boolean
-        get() = getSetting(GPS_LOCATION, true)
+        get() = false
         set(value) = prefsNormal.edit { putBoolean(GPS_LOCATION, value) }
 
     var showBatteryIcon: Boolean
