@@ -4,6 +4,9 @@
 
 - Ajustes → Mira & Siente → Apariencia de las aplicaciones de inicio ofrece cuatro modos. Solo texto es el valor inicial. Las preferencias anteriores de iconos se conservan al actualizar. El modo Solo icono mantiene el nombre accesible de la aplicación y el modo monocromático usa escala de grises.
 - La compilación local de ProdDebug y las 6 pruebas unitarias pasaron. En el emulador API 37 sin conexión se recorrieron los cuatro modos con Reloj y se comprobó que Solo icono conserva el nombre accesible y persiste tras reiniciar el proceso.
+- En `7c7c1907` también se ensamblaron PlayDebug y BetaDebug. El análisis de los tres APK de depuración confirmó SDK mínimo 28, identificadores esperados, `allowBackup=false` y ausencia de Internet, ubicación y `REORDER_TASKS`.
+- [GitHub Actions](https://github.com/StormCatRider/MoonCatLauncher/actions/runs/45936628887) confirmó ensamblado, pruebas y controles de privacidad para `7c7c1907`.
+- `7c7c1907` generó también ProdRelease como APK y AAB de desarrollo sin firma. Se repitió la auditoría del APK, con el paquete `app.mooncat.launcher`, SDK mínimo 28 y correcciones de privacidad confirmadas.
 - Falta extender los modos por pantalla, carpeta y aplicación e integrar las carpetas anidadas, el arrastre y los modos de apertura.
 - El número de versión del paquete sigue en `0.1.0` mientras se completa Moon Home.
 
@@ -50,13 +53,13 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 
 ### Implementación parcial
 
-- ProdDebug desactiva las copias del sistema en el APK y supera la prueba básica sin conexión en API 37. Faltan los demás canales y la comprobación en Android 9.
+- ProdDebug supera la prueba básica sin conexión en API 37. La revisión de permisos abarca los tres APK de depuración y ProdRelease de Foundation. Falta la comprobación en Android 9.
 - Los modelos de distribución, su validador y el almacén local existen. Las carpetas, pantallas y alternativas de presentación todavía requieren integración en la interfaz.
 - El modelo de temas existe. El editor, la previsualización y el formato de intercambio validado siguen pendientes.
 
 ### Trabajo pendiente
 
-- Auditar los demás canales y repetir la prueba de arranque, rol de inicio y widgets en Android 9 durante la verificación de compatibilidad.
+- Auditar los APK de distribución de Play y Beta cuando se preparen y repetir la prueba de arranque, rol de inicio y widgets en Android 9 durante la verificación de compatibilidad.
 - Integrar las carpetas y la distribución persistente de Moon Home. Continuar con Moon Spaces, Moon Search, Moon Studio, Moon Shield y Moon Focus.
 - Implementar respaldos manuales cifrados y validar una restauración antes de sustituir datos. Completar accesibilidad, rendimiento y las pruebas beta antes de preparar APK y AAB de distribución.
 - La cita de Acerca de queda a la espera del texto del propietario.
