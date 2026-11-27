@@ -568,7 +568,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
     private fun homeAppClicked(location: Int) {
-        if (prefs.getAppName(location).isEmpty()) showLongPressToast()
+        if (prefs.getAppName(location).isEmpty() || homeFolders.isGrouped(location)) showLongPressToast()
         else viewModel.launchApp(prefs.getHomeAppModel(location), this)
     }
 
@@ -814,8 +814,9 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     id = i
                     val app = prefs.getHomeAppModel(i)
                     val folder = homeFolders.folderAt(i)
-                    text = folder?.label ?: prefs.getAppDisplayName(app)
-                    if (folder == null) applyHomeAppIcon(app, prefs.homeDisplayMode)
+                    val grouped = homeFolders.isGrouped(i)
+                    text = folder?.label ?: if (grouped) getLocalizedString(R.string.select_app) else prefs.getAppDisplayName(app)
+                    if (folder == null && !grouped) applyHomeAppIcon(app, prefs.homeDisplayMode)
                     getHomeAppsGestureListener()
                     setOnClickListener(this@HomeFragment)
                     if (!prefs.extendHomeAppsArea) {
@@ -837,7 +838,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     id = i
                     val homeApp = prefs.getHomeAppModel(i)
                     // A shortcut's package is its creator (e.g. the browser), whose usage would be misleading
-                    text = if (homeApp.isShortcut || homeFolders.folderAt(i) != null) "" else formatMillisToHMS(
+                    text = if (homeApp.isShortcut || homeFolders.folderAt(i) != null || homeFolders.isGrouped(i)) "" else formatMillisToHMS(
                         appUsageMonitor.getUsageStats(
                             context,
                             homeApp.activityPackage
@@ -1035,11 +1036,12 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                 homeAppLabel.apply {
                     val homeApp = prefs.getHomeAppModel(i)
                     val folder = homeFolders.folderAt(i)
+                    val grouped = homeFolders.isGrouped(i)
                     textSize = prefs.appSize.toFloat()
                     id = i
                     text = if (folder != null) {
                         folder.label
-                    } else if (homeApp.activityPackage.isBlank()) {
+                    } else if (grouped || homeApp.activityPackage.isBlank()) {
                         getLocalizedString(R.string.select_app)
                     } else {
                         prefs.getAppDisplayName(homeApp)
@@ -1064,7 +1066,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     setTextColor(prefs.appColor)
                     val packageName = homeApp.activityPackage
                     val displayMode = prefs.homeDisplayMode
-                    val originalIcon = if (folder == null) applyHomeAppIcon(homeApp, displayMode) else null
+                    val originalIcon = if (folder == null && !grouped) applyHomeAppIcon(homeApp, displayMode) else null
                     if (originalIcon != null) {
                         val label = if (displayMode == DisplayMode.ICON_ONLY) "" else prefs.getAppDisplayName(homeApp)
                         val nm = NotificationManagerCompat.getEnabledListenerPackages(context)
@@ -1395,7 +1397,9 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         this.attachGestureManager(requireContext(), object : GestureAdapter() {
 
             override fun onLongPress() {
-                textOnLongClick(this@getHomeAppsGestureListener)
+                val row = this@getHomeAppsGestureListener
+                val manage: () -> Unit = { textOnLongClick(row) }
+                if (homeFolders.folderAt(row.id) != null || !homeFolders.dragFavorite(row, row.id, manage)) manage()
             }
 
             override fun onSingleTap() {

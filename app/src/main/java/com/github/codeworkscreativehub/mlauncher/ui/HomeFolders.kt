@@ -18,12 +18,14 @@ import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
+import com.github.codeworkscreativehub.mlauncher.helper.utils.PrivateSpaceManager
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.ItemType
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.FolderOpenMode
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LauncherItem
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LauncherLayout
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LayoutSnapshot
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.moveFolderItem
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.groupHomeFavorites
 import com.github.codeworkscreativehub.mlauncher.mooncat.storage.LayoutStore
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -41,6 +43,7 @@ internal class HomeFolders(
 ) {
     private val store = LayoutStore(home.requireContext())
     private val users = requireNotNull(home.requireContext().getSystemService(UserManager::class.java))
+    private val privateSpace = PrivateSpaceManager(home.requireContext())
     private var snapshot: LayoutSnapshot? = null
     private var saving = false
     private var dialog: AlertDialog? = null
@@ -62,6 +65,77 @@ internal class HomeFolders(
 
     fun folderAt(slot: Int): LauncherItem? = snapshot?.items?.firstOrNull {
         it.pageId == HOME_PAGE && it.parentFolderId == null && it.position == slot && it.type == ItemType.FOLDER
+    }
+
+    fun isGrouped(slot: Int): Boolean {
+        val app = prefs.getHomeAppModel(slot)
+        if (app.activityPackage.isBlank()) return false
+        val serial = users.getSerialNumberForUser(app.user)
+        return snapshot?.items.orEmpty().any {
+            it.originalHomeSlot == slot && it.packageName == app.activityPackage &&
+                it.activityName == app.activityClass && it.userSerial == serial
+        }
+    }
+
+    private data class HomeDrag(val slot: Int, val app: AppListItem, val tapAction: () -> Unit)
+
+    fun dragFavorite(row: View, slot: Int, tapAction: () -> Unit): Boolean {
+        if (snapshot == null || prefs.homeLocked || saving || isGrouped(slot)) return false
+        val app = prefs.getHomeAppModel(slot)
+        if (app.activityPackage.isBlank() || privateSpace.isPrivateSpaceProfile(app.user)) return false
+        return row.startDragAndDrop(
+            ClipData.newPlainText("", ""), View.DragShadowBuilder(row), HomeDrag(slot, app, tapAction), 0
+        )
+    }
+
+    private fun acceptHomeDrag(slot: Int, row: View) {
+        row.setOnDragListener { _, event ->
+            val drag = event.localState as? HomeDrag ?: return@setOnDragListener false
+            when (event.action) {
+                DragEvent.ACTION_DROP -> if (drag.slot == slot || prefs.homeLocked || saving) false
+                    else dropFavorite(drag, slot)
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    if (drag.slot == slot && !event.result && !prefs.homeLocked) drag.tapAction()
+                    true
+                }
+                else -> true
+            }
+        }
+    }
+
+    private fun dropFavorite(drag: HomeDrag, slot: Int): Boolean {
+        if (prefs.getHomeAppModel(drag.slot) != drag.app || isGrouped(drag.slot)) return false
+        val source = favoriteItem(drag.slot, drag.app) ?: return false
+        val existing = folderAt(slot)
+        if (existing != null) {
+            addChild(existing, source)
+            return true
+        }
+        if (isGrouped(slot)) return false
+        val targetApp = prefs.getHomeAppModel(slot)
+        val target = favoriteItem(slot, targetApp) ?: return false
+        nameFolder { name ->
+            if (prefs.getHomeAppModel(drag.slot) != drag.app || prefs.getHomeAppModel(slot) != targetApp) {
+                reportError()
+                return@nameFolder
+            }
+            val folder = LauncherItem(UUID.randomUUID().toString(), name, ItemType.FOLDER, HOME_PAGE, position = slot)
+            edit { current -> current.groupHomeFavorites(folder, target, source) }
+        }
+        return true
+    }
+
+    private fun favoriteItem(slot: Int, app: AppListItem): LauncherItem? {
+        if (app.activityPackage.isBlank() || app.activityClass.isBlank() ||
+            privateSpace.isPrivateSpaceProfile(app.user)) return null
+        val serial = users.getSerialNumberForUser(app.user)
+        if (serial < 0) return null
+        return LauncherItem(
+            UUID.randomUUID().toString(), prefs.getAppDisplayName(app).ifBlank { app.activityPackage },
+            if (app.isShortcut) ItemType.SHORTCUT else ItemType.APPLICATION,
+            HOME_PAGE, position = 0, packageName = app.activityPackage,
+            activityName = app.activityClass, userSerial = serial, originalHomeSlot = slot
+        )
     }
 
     fun close() {
@@ -99,6 +173,7 @@ internal class HomeFolders(
     }
 
     fun visibleSlot(slot: Int, row: View): View {
+        acceptHomeDrag(slot, row)
         val root = folderAt(slot) ?: return row
         if (root.id != inlineRootId) return row
         val folder = snapshot?.items?.firstOrNull { it.id == inlineFolderId } ?: root
@@ -368,7 +443,8 @@ internal class HomeFolders(
     }
 
     private fun resolveApp(item: LauncherItem): AppListItem? = viewModel.appList.value.orEmpty().firstOrNull {
-        item.type == ItemType.APPLICATION && it.profileType != "PRIVATE" && it.activityPackage == item.packageName &&
+        (item.type == ItemType.APPLICATION || item.type == ItemType.SHORTCUT) &&
+            it.profileType != "PRIVATE" && it.activityPackage == item.packageName &&
             it.activityClass == item.activityName && users.getSerialNumberForUser(it.user) == item.userSerial
     }
 

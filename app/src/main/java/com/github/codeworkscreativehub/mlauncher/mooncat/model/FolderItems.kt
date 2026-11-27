@@ -1,5 +1,26 @@
 package com.github.codeworkscreativehub.mlauncher.mooncat.model
 
+internal fun LayoutSnapshot.groupHomeFavorites(
+    folder: LauncherItem,
+    target: LauncherItem,
+    source: LauncherItem
+): LayoutSnapshot {
+    require(folder.type == ItemType.FOLDER && folder.parentFolderId == null)
+    require(target.originalHomeSlot == folder.position && source.originalHomeSlot != target.originalHomeSlot)
+    require(listOf(target, source).all {
+        it.type in setOf(ItemType.APPLICATION, ItemType.SHORTCUT) &&
+            it.originalHomeSlot != null && it.originalHomeSlot >= 0 && it.pageId == folder.pageId
+    })
+    require(items.none {
+        it.pageId == folder.pageId && it.parentFolderId == null && it.position == folder.position
+    })
+    return copy(items = items + listOf(
+        folder,
+        target.copy(parentFolderId = folder.id, position = 0),
+        source.copy(parentFolderId = folder.id, position = 1)
+    ))
+}
+
 internal fun LayoutSnapshot.moveFolderItem(
     itemId: String,
     destinationId: String,

@@ -54,6 +54,17 @@ class LauncherLayoutTest {
         assertEquals(snapshot, adapter.fromJson(adapter.toJson(snapshot)))
         assertFalse(snapshot.copy(items = listOf(folder, child)).isValid())
     }
+    @Test fun groupsTwoHomeFavoritesWithTheirRestoreSlots() {
+        val target = app.copy(packageName = "example.target", activityName = "Main", userSerial = 0, originalHomeSlot = 0)
+        val source = target.copy(id = "source", packageName = "example.source", originalHomeSlot = 1)
+        val grouped = LayoutSnapshot().groupHomeFavorites(folder, target, source)
+        assertTrue(grouped.isValid())
+        val members = grouped.items.filter { it.parentFolderId == folder.id }.sortedBy { it.position }
+        assertEquals(listOf(target.id, source.id), members.map { it.id })
+        assertEquals(listOf(0, 1), members.map { it.originalHomeSlot })
+        assertThrows(IllegalArgumentException::class.java) { grouped.groupHomeFavorites(folder, target, source) }
+    }
+
     @Test fun movesSubtreeAndReordersWithoutDroppingItems() {
         val sibling = folder.copy(id = "other", position = 2)
         val child = app.copy(parentFolderId = nested.id, packageName = "example.app", activityName = "Main")

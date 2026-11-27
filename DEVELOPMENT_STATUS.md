@@ -14,7 +14,8 @@ Se retiraron scripts y automatizaciones del fork para Discord, Crowdin, changelo
 - En el emulador API 37 sin red se creó Weekend → Tools → Reloj desde el inicio. Tras detener y volver a abrir el launcher, el árbol seguía disponible y Reloj se abrió desde la subcarpeta.
 - El editor permite mover elementos entre carpetas de la misma pantalla y cambiar su orden. Las carpetas aceptan arrastrar un elemento sobre una subcarpeta o antes de una aplicación. Las pruebas unitarias verifican la conservación de descendientes y el rechazo de ciclos. Queda por probar el gesto de arrastre en un dispositivo.
 - Las carpetas se abren dentro del inicio por defecto. Cada carpeta puede guardarse en modo emergente o de pantalla completa. Se comprobaron los tres modos en el emulador API 37 sin conexión. El modo de pantalla completa persistió tras reiniciar y la ventana ocupó los 1080 × 2400 píxeles del emulador. Pasaron `ProdDebug` y las 9 pruebas unitarias.
-- Falta extender los modos de presentación por pantalla, carpeta y aplicación e integrar el arrastre desde el inicio.
+- Arrastrar un favorito sobre otro en el inicio crea una carpeta con ambos. También se admite soltar un favorito sobre una carpeta existente. Las referencias de origen se conservan para restaurar la posición anterior al quitar un favorito de la carpeta. En API 37 sin red se arrastró Reloj sobre Calendario, se verificó que los dos aparecieran una sola vez, se abrió Reloj tras reiniciar y se comprobó que volvió a su posición al quitarlo de la carpeta. Pasaron `ProdDebug` y las 10 pruebas unitarias.
+- Falta extender los modos de presentación por pantalla, carpeta y aplicación, y verificar en dispositivo el arrastre dentro de carpetas.
 - El número de versión del paquete sigue en `0.1.0` mientras se completa Moon Home.
 
 ## 0.1.0 Foundation

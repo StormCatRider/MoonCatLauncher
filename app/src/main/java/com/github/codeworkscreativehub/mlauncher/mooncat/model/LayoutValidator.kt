@@ -19,6 +19,10 @@ data class LayoutSnapshot(
         for (item in items) {
             if (item.id.isBlank() || item.label.isBlank() || item.pageId !in pageIds || item.position < 0) return false
             if (item.type == ItemType.APPLICATION && (item.packageName.isNullOrBlank() || item.activityName.isNullOrBlank())) return false
+            val homeSlot = item.originalHomeSlot
+            if (homeSlot != null && (homeSlot < 0 || item.parentFolderId == null ||
+                    item.type !in setOf(ItemType.APPLICATION, ItemType.SHORTCUT) ||
+                    item.packageName.isNullOrBlank() || item.activityName.isNullOrBlank() || item.userSerial == null)) return false
             var parent = item.parentFolderId
             if (parent != null && item.type == ItemType.WIDGET) return false
             val seen = mutableSetOf(item.id)

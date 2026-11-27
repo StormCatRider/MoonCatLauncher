@@ -32,7 +32,8 @@ data class LauncherItem(
     val activityName: String? = null,
     val userSerial: Long? = null,
     val displayMode: DisplayMode? = null,
-    val folderOpenMode: FolderOpenMode = FolderOpenMode.INLINE
+    val folderOpenMode: FolderOpenMode = FolderOpenMode.INLINE,
+    val originalHomeSlot: Int? = null
 )
 
 object LauncherLayout {
