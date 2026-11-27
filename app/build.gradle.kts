@@ -10,12 +10,12 @@ plugins {
 //   Version configuration
 // =========================
 
-val major = 1
-val minor = 12
-val patch = 3
+val major = 0
+val minor = 1
+val patch = 0
 val build = 0
 
-val baseVersionName = "$major.$minor.$patch Build $build"
+val baseVersionName = "$major.$minor.$patch"
 
 val baseVersionCode =
     (String.format("%02d", major) +
@@ -45,58 +45,57 @@ extensions.configure<ApplicationExtension>("android") {
     productFlavors {
         create("prod") {
             dimension = "channel"
-            applicationId = "app.mlauncher"
-            resValue("string", "app_name", "Multi Launcher")
+            applicationId = "app.mooncat.launcher"
+            resValue("string", "app_name", "Moon Cat Launcher")
             resValue("bool", "is_play_store", "false")
         }
 
         create("play") {
             dimension = "channel"
-            applicationId = "app.mlauncher"
-            resValue("string", "app_name", "Multi Launcher")
+            applicationId = "app.mooncat.launcher"
+            resValue("string", "app_name", "Moon Cat Launcher")
             resValue("bool", "is_play_store", "true")
         }
 
         create("beta") {
             dimension = "channel"
-            applicationId = "app.mlauncher.beta"
+            applicationId = "app.mooncat.launcher.beta"
             versionNameSuffix = "-beta"
-            resValue("string", "app_name", "Multi Launcher Beta")
+            resValue("string", "app_name", "Moon Cat Launcher Beta")
             resValue("bool", "is_play_store", "false")
         }
 
         create("alpha") {
             dimension = "channel"
-            applicationId = "app.mlauncher.alpha"
+            applicationId = "app.mooncat.launcher.alpha"
             versionNameSuffix = "-alpha"
-            resValue("string", "app_name", "Multi Launcher Alpha")
+            resValue("string", "app_name", "Moon Cat Launcher Alpha")
             resValue("bool", "is_play_store", "false")
         }
 
         create("nightly") {
             dimension = "channel"
-            applicationId = "app.mlauncher.nightly"
+            applicationId = "app.mooncat.launcher.nightly"
             versionNameSuffix = "-nightly"
-            resValue("string", "app_name", "Multi Launcher Nightly")
+            resValue("string", "app_name", "Moon Cat Launcher Nightly")
             resValue("bool", "is_play_store", "false")
         }
     }
 
+    // Independent release signing; debug builds need no release secrets.
+    val releaseKey = rootProject.file("app/mooncat.jks")
+    fun signingSecret(name: String): String? =
+        System.getenv(name) ?: project.findProperty(name) as? String
+    val hasReleaseSigning = releaseKey.isFile &&
+        listOf("KEY_STORE_PASSWORD", "KEY_ALIAS", "KEY_PASSWORD").all { !signingSecret(it).isNullOrBlank() }
     signingConfigs {
-        create("release") {
-            val keystoreFile = rootProject.file("app/mLauncher.jks")
-
-            println("Using keystore: ${keystoreFile.absolutePath} (${keystoreFile.length()} bytes)")
-
-            fun required(name: String): String =
-                System.getenv(name)
-                    ?: project.findProperty(name) as String?
-                    ?: error("Missing required environment variable: $name")
-
-            storeFile = keystoreFile
-            storePassword = required("KEY_STORE_PASSWORD")
-            keyAlias = required("KEY_ALIAS")
-            keyPassword = required("KEY_PASSWORD")
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = releaseKey
+                storePassword = signingSecret("KEY_STORE_PASSWORD")
+                keyAlias = signingSecret("KEY_ALIAS")
+                keyPassword = signingSecret("KEY_PASSWORD")
+            }
         }
     }
 
@@ -108,7 +107,7 @@ extensions.configure<ApplicationExtension>("android") {
             signingConfig = signingConfigs["debug"]
 
             resValue("string", "app_version", baseVersionName)
-            resValue("string", "app_name", "Multi Launcher Debug")
+            resValue("string", "app_name", "Moon Cat Launcher Debug")
             resValue("string", "empty", "")
         }
 
@@ -121,7 +120,7 @@ extensions.configure<ApplicationExtension>("android") {
                 "proguard-rules.pro"
             )
 
-            signingConfig = signingConfigs["release"]
+            if (hasReleaseSigning) signingConfig = signingConfigs["release"]
 
             resValue("string", "app_version", baseVersionName)
             resValue("string", "empty", "")
