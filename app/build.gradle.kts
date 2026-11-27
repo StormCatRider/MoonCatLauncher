@@ -179,6 +179,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.viewpager2)
     implementation(libs.activity)
+    implementation(libs.fragment.ktx)
     implementation(libs.commons.text)
 
     implementation(libs.lifecycle.extensions)
@@ -212,16 +213,15 @@ dependencies {
 
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.espresso.contrib)
-    implementation(libs.espresso.idling.resource)
+    androidTestImplementation(libs.espresso.idling.resource)
 
     androidTestImplementation(libs.test.runner)
     androidTestImplementation(libs.test.rules)
-    implementation(libs.test.core.ktx)
+    androidTestImplementation(libs.test.core.ktx)
 
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.test.manifest)
 
-    debugImplementation(libs.fragment.testing)
     androidTestImplementation(libs.navigation.testing)
 
     testImplementation(libs.junit)

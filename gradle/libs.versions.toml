@@ -13,6 +13,7 @@ recyclerview = "1.4.0"
 paletteKtx = "1.1.0"
 activityKtx = "1.13.0"
 material = "1.14.0"
+fragment = "1.9.1"
 
 # Android Lifecycle
 lifecycle-extensions = "2.2.0"
@@ -48,7 +49,6 @@ espresso = "3.7.0"
 test-core-ktx = "1.7.0"
 test-runner = "1.7.0"
 test-rules = "1.7.0"
-fragment-testing = "1.9.1"
 ui-test-junit4 = "1.11.4"
 ui-test-manifest = "1.11.4"
 activity = "1.13.0"
@@ -68,6 +68,7 @@ activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 
 # Android Lifecycle
 lifecycle-extensions = { group = "androidx.lifecycle", name = "lifecycle-extensions", version.ref = "lifecycle-extensions" }
@@ -115,7 +116,6 @@ espresso-idling-resource = { group = "androidx.test.espresso", name = "espresso-
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "test-core-ktx" }
 test-runner = { group = "androidx.test", name = "runner", version.ref = "test-runner" }
 test-rules = { group = "androidx.test", name = "rules", version.ref = "test-rules" }
-fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragment-testing" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "ui-test-junit4" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "ui-test-manifest" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
