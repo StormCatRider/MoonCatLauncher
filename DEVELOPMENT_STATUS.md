@@ -23,29 +23,33 @@ La rama de trabajo es `feature/mooncat-foundation`. El proyecto conserva Android
 - El [primer cambio de privacidad](https://github.com/StormCatRider/MoonCatLauncher/actions/runs/45933518117) pasó ensamblado, pruebas unitarias y verificación del APK ProdDebug para `074cda5d`.
 - La [verificación ampliada](https://github.com/StormCatRider/MoonCatLauncher/actions/runs/45933969090) pasó para `caf3eb13`, con ensamblado, pruebas unitarias y las comprobaciones adicionales del APK.
 - La [compilación de la bienvenida corregida](https://github.com/StormCatRider/MoonCatLauncher/actions/runs/45934609004) pasó para `1ef1181b`.
-- En un emulador API 37 sin red predeterminada se instaló `074cda5d` y Android reconoció el rol de inicio. La prueba de instalación limpia detectó que la bienvenida exigía acceso de uso para avanzar. El código se corrigió y el recorrido completo requiere volver a probarse con el APK actualizado.
-- Para los cambios de Foundation se ejecutaron `git diff --check` y el análisis XML de los recursos modificados. La verificación del APK nuevo y las pruebas en dispositivo requieren resultados propios.
+- La [verificación de la limpieza de dependencias](https://github.com/StormCatRider/MoonCatLauncher/actions/runs/45935115562) pasó para `cd4b763a`.
+- La prueba de instalación limpia de `074cda5d` en API 37 detectó que la bienvenida exigía acceso de uso para avanzar. Con el APK de `cd4b763a`, el emulador completó la bienvenida con el acceso de uso sin conceder, el servicio de accesibilidad desactivado y ninguna red predeterminada. Android reconoció el rol de inicio, el gesto hacia arriba abrió el cajón y una consulta sin coincidencias permaneció en el cajón.
+- La compilación local de `cd4b763a` ensambló ProdDebug y pasó las 6 pruebas unitarias. `aapt` confirmó el identificador `app.mooncat.launcher.debug`, SDK mínimo 28, SDK objetivo 37 y `allowBackup=false`.
+- En el emulador API 37 sin red se configuró un gesto para abrir la página de widgets, se comprobó el aviso y se enlazó el reloj analógico con la autorización puntual de Android.
+- `assembleProdRelease` y `bundleProdRelease` generaron el APK y el AAB de Foundation sin firma. En el APK, `aapt` confirmó `app.mooncat.launcher`, SDK mínimo 28 y ausencia de Internet, ubicación y copias automáticas.
+- También se ejecutaron `git diff --check` y el análisis XML de los recursos modificados.
 
 ### Permisos observados en ProdDebug
 
-El APK de `074cda5d` carece de permisos de Internet y de ubicación precisa, aproximada y en segundo plano. El inventario empaquetado incluye:
+El APK de `cd4b763a` carece de permisos de Internet y de ubicación precisa, aproximada y en segundo plano. El inventario empaquetado incluye:
 
 - Datos y perfiles de Android. `READ_CONTACTS`, `PACKAGE_USAGE_STATS`, `QUERY_ALL_PACKAGES` y `ACCESS_HIDDEN_PROFILES`.
 - Integraciones del launcher. `REQUEST_DELETE_PACKAGES`, `EXPAND_STATUS_BAR`, `VIBRATE`, `SET_WALLPAPER`, `SET_ALARM`, `BIND_APPWIDGET` y `BIND_REMOTEVIEWS`.
 - Biometría. `USE_BIOMETRIC` y `USE_FINGERPRINT`.
-- Ejecución y compatibilidad. `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RECEIVE_BOOT_COMPLETED`, `REORDER_TASKS`, `WAKE_LOCK` y el permiso interno para receptores dinámicos.
+- Ejecución y compatibilidad. `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK` y el permiso interno para receptores dinámicos.
 
-El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RECEIVE_BOOT_COMPLETED` y `WAKE_LOCK` a WorkManager, usado por el widget local de palabra del día. AndroidX Biometric declara `USE_FINGERPRINT`. Fragment Testing y AndroidX Test añadían `REORDER_TASKS` al APK de depuración. Falta confirmar la eliminación en el siguiente APK y revisar los demás canales.
+El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RECEIVE_BOOT_COMPLETED` y `WAKE_LOCK` a WorkManager, usado por el widget local de palabra del día. AndroidX Biometric declara `USE_FINGERPRINT`. Fragment Testing y AndroidX Test añadían `REORDER_TASKS`, ausente en el APK de `cd4b763a`.
 
 ### Implementación parcial
 
-- El manifiesto fuente desactiva las copias de Android y declara reglas de exclusión. Falta confirmar el manifiesto empaquetado por canal y verificar la ejecución sin conexión.
+- ProdDebug desactiva las copias del sistema en el APK y supera la prueba básica sin conexión en API 37. Faltan los demás canales y la comprobación en Android 9.
 - Los modelos de distribución, su validador y el almacén local existen. Las carpetas, pantallas y alternativas de presentación todavía requieren integración en la interfaz.
 - El modelo de temas existe. El editor, la previsualización y el formato de intercambio validado siguen pendientes.
 
 ### Trabajo pendiente
 
-- Terminar la revisión de dependencias y permisos, y verificar el arranque, el rol de launcher y los widgets sin conexión en Android 9 y una versión reciente.
+- Auditar los demás canales y repetir la prueba de arranque, rol de inicio y widgets en Android 9 durante la verificación de compatibilidad.
 - Integrar las carpetas y la distribución persistente de Moon Home. Continuar con Moon Spaces, Moon Search, Moon Studio, Moon Shield y Moon Focus.
 - Implementar respaldos manuales cifrados y validar una restauración antes de sustituir datos. Completar accesibilidad, rendimiento y las pruebas beta antes de preparar APK y AAB de distribución.
 - La cita de Acerca de queda a la espera del texto del propietario.
