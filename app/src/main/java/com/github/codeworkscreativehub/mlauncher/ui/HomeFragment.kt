@@ -66,7 +66,6 @@ import com.github.codeworkscreativehub.mlauncher.helper.FontManager
 import com.github.codeworkscreativehub.mlauncher.helper.IconCacheTarget
 import com.github.codeworkscreativehub.mlauncher.helper.IconPackHelper.getSafeAppIcon
 import com.github.codeworkscreativehub.mlauncher.helper.ShortcutHelper
-import com.github.codeworkscreativehub.mlauncher.helper.WeatherHelper
 import com.github.codeworkscreativehub.mlauncher.helper.analytics.AppUsageMonitor
 import com.github.codeworkscreativehub.mlauncher.helper.formatMillisToHMS
 import com.github.codeworkscreativehub.mlauncher.helper.getHexForOpacity
@@ -102,7 +101,6 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     private lateinit var deviceManager: DevicePolicyManager
     private lateinit var batteryReceiver: BatteryReceiver
     private lateinit var biometricHelper: BiometricHelper
-    private lateinit var weatherHelper: WeatherHelper
     private lateinit var privateSpaceReceiver: PrivateSpaceReceiver
     private lateinit var vibrator: Vibrator
 
@@ -174,22 +172,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         // Handle status bar once per view creation
         setTopPadding(binding.mainLayout)
 
-        weatherHelper = WeatherHelper(
-            requireContext(),
-            viewLifecycleOwner
-        ) { weatherText ->
-            binding.weather.textSize = prefs.batterySize.toFloat()
-            binding.weather.setTextColor(prefs.batteryColor)
-            binding.weather.text = weatherText
-            binding.weather.isVisible = true
-        }
-
-        // Weather updates
-        if (prefs.showWeather) {
-            weatherHelper.getWeather()
-        } else {
-            binding.weather.isVisible = false
-        }
+        binding.weather.isVisible = false
 
         // Update dynamic UI elements
         updateTimeAndInfo()
