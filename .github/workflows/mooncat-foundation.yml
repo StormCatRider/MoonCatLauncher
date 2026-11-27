@@ -1,0 +1,39 @@
+name: Moon Cat Foundation CI
+on:
+  push:
+    branches: ['feature/mooncat-*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Build and test
+        run: bash gradlew assembleProdDebug testProdDebugUnitTest --no-daemon
+      - name: Verify APK privacy
+        shell: bash
+        run: |
+          set -euo pipefail
+          apk=$(find app/build/outputs/apk/prod/debug -name '*.apk' -print -quit)
+          test -n "$apk"
+          analyzer="$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer"
+          test -x "$analyzer"
+          permissions=$("$analyzer" manifest permissions "$apk")
+          printf '%s\n' "$permissions"
+          if grep -Eq 'android.permission.(INTERNET|ACCESS_FINE_LOCATION|ACCESS_COARSE_LOCATION)' <<< "$permissions"; then
+            echo 'Forbidden permission detected'
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mooncat-debug
+          path: app/build/outputs/apk/prod/debug/*.apk
+          if-no-files-found: error
