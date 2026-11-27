@@ -48,7 +48,7 @@ class LauncherLayoutTest {
             activityName = "example.game.Main",
             userSerial = 42
         )
-        val snapshot = LayoutSnapshot(items = listOf(folder, nested, child))
+        val snapshot = LayoutSnapshot(items = listOf(folder.copy(folderOpenMode = FolderOpenMode.FULL_SCREEN), nested, child))
         val adapter = Moshi.Builder().build().adapter(LayoutSnapshot::class.java)
         assertTrue(snapshot.isValid())
         assertEquals(snapshot, adapter.fromJson(adapter.toJson(snapshot)))

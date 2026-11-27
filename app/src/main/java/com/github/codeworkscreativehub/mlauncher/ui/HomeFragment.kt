@@ -396,7 +396,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                 try { // Launch app
                     val appLocation = view.id
                     val folder = homeFolders.folderAt(appLocation)
-                    if (folder == null) homeAppClicked(appLocation) else homeFolders.open(folder)
+                    if (folder == null) homeAppClicked(appLocation) else homeFolders.toggle(folder)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -409,7 +409,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
 
         val slot = view.id
         val folder = homeFolders.folderAt(slot)
-        if (folder != null) homeFolders.open(folder)
+        if (folder != null) homeFolders.editFolder(folder)
         else homeFolders.chooseSlotAction(slot) {
             showAppList(AppDrawerFlag.SetHomeApp, includeHiddenApps = true, includeRecentApps = false, slot)
         }
@@ -558,10 +558,9 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                 binding.homeAppsLayout.gravity = homeAppsGravity.value() or horizontalAlignment
 
                 binding.homeAppsLayout.children.forEach { view ->
-                    if (prefs.appUsageStats) {
-                        (view as LinearLayout).gravity = homeAppsGravity.value()
-                    } else {
-                        (view as TextView).gravity = homeAppsGravity.value()
+                    when (view) {
+                        is LinearLayout -> view.gravity = homeAppsGravity.value()
+                        is TextView -> view.gravity = homeAppsGravity.value()
                     }
                 }
             }
@@ -872,7 +871,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                 parentLinearLayout.addView(newAppView)
 
                 // Add parentLinearLayout to homeAppsLayout
-                binding.homeAppsLayout.addView(parentLinearLayout)
+                binding.homeAppsLayout.addView(homeFolders.visibleSlot(i, parentLinearLayout))
             }
         } else if (diff < 0) {
             // Remove extra apps
@@ -1140,7 +1139,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     }
                 }
                 // Add the view to the layout
-                binding.homeAppsLayout.addView(homeAppLabel)
+                binding.homeAppsLayout.addView(homeFolders.visibleSlot(i, homeAppLabel))
             }
         } else if (diff < 0) {
             // Remove extra apps

@@ -526,4 +526,8 @@
     <string name="mooncat_folder_move_end">Move to end</string>
     <string name="mooncat_folder_move_before">Move before…</string>
     <string name="mooncat_folder_no_destination">No other folder is available for this item.</string>
+    <string name="mooncat_folder_open_mode">Opening mode</string>
+    <string name="mooncat_folder_inline">Inline</string>
+    <string name="mooncat_folder_popup">Pop-up</string>
+    <string name="mooncat_folder_full">Full screen</string>
 </resources>

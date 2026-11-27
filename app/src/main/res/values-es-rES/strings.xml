@@ -424,4 +424,8 @@
     <string name="mooncat_folder_move_end">Mover al final</string>
     <string name="mooncat_folder_move_before">Mover antes de…</string>
     <string name="mooncat_folder_no_destination">No hay otra carpeta disponible para este elemento.</string>
+    <string name="mooncat_folder_open_mode">Modo de apertura</string>
+    <string name="mooncat_folder_inline">En el inicio</string>
+    <string name="mooncat_folder_popup">Ventana emergente</string>
+    <string name="mooncat_folder_full">Pantalla completa</string>
 </resources>

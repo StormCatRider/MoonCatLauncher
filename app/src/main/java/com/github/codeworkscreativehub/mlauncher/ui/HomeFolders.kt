@@ -1,10 +1,15 @@
 package com.github.codeworkscreativehub.mlauncher.ui
 
 import android.content.ClipData
+import android.graphics.drawable.ColorDrawable
 import android.os.UserManager
 import android.view.DragEvent
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.github.codeworkscreativehub.common.getLocalizedString
@@ -14,11 +19,13 @@ import com.github.codeworkscreativehub.mlauncher.R
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.ItemType
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.FolderOpenMode
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LauncherItem
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LauncherLayout
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LayoutSnapshot
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.moveFolderItem
 import com.github.codeworkscreativehub.mlauncher.mooncat.storage.LayoutStore
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
@@ -37,6 +44,8 @@ internal class HomeFolders(
     private var snapshot: LayoutSnapshot? = null
     private var saving = false
     private var dialog: AlertDialog? = null
+    private var inlineRootId: String? = null
+    private var inlineFolderId: String? = null
 
     fun load() {
         home.viewLifecycleOwner.lifecycleScope.launch {
@@ -57,6 +66,7 @@ internal class HomeFolders(
 
     fun close() {
         dialog?.dismiss()
+        dialog = null
     }
 
     fun chooseSlotAction(slot: Int, selectApp: () -> Unit) {
@@ -78,20 +88,89 @@ internal class HomeFolders(
         })
     }
 
-    fun open(folder: LauncherItem) {
-        val children = snapshot?.items.orEmpty().filter { it.parentFolderId == folder.id }.sortedBy { it.position }
+    fun toggle(slotFolder: LauncherItem) {
+        if (slotFolder.folderOpenMode != FolderOpenMode.INLINE) {
+            open(slotFolder)
+            return
+        }
+        inlineRootId = slotFolder.id.takeUnless { it == inlineRootId }
+        inlineFolderId = inlineRootId
+        refresh()
+    }
+
+    fun visibleSlot(slot: Int, row: View): View {
+        val root = folderAt(slot) ?: return row
+        if (root.id != inlineRootId) return row
+        val folder = snapshot?.items?.firstOrNull { it.id == inlineFolderId } ?: root
+        val context = row.context
+        val density = context.resources.displayMetrics.density
+        val column = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding((16 * density).toInt(), 0, 0, 0)
+        }
+        fun add(label: String, item: LauncherItem? = null, action: () -> Unit) {
+            column.addView(TextView(context).apply {
+                text = label
+                textSize = prefs.appSize.toFloat()
+                setTextColor(prefs.appColor)
+                minHeight = (48 * density).toInt()
+                gravity = android.view.Gravity.CENTER_VERTICAL
+                isFocusable = true
+                setOnClickListener { action() }
+                if (item != null && !prefs.homeLocked) {
+                    setOnLongClickListener { startItemDrag(it, item) }
+                    setOnDragListener { _, event ->
+                        val source = event.localState as? LauncherItem
+                        if (source == null || prefs.homeLocked) return@setOnDragListener false
+                        if (event.action == DragEvent.ACTION_DROP) drop(source, item, folder)
+                        true
+                    }
+                }
+            })
+        }
+        if (folder.id != root.id) {
+            add(getLocalizedString(R.string.mooncat_folder_up)) {
+                inlineFolderId = folder.parentFolderId
+                refresh()
+            }
+        }
+        for (child in childrenOf(folder)) {
+            add(displayLabel(child), child) {
+                if (child.type == ItemType.FOLDER && child.folderOpenMode == FolderOpenMode.INLINE) {
+                    inlineFolderId = child.id
+                    refresh()
+                } else select(child)
+            }
+        }
+        if (!prefs.homeLocked) add(getLocalizedString(R.string.mooncat_folder_edit)) { editFolder(folder) }
+        return LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(row)
+            addView(ScrollView(context).apply {
+                isFillViewport = false
+                addView(column)
+            }, MATCH_PARENT, (48 * density * column.childCount.coerceIn(1, 3)).toInt())
+        }
+    }
+
+    private fun childrenOf(folder: LauncherItem): List<LauncherItem> =
+        snapshot?.items.orEmpty().filter { it.parentFolderId == folder.id }.sortedBy { it.position }
+
+    private fun select(child: LauncherItem) {
+        if (child.type == ItemType.FOLDER) open(child)
+        else {
+            val app = resolveApp(child)
+            if (app == null) reportError(R.string.mooncat_folder_app_missing) else viewModel.launchApp(app, home)
+        }
+    }
+
+    private fun open(folder: LauncherItem) {
+        val children = childrenOf(folder)
         val entries = children.map(::displayLabel)
         val builder = MaterialAlertDialogBuilder(home.requireContext())
             .setTitle(folder.label)
             .setItems(entries.toTypedArray()) { _, index ->
-                val child = children[index]
-                if (child.type == ItemType.FOLDER) {
-                    open(child)
-                } else {
-                    val app = resolveApp(child)
-                    if (app == null) reportError(R.string.mooncat_folder_app_missing)
-                    else viewModel.launchApp(app, home)
-                }
+                select(children[index])
             }
             .setNegativeButton(android.R.string.cancel, null)
         snapshot?.items?.firstOrNull { it.id == folder.parentFolderId }?.let { parent ->
@@ -101,13 +180,18 @@ internal class HomeFolders(
             builder.setPositiveButton(R.string.mooncat_folder_edit) { _, _ -> editFolder(folder) }
         }
         val opened = show(builder)
+        if (folder.folderOpenMode == FolderOpenMode.FULL_SCREEN) {
+            opened.window?.apply {
+                val surface = MaterialColors.getColor(decorView, com.google.android.material.R.attr.colorSurface, prefs.backgroundColor)
+                setBackgroundDrawable(ColorDrawable(surface))
+                setLayout(MATCH_PARENT, MATCH_PARENT)
+            }
+        }
         val list = opened.listView
         if (!prefs.homeLocked && list != null) {
             list.setOnItemLongClickListener { _, row, position, _ ->
                 val child = children[position]
-                !saving && row.startDragAndDrop(
-                    ClipData.newPlainText("", ""), View.DragShadowBuilder(row), child, 0
-                )
+                startItemDrag(row, child)
             }
             list.setOnDragListener { _, event ->
                 val child = event.localState as? LauncherItem
@@ -115,17 +199,25 @@ internal class HomeFolders(
                 if (event.action == DragEvent.ACTION_DROP) {
                     val targetIndex = list.pointToPosition(event.x.toInt(), event.y.toInt())
                     val target = children.getOrNull(targetIndex) ?: return@setOnDragListener false
-                    if (target.id != child.id) {
-                        if (target.type == ItemType.FOLDER) move(child, target)
-                        else move(child, folder, target.id)
-                    }
+                    drop(child, target, folder)
                 }
                 true
             }
         }
     }
 
-    private fun editFolder(folder: LauncherItem) {
+    private fun startItemDrag(row: View, item: LauncherItem): Boolean =
+        !prefs.homeLocked && !saving && row.startDragAndDrop(
+            ClipData.newPlainText("", ""), View.DragShadowBuilder(row), item, 0
+        )
+
+    private fun drop(source: LauncherItem, target: LauncherItem, folder: LauncherItem) {
+        if (target.id == source.id) return
+        if (target.type == ItemType.FOLDER) move(source, target)
+        else move(source, folder, target.id)
+    }
+
+    fun editFolder(folder: LauncherItem) {
         if (prefs.homeLocked || saving) return
         val children = snapshot?.items.orEmpty().filter { it.parentFolderId == folder.id }
         val labels = arrayOf(
@@ -134,7 +226,8 @@ internal class HomeFolders(
             getLocalizedString(R.string.mooncat_folder_rename),
             getLocalizedString(R.string.mooncat_folder_remove),
             getLocalizedString(R.string.mooncat_folder_move),
-            getLocalizedString(R.string.mooncat_folder_reorder)
+            getLocalizedString(R.string.mooncat_folder_reorder),
+            getLocalizedString(R.string.mooncat_folder_open_mode)
         )
         show(MaterialAlertDialogBuilder(home.requireContext()).setTitle(folder.label).setItems(labels) { _, index ->
             when (index) {
@@ -157,8 +250,29 @@ internal class HomeFolders(
                             move(child, folder, targets.getOrNull(position)?.id)
                         })
                 }
+                6 -> chooseOpenMode(folder)
             }
         })
+    }
+
+    private fun chooseOpenMode(folder: LauncherItem) {
+        val labels = arrayOf(R.string.mooncat_folder_inline, R.string.mooncat_folder_popup, R.string.mooncat_folder_full)
+        show(MaterialAlertDialogBuilder(home.requireContext())
+            .setTitle(R.string.mooncat_folder_open_mode)
+            .setSingleChoiceItems(labels.map { getLocalizedString(it) }.toTypedArray(), folder.folderOpenMode.ordinal) { popup, index ->
+                val mode = FolderOpenMode.entries[index]
+                popup.dismiss()
+                edit(afterSave = {
+                    if (mode != FolderOpenMode.INLINE) {
+                        if (inlineRootId == folder.id) {
+                            inlineRootId = null
+                            inlineFolderId = null
+                        } else if (inlineFolderId == folder.id) inlineFolderId = folder.parentFolderId
+                    }
+                }) { current ->
+                    current.copy(items = current.items.map { if (it.id == folder.id) it.copy(folderOpenMode = mode) else it })
+                }
+            })
     }
 
     private fun chooseChild(children: List<LauncherItem>, title: Int, select: (LauncherItem) -> Unit) {
@@ -190,7 +304,16 @@ internal class HomeFolders(
     }
 
     private fun move(child: LauncherItem, destination: LauncherItem, beforeId: String? = null) {
-        edit(afterSave = { open(destination) }) { current ->
+        edit(afterSave = {
+            if (inlineRootId != null && destination.folderOpenMode == FolderOpenMode.INLINE) {
+                val byId = snapshot?.items.orEmpty().associateBy { it.id }
+                val root = generateSequence(destination) { byId[it.parentFolderId] }.last()
+                if (root.folderOpenMode == FolderOpenMode.INLINE) {
+                    inlineRootId = root.id
+                    inlineFolderId = destination.id
+                } else open(destination)
+            } else open(destination)
+        }) { current ->
             current.moveFolderItem(child.id, destination.id, beforeId)
         }
     }
@@ -280,8 +403,8 @@ internal class HomeFolders(
         home.viewLifecycleOwner.lifecycleScope.launch {
             try {
                 snapshot = withContext(Dispatchers.IO) { store.update(transform) }
-                refresh()
                 afterSave()
+                refresh()
             } catch (error: CancellationException) {
                 throw error
             } catch (_: Exception) {
