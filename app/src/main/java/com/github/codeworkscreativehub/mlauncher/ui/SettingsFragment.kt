@@ -226,11 +226,7 @@ class SettingsFragment : BaseFragment() {
         var toggledShowDailyWord by remember { mutableStateOf(prefs.showDailyWord) }
         var toggledShowBattery by remember { mutableStateOf(prefs.showBattery) }
         var toggledShowBatteryIcon by remember { mutableStateOf(prefs.showBatteryIcon) }
-        var toggledShowWeather by remember { mutableStateOf(prefs.showWeather) }
         var toggledShowPrivateSpaces by remember { mutableStateOf(prefs.showPrivateSpaces) }
-        var toggledGPSLocation by remember { mutableStateOf(prefs.gpsLocation) }
-        var selectedTempUnits by remember { mutableStateOf(prefs.tempUnit) }
-        var selectedWeatherLocation by remember { mutableStateOf(prefs.loadLocationName()) }
 
         val contextMenuOptionLabels = listOf(
             getLocalizedString(R.string.pin),
@@ -1209,82 +1205,6 @@ class SettingsFragment : BaseFragment() {
                         Spacer(modifier = Modifier.height(12.dp))
                     }
 
-
-                    // Weather
-                    SettingsTitle(
-                        text = getLocalizedString(R.string.weather),
-                        fontSize = titleFontSize,
-                    )
-
-                    SettingsSwitch(
-                        text = getLocalizedString(R.string.show_weather),
-                        fontSize = titleFontSize,
-                        defaultState = toggledShowWeather,
-                        onCheckedChange = {
-                            toggledShowWeather = !prefs.showWeather
-                            prefs.showWeather = toggledShowWeather
-                        }
-                    )
-
-                    if (toggledShowWeather) {
-                        SettingsSwitch(
-                            text = getLocalizedString(R.string.gps_location),
-                            fontSize = titleFontSize,
-                            defaultState = toggledGPSLocation,
-                            onCheckedChange = {
-                                toggledGPSLocation = !prefs.gpsLocation
-                                prefs.gpsLocation = toggledGPSLocation
-
-                                if (toggledGPSLocation && !hasLocationPermission(context)) {
-                                    context.requestRuntimePermission(
-                                        arrayOf(
-                                            Manifest.permission.ACCESS_FINE_LOCATION,
-                                            Manifest.permission.ACCESS_COARSE_LOCATION
-                                        ),
-                                        Constants.ACCESS_FINE_LOCATION,
-                                        "Location"
-                                    )
-                                }
-                            }
-                        )
-                    }
-
-                    if (toggledShowWeather) {
-                        SettingsSelect(
-                            title = getLocalizedString(R.string.temp_unit),
-                            option = selectedTempUnits.string(),
-                            fontSize = titleFontSize,
-                            onClick = {
-                                val tempUnitsOptions = Constants.TempUnits.entries.toTypedArray()
-                                val selectedIndex =
-                                    tempUnitsOptions.indexOf(selectedTempUnits).takeIf { it >= 0 }
-                                        ?: 1
-
-                                dialogBuilder.showSingleChoiceBottomSheetPill(
-                                    context = requireContext(),
-                                    options = tempUnitsOptions,
-                                    title = getLocalizedString(R.string.temp_unit),
-                                    selectedIndex = selectedIndex,
-                                    onItemSelected = { newTempUnit ->
-                                        selectedTempUnits = newTempUnit // Update state
-                                        prefs.tempUnit =
-                                            selectedTempUnits // Persist selection in preferences
-                                    }
-                                )
-                            }
-                        )
-                    }
-
-                    if (toggledShowWeather && !toggledGPSLocation) {
-                        SettingsSelect(
-                            title = getLocalizedString(R.string.manual_location),
-                            option = selectedWeatherLocation,
-                            fontSize = titleFontSize,
-                            onClick = {
-                                showLocationSearch()
-                            }
-                        )
-                    }
 
                     if (isGestureNavigationEnabled(context)) {
                         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.bottom_margin_gesture_nav)))
