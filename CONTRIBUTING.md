@@ -1,4 +1,4 @@
-# Contributing to mLauncher
+# Contributing to Moon Cat Launcher
 
 We love your input! Contributing to this project can include:
 
@@ -22,7 +22,7 @@ Following these guidelines helps make the contribution process smooth for everyo
 
 ## Code of Conduct
 
-By participating in this project, you agree to uphold our [Code of Conduct](CODE-OF-CONDUCT.md). We expect all contributors to communicate respectfully and maintain a positive, inclusive environment.
+By participating in this project, you agree to uphold our [Code of Conduct](CODE_OF_CONDUCT.md). We expect all contributors to communicate respectfully and maintain a positive, inclusive environment.
 
 ## Getting Started
 

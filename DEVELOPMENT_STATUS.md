@@ -1,5 +1,7 @@
 # Estado de desarrollo
 
+Se retiraron scripts y automatizaciones del fork para Discord, Crowdin, changelog, borrado de releases y Fastlane, junto con los metadatos de tienda de mLauncher. Los formularios de incidencias enlazan al proyecto Moon Cat. Se conservan la licencia, los créditos, el historial y los temas y archivos de palabras que siguen siendo importables.
+
 ## Moon Home 0.2.0 en desarrollo
 
 - Ajustes → Mira & Siente → Apariencia de las aplicaciones de inicio ofrece cuatro modos. Solo texto es el valor inicial. Las preferencias anteriores de iconos se conservan al actualizar. El modo Solo icono mantiene el nombre accesible de la aplicación y el modo monocromático usa escala de grises.

@@ -17,9 +17,9 @@ body:
       options:
         - label: "I have written the bug report in English with a clear, descriptive title."
           required: true
-        - label: "I confirmed there are **no existing bug reports** — [open](https://github.com/CodeWorksCreativeHub/mLauncher/issues) or [closed](https://github.com/CodeWorksCreativeHub/mLauncher/issues?q=is%3Aissue+is%3Aclosed) — that already cover this issue."
+        - label: "I confirmed there are **no existing bug reports** — [open](https://github.com/StormCatRider/MoonCatLauncher/issues) or [closed](https://github.com/StormCatRider/MoonCatLauncher/issues?q=is%3Aissue+is%3Aclosed) — that already cover this issue."
           required: true
-        - label: "I checked the [CHANGELOG](https://github.com/CodeWorksCreativeHub/mLauncher/blob/main/CHANGELOG.md) to ensure the bug hasn’t already been fixed."
+        - label: "I checked the [CHANGELOG](https://github.com/StormCatRider/MoonCatLauncher/blob/feature/mooncat-foundation/DEVELOPMENT_STATUS.md) to ensure the bug hasn’t already been fixed."
           required: true
         - label: "I reproduced the bug on the **latest GitHub release**."
           required: true
