@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
       - name: Build and test
         run: bash gradlew assembleProdDebug testProdDebugUnitTest --no-daemon
       - name: Verify APK privacy
@@ -31,10 +31,22 @@ jobs:
           test -x "$analyzer"
           permissions=$("$analyzer" manifest permissions "$apk")
           printf '%s\n' "$permissions"
-          if grep -Eq 'android[.]permission[.](INTERNET|ACCESS_FINE_LOCATION|ACCESS_COARSE_LOCATION)' <<< "$permissions"; then
+          if grep -Eq '^android[.]permission[.](INTERNET|ACCESS_FINE_LOCATION|ACCESS_COARSE_LOCATION|ACCESS_BACKGROUND_LOCATION)$' <<< "$permissions"; then
             echo 'Forbidden permission detected'
             exit 1
           fi
+          test "$("$analyzer" manifest application-id "$apk")" = 'app.mooncat.launcher.debug'
+          test "$("$analyzer" manifest min-sdk "$apk")" = '28'
+          "$analyzer" manifest print "$apk" | python3 -c '
+          import sys
+          from xml.etree import ElementTree
+
+          manifest = ElementTree.parse(sys.stdin)
+          application = manifest.find("application")
+          android = "{http://schemas.android.com/apk/res/android}"
+          if application is None or application.get(android + "allowBackup") != "false":
+              sys.exit("Expected Android automatic backups to be disabled")
+          '
       - uses: actions/upload-artifact@v4
         with:
           name: mooncat-debug

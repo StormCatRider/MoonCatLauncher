@@ -299,31 +299,10 @@ fun Context.openDigitalWellbeing() {
     }
 }
 
-fun Context.searchOnPlayStore(query: String? = null): Boolean {
-    return try {
-        val playStoreIntent = Intent(Intent.ACTION_VIEW)
-        playStoreIntent.data = "${Constants.APP_GOOGLE_PLAY_STORE}=$query".toUri()
-
-        // Check if the Play Store app is installed
-        if (playStoreIntent.resolveActivity(packageManager) != null) {
-            startActivity(playStoreIntent)
-        } else {
-            // If Play Store app is not installed, open Play Store website in browser
-            playStoreIntent.data = "${Constants.URL_GOOGLE_PLAY_STORE}=$query".toUri()
-            startActivity(playStoreIntent)
-        }
-        true
-    } catch (e: Exception) {
-        e.printStackTrace()
-        false
-    }
-}
-
 fun Context.searchCustomSearchEngine(searchQuery: String? = null, prefs: Prefs): Boolean {
     val searchUrl = prefs.searchEngines.getURL()
     val encodedQuery = Uri.encode(searchQuery)
     val fullUrl = "$searchUrl$encodedQuery"
-    AppLogger.d("fullUrl", fullUrl)
     openUrl(fullUrl)
     return true
 }

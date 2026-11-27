@@ -41,7 +41,6 @@ import com.github.codeworkscreativehub.common.hasSoftKeyboard
 import com.github.codeworkscreativehub.common.isGestureNavigationEnabled
 import com.github.codeworkscreativehub.common.isSystemApp
 import com.github.codeworkscreativehub.common.searchCustomSearchEngine
-import com.github.codeworkscreativehub.common.searchOnPlayStore
 import com.github.codeworkscreativehub.common.showShortToast
 import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
@@ -491,8 +490,6 @@ class AppDrawerFragment : BaseFragment() {
                                 ) || prefs.openAppOnEnter
                             ) {
                                 appAdapter?.launchFirstInList()
-                            } else {
-                                requireContext().searchOnPlayStore(searchQuery)
                             }
                         }
 
@@ -504,8 +501,6 @@ class AppDrawerFragment : BaseFragment() {
                                 ) || prefs.openAppOnEnter
                             ) {
                                 contactAdapter?.launchFirstInList()
-                            } else {
-                                requireContext().searchOnPlayStore(searchQuery)
                             }
                         }
                     }

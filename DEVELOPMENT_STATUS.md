@@ -12,6 +12,8 @@ La rama de trabajo es `feature/mooncat-foundation`. El proyecto conserva Android
 - Retirada la copia general en JSON de los ajustes. La restauración heredada podía borrar preferencias antes de validar el archivo. El borrado manual sigue disponible en Ajustes, en Datos locales.
 - Añadido el aviso sobre conexión independiente en el selector de widgets en español e inglés.
 - Limitado el servicio opcional de accesibilidad a acciones globales y retirada su capacidad de leer el contenido de las ventanas. Su descripción explica qué acciones habilita.
+- El envío de una consulta del cajón ya no abre Google Play cuando no se selecciona un resultado local. La búsqueda web explícita sigue abriendo el navegador.
+- El control de CI comprueba también el identificador, el SDK mínimo, la exclusión de ubicación en segundo plano y la desactivación de las copias automáticas en el APK ProdDebug.
 
 ### Verificación
 
