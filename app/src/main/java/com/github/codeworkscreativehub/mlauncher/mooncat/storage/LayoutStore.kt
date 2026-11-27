@@ -3,11 +3,16 @@ package com.github.codeworkscreativehub.mlauncher.mooncat.storage
 import android.content.Context
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LayoutSnapshot
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 class LayoutStore(context: Context) {
     private val prefs = context.applicationContext.getSharedPreferences("mooncat_layout", Context.MODE_PRIVATE)
-    private val adapter = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build().adapter(LayoutSnapshot::class.java)
+    private val adapter = Moshi.Builder().build().adapter(LayoutSnapshot::class.java)
+
+    fun update(transform: (LayoutSnapshot) -> LayoutSnapshot): LayoutSnapshot = synchronized(writeLock) {
+        val updated = transform(load())
+        check(save(updated)) { "Layout write failed" }
+        updated
+    }
 
     // Missing data is a fresh installation; malformed data is an error, not a silent reset.
     fun load(): LayoutSnapshot {
@@ -19,8 +24,7 @@ class LayoutStore(context: Context) {
     }
 
     // Call from a background dispatcher; commit reports whether the write succeeded.
-    @Synchronized
-    fun save(snapshot: LayoutSnapshot): Boolean {
+    private fun save(snapshot: LayoutSnapshot): Boolean {
         require(snapshot.isValid()) { "Invalid layout" }
         val raw = adapter.toJson(snapshot)
         require(raw.length <= MAX_LENGTH) { "Layout exceeds size limit" }
@@ -28,6 +32,7 @@ class LayoutStore(context: Context) {
     }
 
     companion object {
+        private val writeLock = Any()
         private const val KEY = "snapshot_v1"
         private const val MAX_LENGTH = 2_000_000
     }

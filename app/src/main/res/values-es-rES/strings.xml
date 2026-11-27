@@ -410,4 +410,13 @@
     <string name="mooncat_display_icon_and_text">Icono y texto</string>
     <string name="mooncat_display_monochrome">Icono monocromático y texto</string>
     <string name="mooncat_display_icon_only">Solo icono</string>
+    <string name="mooncat_folder_new">Nueva carpeta</string>
+    <string name="mooncat_folder_name">Nombre de la carpeta</string>
+    <string name="mooncat_folder_edit">Editar carpeta</string>
+    <string name="mooncat_folder_rename">Renombrar carpeta</string>
+    <string name="mooncat_folder_remove">Quitar elemento</string>
+    <string name="mooncat_folder_remove_empty">Vacía las carpetas anidadas antes de quitarlas.</string>
+    <string name="mooncat_folder_app_missing">Aplicación no disponible en este perfil.</string>
+    <string name="mooncat_folder_error">No se pudieron leer o guardar las carpetas.</string>
+    <string name="mooncat_folder_up">Carpeta superior</string>
 </resources>

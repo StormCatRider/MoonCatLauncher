@@ -98,6 +98,7 @@ import java.util.Calendar
 class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListener {
 
     private lateinit var prefs: Prefs
+    private lateinit var homeFolders: HomeFolders
     private lateinit var viewModel: MainViewModel
     private lateinit var dialogBuilder: DialogManager
     private lateinit var deviceManager: DevicePolicyManager
@@ -149,6 +150,10 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             ViewModelProvider(this)[MainViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
 
+        homeFolders = HomeFolders(this, viewModel, prefs) {
+            viewModel.homeAppsChanged.value = System.currentTimeMillis()
+        }
+        homeFolders.load()
         viewModel.ismlauncherDefault()
 
         deviceManager =
@@ -390,7 +395,8 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             else -> {
                 try { // Launch app
                     val appLocation = view.id
-                    homeAppClicked(appLocation)
+                    val folder = homeFolders.folderAt(appLocation)
+                    if (folder == null) homeAppClicked(appLocation) else homeFolders.open(folder)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -401,8 +407,12 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     override fun onLongClick(view: View): Boolean {
         if (prefs.homeLocked) return true
 
-        val n = view.id
-        showAppList(AppDrawerFlag.SetHomeApp, includeHiddenApps = true, includeRecentApps = false, n)
+        val slot = view.id
+        val folder = homeFolders.folderAt(slot)
+        if (folder != null) homeFolders.open(folder)
+        else homeFolders.chooseSlotAction(slot) {
+            showAppList(AppDrawerFlag.SetHomeApp, includeHiddenApps = true, includeRecentApps = false, slot)
+        }
         return true
     }
 
@@ -804,8 +814,9 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     textSize = prefs.appSize.toFloat()
                     id = i
                     val app = prefs.getHomeAppModel(i)
-                    text = prefs.getAppDisplayName(app)
-                    applyHomeAppIcon(app, prefs.homeDisplayMode)
+                    val folder = homeFolders.folderAt(i)
+                    text = folder?.label ?: prefs.getAppDisplayName(app)
+                    if (folder == null) applyHomeAppIcon(app, prefs.homeDisplayMode)
                     getHomeAppsGestureListener()
                     setOnClickListener(this@HomeFragment)
                     if (!prefs.extendHomeAppsArea) {
@@ -827,7 +838,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     id = i
                     val homeApp = prefs.getHomeAppModel(i)
                     // A shortcut's package is its creator (e.g. the browser), whose usage would be misleading
-                    text = if (homeApp.isShortcut) "" else formatMillisToHMS(
+                    text = if (homeApp.isShortcut || homeFolders.folderAt(i) != null) "" else formatMillisToHMS(
                         appUsageMonitor.getUsageStats(
                             context,
                             homeApp.activityPackage
@@ -1024,9 +1035,12 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                 val homeAppLabel = layoutInflater.inflate(R.layout.home_app_button, null) as TextView
                 homeAppLabel.apply {
                     val homeApp = prefs.getHomeAppModel(i)
+                    val folder = homeFolders.folderAt(i)
                     textSize = prefs.appSize.toFloat()
                     id = i
-                    text = if (homeApp.activityPackage.isBlank()) {
+                    text = if (folder != null) {
+                        folder.label
+                    } else if (homeApp.activityPackage.isBlank()) {
                         getLocalizedString(R.string.select_app)
                     } else {
                         prefs.getAppDisplayName(homeApp)
@@ -1051,7 +1065,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     setTextColor(prefs.appColor)
                     val packageName = homeApp.activityPackage
                     val displayMode = prefs.homeDisplayMode
-                    val originalIcon = applyHomeAppIcon(homeApp, displayMode)
+                    val originalIcon = if (folder == null) applyHomeAppIcon(homeApp, displayMode) else null
                     if (originalIcon != null) {
                         val label = if (displayMode == DisplayMode.ICON_ONLY) "" else prefs.getAppDisplayName(homeApp)
                         val nm = NotificationManagerCompat.getEnabledListenerPackages(context)
@@ -1445,6 +1459,11 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                 }
             }
         })
+    }
+
+    override fun onDestroyView() {
+        homeFolders.close()
+        super.onDestroyView()
     }
 
     private fun dismissDialogs() {

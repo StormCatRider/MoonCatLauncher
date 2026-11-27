@@ -1,5 +1,8 @@
 package com.github.codeworkscreativehub.mlauncher.mooncat.model
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class LayoutSnapshot(
     val pages: List<LauncherPage> = LauncherLayout.initialPages(),
     val items: List<LauncherItem> = emptyList(),

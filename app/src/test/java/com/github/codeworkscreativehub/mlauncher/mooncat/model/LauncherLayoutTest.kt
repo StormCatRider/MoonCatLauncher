@@ -1,5 +1,6 @@
 package com.github.codeworkscreativehub.mlauncher.mooncat.model
 
+import com.squareup.moshi.Moshi
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -38,5 +39,19 @@ class LauncherLayoutTest {
         assertEquals(DisplayMode.ICON_ONLY, LauncherLayout.resolveDisplayMode(app, null, page))
         assertEquals(DisplayMode.ICON_AND_TEXT, LauncherLayout.resolveDisplayMode(app, parent, page))
         assertEquals(DisplayMode.MONOCHROME_AND_TEXT, LauncherLayout.resolveDisplayMode(app.copy(displayMode = DisplayMode.MONOCHROME_AND_TEXT), parent, page))
+    }
+
+    @Test fun nestedFoldersRoundTripWithProfileIdentity() {
+        val child = app.copy(
+            parentFolderId = nested.id,
+            packageName = "example.game",
+            activityName = "example.game.Main",
+            userSerial = 42
+        )
+        val snapshot = LayoutSnapshot(items = listOf(folder, nested, child))
+        val adapter = Moshi.Builder().build().adapter(LayoutSnapshot::class.java)
+        assertTrue(snapshot.isValid())
+        assertEquals(snapshot, adapter.fromJson(adapter.toJson(snapshot)))
+        assertFalse(snapshot.copy(items = listOf(folder, child)).isValid())
     }
 }

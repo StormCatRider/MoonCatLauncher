@@ -1,10 +1,17 @@
 package com.github.codeworkscreativehub.mlauncher.mooncat.model
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = false)
 enum class DisplayMode { TEXT_ONLY, ICON_AND_TEXT, MONOCHROME_AND_TEXT, ICON_ONLY }
+@JsonClass(generateAdapter = false)
 enum class FolderOpenMode { INLINE, POPUP, FULL_SCREEN }
+@JsonClass(generateAdapter = false)
 enum class PageType { HOME, WIDGETS, MIXED }
+@JsonClass(generateAdapter = false)
 enum class ItemType { APPLICATION, FOLDER, SHORTCUT, WIDGET }
 
+@JsonClass(generateAdapter = true)
 data class LauncherPage(
     val id: String,
     val name: String,
@@ -13,6 +20,7 @@ data class LauncherPage(
     val displayMode: DisplayMode? = null
 )
 
+@JsonClass(generateAdapter = true)
 data class LauncherItem(
     val id: String,
     val label: String,

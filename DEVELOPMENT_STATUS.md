@@ -9,7 +9,10 @@ Se retiraron scripts y automatizaciones del fork para Discord, Crowdin, changelo
 - En `7c7c1907` también se ensamblaron PlayDebug y BetaDebug. El análisis de los tres APK de depuración confirmó SDK mínimo 28, identificadores esperados, `allowBackup=false` y ausencia de Internet, ubicación y `REORDER_TASKS`.
 - [GitHub Actions](https://github.com/StormCatRider/MoonCatLauncher/actions/runs/45936628887) confirmó ensamblado, pruebas y controles de privacidad para `7c7c1907`.
 - `7c7c1907` generó también ProdRelease como APK y AAB de desarrollo sin firma. Se repitió la auditoría del APK, con el paquete `app.mooncat.launcher`, SDK mínimo 28 y correcciones de privacidad confirmadas.
-- Falta extender los modos por pantalla, carpeta y aplicación e integrar las carpetas anidadas, el arrastre y los modos de apertura.
+- Mantener pulsada una posición del inicio permite crear una carpeta. El editor admite subcarpetas, renombrado y aplicaciones por perfil. El guardado local valida la distribución y evita borrar carpetas con contenido. Los favoritos existentes se conservan debajo de la carpeta de esa posición.
+- `ProdDebug` y las 7 pruebas unitarias pasaron con la integración de carpetas. Una prueba también verifica el recorrido JSON de una carpeta anidada y la identidad de perfil.
+- En el emulador API 37 sin red se creó Weekend → Tools → Reloj desde el inicio. Tras detener y volver a abrir el launcher, el árbol seguía disponible y Reloj se abrió desde la subcarpeta.
+- Falta extender los modos por pantalla, carpeta y aplicación, agregar arrastre y movimientos, y habilitar la apertura en línea y en pantalla completa. La apertura actual usa un diálogo.
 - El número de versión del paquete sigue en `0.1.0` mientras se completa Moon Home.
 
 ## 0.1.0 Foundation
