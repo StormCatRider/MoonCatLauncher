@@ -52,7 +52,7 @@
 
 
     <string name="settings_advanced_title">Advanced</string>
-    <string name="settings_advanced_description">Access app info, default launcher, backup tools and more.</string>
+    <string name="settings_advanced_description">Manage the default launcher, local data and app settings.</string>
 
     <string name="settings_expert_title">Expert</string>
     <string name="settings_expert_description">Unlock hidden options, and advanced tweaks.</string>
@@ -507,4 +507,9 @@
     <string name="mooncat_local_data_title">Local data</string>
     <string name="mooncat_local_data_description">Clear launcher data stored on this device</string>
     <string name="mooncat_widget_privacy">Third-party widgets can connect to the Internet independently of Moon Cat Launcher.</string>
+    <string name="mooncat_home_display_mode">Home app display</string>
+    <string name="mooncat_display_text_only">Text only</string>
+    <string name="mooncat_display_icon_and_text">Icon and text</string>
+    <string name="mooncat_display_monochrome">Monochrome icon and text</string>
+    <string name="mooncat_display_icon_only">Icon only</string>
 </resources>

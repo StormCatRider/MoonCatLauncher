@@ -38,7 +38,7 @@
     <string name="settings_hidden_apps_title">Aplicaciones ocultas</string>
     <string name="settings_hidden_apps_description">Administra las aplicaciones ocultas: muestra cualquier aplicación de esta lista cuando sea necesario.</string>
     <string name="settings_advanced_title">Configuración avanzada</string>
-    <string name="settings_advanced_description">Acceda a la información de la aplicación, el lanzador predeterminado, las herramientas de copia de seguridad y mucho más.</string>
+    <string name="settings_advanced_description">Gestiona el launcher predeterminado, los datos locales y los ajustes de la aplicación.</string>
     <string name="settings_expert_title">Experto</string>
     <string name="settings_expert_description">Desbloquea opciones ocultas y ajustes avanzados.</string>
     <string name="settings_exit_mlauncher_title">Salir de Moon Cat Launcher</string>
@@ -405,4 +405,9 @@
     <string name="mooncat_local_data_title">Datos locales</string>
     <string name="mooncat_local_data_description">Borra los datos del launcher guardados en este dispositivo</string>
     <string name="mooncat_widget_privacy">Los widgets de terceros pueden conectarse a Internet independientemente de Moon Cat Launcher.</string>
+    <string name="mooncat_home_display_mode">Apariencia de las aplicaciones de inicio</string>
+    <string name="mooncat_display_text_only">Solo texto</string>
+    <string name="mooncat_display_icon_and_text">Icono y texto</string>
+    <string name="mooncat_display_monochrome">Icono monocromático y texto</string>
+    <string name="mooncat_display_icon_only">Solo icono</string>
 </resources>

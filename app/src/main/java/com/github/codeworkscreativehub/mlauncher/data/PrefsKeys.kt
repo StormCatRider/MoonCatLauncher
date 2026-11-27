@@ -76,6 +76,7 @@ internal const val BEDTIME_END_MINUTE = "BEDTIME_END_MINUTE"
 
 // Icons
 internal const val ICON_PACK_HOME = "ICON_PACK_HOME"
+internal const val HOME_DISPLAY_MODE = "HOME_DISPLAY_MODE"
 internal const val CUSTOM_ICON_PACK_HOME = "CUSTOM_ICON_PACK_HOME"
 internal const val ICON_PACK_APP_LIST = "ICON_PACK_APP_LIST"
 internal const val CUSTOM_ICON_PACK_APP_LIST = "CUSTOM_ICON_PACK_APP_LIST"

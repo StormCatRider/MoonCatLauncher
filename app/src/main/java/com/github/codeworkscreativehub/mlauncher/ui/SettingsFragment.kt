@@ -90,6 +90,7 @@ import com.github.codeworkscreativehub.mlauncher.helper.showNavigationBar
 import com.github.codeworkscreativehub.mlauncher.helper.showStatusBar
 import com.github.codeworkscreativehub.mlauncher.helper.updateHomeWidget
 import com.github.codeworkscreativehub.mlauncher.helper.utils.AppReloader
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.DisplayMode
 import com.github.codeworkscreativehub.mlauncher.helper.utils.PrivateSpaceManager
 import com.github.codeworkscreativehub.mlauncher.style.SettingsTheme
 import com.github.codeworkscreativehub.mlauncher.ui.components.DialogManager
@@ -269,6 +270,7 @@ class SettingsFragment : BaseFragment() {
         var selectedRecentCounter by remember { mutableIntStateOf(prefs.recentCounter) }
         var toggledRecentAppUsageStats by remember { mutableStateOf(prefs.appUsageStats) }
         var selectedIconPackHome by remember { mutableStateOf(prefs.iconPackHome) }
+        var homeDisplayMode by remember { mutableStateOf(prefs.homeDisplayMode) }
         var selectedIconPackAppList by remember { mutableStateOf(prefs.iconPackAppList) }
         var toggledShowBackground by remember { mutableStateOf(prefs.showBackground) }
         var selectedBackgroundOpacity by remember { mutableIntStateOf(prefs.opacityNum) }
@@ -1724,6 +1726,30 @@ class SettingsFragment : BaseFragment() {
                     )
 
                     SettingsSelect(
+                        title = getLocalizedString(R.string.mooncat_home_display_mode),
+                        option = getLocalizedString(homeDisplayMode.labelResource()),
+                        fontSize = titleFontSize,
+                        onClick = {
+                            val modesByLabel = DisplayMode.entries.associateBy {
+                                getLocalizedString(it.labelResource())
+                            }
+                            dialogBuilder.showSingleChoiceBottomSheet(
+                                context = requireContext(),
+                                options = modesByLabel.keys.toTypedArray(),
+                                title = getLocalizedString(R.string.mooncat_home_display_mode),
+                                selectedIndex = homeDisplayMode.ordinal,
+                                onItemSelected = { label ->
+                                    modesByLabel[label]?.let { mode ->
+                                        prefs.homeDisplayMode = mode
+                                        homeDisplayMode = mode
+                                        viewModel.homeAppsChanged.value = System.currentTimeMillis()
+                                    }
+                                }
+                            )
+                        }
+                    )
+
+                    SettingsSelect(
                         title = getLocalizedString(R.string.select_home_icons),
                         option = selectedIconPackHome.getString(IconCacheTarget.HOME.name),
                         fontSize = titleFontSize,
@@ -1757,7 +1783,9 @@ class SettingsFragment : BaseFragment() {
                                             selectedIconPackHome = newAppIcons // Update state
                                             prefs.iconPackHome =
                                                 newAppIcons // Persist selection in preferences
+                                            homeDisplayMode = prefs.homeDisplayMode
                                             viewModel.iconPackHome.value = newAppIcons
+                                            viewModel.homeAppsChanged.value = System.currentTimeMillis()
 
                                             // --- Trigger widget update ---
                                             updateHomeWidget(context)
@@ -2945,6 +2973,13 @@ class SettingsFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    private fun DisplayMode.labelResource(): Int = when (this) {
+        DisplayMode.TEXT_ONLY -> R.string.mooncat_display_text_only
+        DisplayMode.ICON_AND_TEXT -> R.string.mooncat_display_icon_and_text
+        DisplayMode.MONOCHROME_AND_TEXT -> R.string.mooncat_display_monochrome
+        DisplayMode.ICON_ONLY -> R.string.mooncat_display_icon_only
     }
 
     private fun dismissDialogs() {

@@ -13,6 +13,7 @@ import com.github.codeworkscreativehub.mlauncher.data.Constants.Gravity
 import com.github.codeworkscreativehub.mlauncher.helper.emptyString
 import com.github.codeworkscreativehub.mlauncher.helper.getUserHandleFromString
 import com.github.codeworkscreativehub.mlauncher.helper.isSystemInDarkMode
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.DisplayMode
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -405,6 +406,17 @@ class Prefs(val context: Context) {
             return getEnumSetting(ICON_PACK_HOME, Constants.IconPacks.Disabled)
         }
         set(value) = prefsNormal.edit { putString(ICON_PACK_HOME, value.name) }
+
+    var homeDisplayMode: DisplayMode
+        get() {
+            val defaultMode = if (iconPackHome == Constants.IconPacks.Disabled) {
+                DisplayMode.TEXT_ONLY
+            } else {
+                DisplayMode.ICON_AND_TEXT
+            }
+            return getEnumSetting(HOME_DISPLAY_MODE, defaultMode)
+        }
+        set(value) = prefsNormal.edit { putString(HOME_DISPLAY_MODE, value.name) }
 
     var customIconPackHome: String
         get() = prefsNormal.getString(CUSTOM_ICON_PACK_HOME, emptyString()).toString()

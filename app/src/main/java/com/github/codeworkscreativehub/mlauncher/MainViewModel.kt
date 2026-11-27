@@ -36,6 +36,7 @@ import com.github.codeworkscreativehub.mlauncher.data.SHORTCUT_PREFIX
 import com.github.codeworkscreativehub.mlauncher.data.settingsKeyOf
 import com.github.codeworkscreativehub.mlauncher.helper.ChineseSortHelper
 import com.github.codeworkscreativehub.mlauncher.helper.ShortcutHelper
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.DisplayMode
 import com.github.codeworkscreativehub.mlauncher.helper.hasContactsPermission
 import com.github.codeworkscreativehub.mlauncher.helper.analytics.AppUsageMonitor
 import com.github.codeworkscreativehub.mlauncher.helper.ismlauncherDefault
@@ -757,7 +758,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         // Home icons are drawn on the main thread, so load shortcut icons here first
-        if (prefs.iconPackHome != Constants.IconPacks.Disabled) {
+        if (prefs.homeDisplayMode != DisplayMode.TEXT_ONLY) {
             (0 until prefs.homeAppsNum)
                 .map { prefs.getHomeAppModel(it) }
                 .filter { it.isShortcut }

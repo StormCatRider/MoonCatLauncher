@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
@@ -56,6 +58,7 @@ import com.github.codeworkscreativehub.common.openWebBrowser
 import com.github.codeworkscreativehub.common.showShortToast
 import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
+import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Constants
 import com.github.codeworkscreativehub.mlauncher.data.Constants.Action
 import com.github.codeworkscreativehub.mlauncher.data.Constants.AppDrawerFlag
@@ -84,6 +87,7 @@ import com.github.codeworkscreativehub.mlauncher.helper.utils.PrivateSpaceManage
 import com.github.codeworkscreativehub.mlauncher.helper.wordOfTheDay
 import com.github.codeworkscreativehub.mlauncher.listener.GestureAdapter
 import com.github.codeworkscreativehub.mlauncher.listener.NotificationDotManager
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.DisplayMode
 import com.github.codeworkscreativehub.mlauncher.services.ActionService
 import com.github.codeworkscreativehub.mlauncher.ui.components.DialogManager
 import com.github.codeworkscreativehub.mlauncher.ui.widgets.WidgetActivity
@@ -799,7 +803,9 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     // Set properties of existingAppView
                     textSize = prefs.appSize.toFloat()
                     id = i
-                    text = prefs.getAppDisplayName(prefs.getHomeAppModel(i))
+                    val app = prefs.getHomeAppModel(i)
+                    text = prefs.getAppDisplayName(app)
+                    applyHomeAppIcon(app, prefs.homeDisplayMode)
                     getHomeAppsGestureListener()
                     setOnClickListener(this@HomeFragment)
                     if (!prefs.extendHomeAppsArea) {
@@ -968,6 +974,45 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
 
+    private fun TextView.applyHomeAppIcon(app: AppListItem, mode: DisplayMode): Drawable? {
+        if (app.activityPackage.isBlank() || mode == DisplayMode.TEXT_ONLY) return null
+
+        val iconPack = prefs.iconPackHome
+        val shortcutIcon = if (app.isShortcut) ShortcutHelper.getIcon(context, app) else null
+        val originalIcon = shortcutIcon ?: getSafeAppIcon(
+            context = context,
+            packageName = app.activityPackage,
+            useIconPack = iconPack == Constants.IconPacks.Custom && prefs.customIconPackHome.isNotEmpty(),
+            iconPackTarget = IconCacheTarget.HOME
+        )
+        val icon = getSystemIcons(context, prefs, IconCacheTarget.HOME, originalIcon)
+            ?: (originalIcon.constantState?.newDrawable(resources) ?: originalIcon).mutate()
+        if (mode == DisplayMode.MONOCHROME_AND_TEXT) {
+            val grayscale = ColorMatrix().apply { setSaturation(0f) }
+            icon.colorFilter = ColorMatrixColorFilter(grayscale)
+        }
+
+        val iconScale = when (iconPack) {
+            Constants.IconPacks.Disabled, Constants.IconPacks.System, Constants.IconPacks.Custom -> 2.8f
+            else -> 1.4f
+        }
+        val iconSize = (prefs.appSize * iconScale).toInt()
+        icon.setBounds(0, 0, iconSize, iconSize)
+        when (prefs.homeAlignment) {
+            Constants.Gravity.Left -> setCompoundDrawables(icon, null, null, null)
+            Constants.Gravity.Center -> setCompoundDrawables(null, icon, null, null)
+            Constants.Gravity.Right -> setCompoundDrawables(null, null, icon, null)
+        }
+        compoundDrawablePadding = (iconSize / 1.2f).toInt()
+
+        if (mode == DisplayMode.ICON_ONLY) {
+            contentDescription = text
+            hint = null
+            text = ""
+        }
+        return originalIcon
+    }
+
     @SuppressLint("InflateParams", "DiscouragedApi", "UseCompatLoadingForDrawables", "ClickableViewAccessibility")
     private fun updateAppCount(newAppsNum: Int) {
         val oldAppsNum = binding.homeAppsLayout.childCount // current number of apps
@@ -1004,66 +1049,11 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     val padding: Int = prefs.textPaddingSize
                     setPadding(0, padding, 0, padding)
                     setTextColor(prefs.appColor)
-                    val appModel = prefs.getHomeAppModel(i)
-                    val packageName = appModel.activityPackage
-
-                    if (packageName.isNotBlank() && prefs.iconPackHome != Constants.IconPacks.Disabled) {
-                        val iconPackPackage = prefs.customIconPackHome
-                        // Try to get app icon, possibly using icon pack, with graceful fallback
-                        val shortcutIcon = if (appModel.isShortcut) ShortcutHelper.getIcon(context, appModel) else null
-                        val nonNullDrawable: Drawable = shortcutIcon ?: getSafeAppIcon(
-                            context = context,
-                            packageName = packageName,
-                            useIconPack = (iconPackPackage.isNotEmpty() && prefs.iconPackHome == Constants.IconPacks.Custom),
-                            iconPackTarget = IconCacheTarget.HOME
-                        )
-
-                        // Use the drawable
-                        val recoloredDrawable: Drawable? = getSystemIcons(
-                            context,
-                            prefs,
-                            IconCacheTarget.HOME,
-                            nonNullDrawable
-                        )
-
-                        val drawableToUse = recoloredDrawable ?: nonNullDrawable
-
-                        // Set the icon size to match text size and add padding
-                        var iconSize = (prefs.appSize * 1.4f).toInt()
-                        if (prefs.iconPackHome == Constants.IconPacks.System || prefs.iconPackHome == Constants.IconPacks.Custom) {
-                            iconSize *= 2
-                        }
-                        val iconPadding = (iconSize / 1.2f).toInt() // padding next to icon
-
-                        drawableToUse.setBounds(0, 0, iconSize, iconSize)
-
-                        // Set drawable position based on alignment
-                        when (prefs.homeAlignment) {
-                            Constants.Gravity.Left -> {
-                                setCompoundDrawables(
-                                    drawableToUse,
-                                    null,
-                                    null,
-                                    null
-                                )
-                                // Add padding between text and icon if an icon is set
-                                compoundDrawablePadding = iconPadding
-                            }
-
-                            Constants.Gravity.Right -> {
-                                setCompoundDrawables(
-                                    null,
-                                    null,
-                                    drawableToUse,
-                                    null
-                                )
-                                // Add padding between text and icon if an icon is set
-                                compoundDrawablePadding = iconPadding
-                            }
-
-                            else -> setCompoundDrawables(null, null, null, null)
-                        }
-
+                    val packageName = homeApp.activityPackage
+                    val displayMode = prefs.homeDisplayMode
+                    val originalIcon = applyHomeAppIcon(homeApp, displayMode)
+                    if (originalIcon != null) {
+                        val label = if (displayMode == DisplayMode.ICON_ONLY) "" else prefs.getAppDisplayName(homeApp)
                         val nm = NotificationManagerCompat.getEnabledListenerPackages(context)
 
                         if (nm.contains(context.packageName)) {
@@ -1080,7 +1070,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
 
                                 this.text = if (count > 0) {
                                     val circledNumber = getCircledDigit(count)
-                                    val newText = "${prefs.getAppDisplayName(appModel)} $circledNumber"
+                                    val newText = if (label.isEmpty()) circledNumber else "$label $circledNumber"
                                     val spannable = SpannableString(newText)
 
                                     val start = newText.indexOf(circledNumber)
@@ -1094,7 +1084,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                                     )
 
                                     // Set color
-                                    val customColor = ColorIconsExtensions.getDominantColor(nonNullDrawable)
+                                    val customColor = ColorIconsExtensions.getDominantColor(originalIcon)
                                     spannable.setSpan(
                                         ForegroundColorSpan(customColor),
                                         start, end,
@@ -1110,7 +1100,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
 
                                     spannable
                                 } else {
-                                    prefs.getAppDisplayName(appModel)
+                                    label
                                 }
 
                                 AppLogger.d("HomeFragment", "Notification count updated for $packageName: $count")

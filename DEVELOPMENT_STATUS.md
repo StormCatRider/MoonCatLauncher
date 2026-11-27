@@ -1,5 +1,12 @@
 # Estado de desarrollo
 
+## Moon Home 0.2.0 en desarrollo
+
+- Ajustes → Mira & Siente → Apariencia de las aplicaciones de inicio ofrece cuatro modos. Solo texto es el valor inicial. Las preferencias anteriores de iconos se conservan al actualizar. El modo Solo icono mantiene el nombre accesible de la aplicación y el modo monocromático usa escala de grises.
+- La compilación local de ProdDebug y las 6 pruebas unitarias pasaron. En el emulador API 37 sin conexión se recorrieron los cuatro modos con Reloj y se comprobó que Solo icono conserva el nombre accesible y persiste tras reiniciar el proceso.
+- Falta extender los modos por pantalla, carpeta y aplicación e integrar las carpetas anidadas, el arrastre y los modos de apertura.
+- El número de versión del paquete sigue en `0.1.0` mientras se completa Moon Home.
+
 ## 0.1.0 Foundation
 
 La rama de trabajo es `feature/mooncat-foundation`. El proyecto conserva Android 9 como mínimo, el identificador `app.mooncat.launcher` y la licencia GPL-3.0 con las atribuciones de mLauncher.
