@@ -12,7 +12,8 @@ Se retiraron scripts y automatizaciones del fork para Discord, Crowdin, changelo
 - Mantener pulsada una posición del inicio permite crear una carpeta. El editor admite subcarpetas, renombrado y aplicaciones por perfil. El guardado local valida la distribución y evita borrar carpetas con contenido. Los favoritos existentes se conservan debajo de la carpeta de esa posición.
 - `ProdDebug` y las 7 pruebas unitarias pasaron con la integración de carpetas. Una prueba también verifica el recorrido JSON de una carpeta anidada y la identidad de perfil.
 - En el emulador API 37 sin red se creó Weekend → Tools → Reloj desde el inicio. Tras detener y volver a abrir el launcher, el árbol seguía disponible y Reloj se abrió desde la subcarpeta.
-- Falta extender los modos por pantalla, carpeta y aplicación, agregar arrastre y movimientos, y habilitar la apertura en línea y en pantalla completa. La apertura actual usa un diálogo.
+- El editor permite mover elementos entre carpetas de la misma pantalla y cambiar su orden. El diálogo también acepta arrastrar un elemento sobre una subcarpeta o antes de una aplicación. Las pruebas unitarias verifican la conservación de descendientes y el rechazo de ciclos. Queda por probar el gesto de arrastre en un dispositivo.
+- Falta extender los modos por pantalla, carpeta y aplicación, integrar el arrastre desde el inicio y habilitar la apertura en línea y en pantalla completa. La apertura actual usa un diálogo.
 - El número de versión del paquete sigue en `0.1.0` mientras se completa Moon Home.
 
 ## 0.1.0 Foundation

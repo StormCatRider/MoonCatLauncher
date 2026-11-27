@@ -54,4 +54,25 @@ class LauncherLayoutTest {
         assertEquals(snapshot, adapter.fromJson(adapter.toJson(snapshot)))
         assertFalse(snapshot.copy(items = listOf(folder, child)).isValid())
     }
+    @Test fun movesSubtreeAndReordersWithoutDroppingItems() {
+        val sibling = folder.copy(id = "other", position = 2)
+        val child = app.copy(parentFolderId = nested.id, packageName = "example.app", activityName = "Main")
+        val peer = child.copy(id = "peer", position = 2)
+        val snapshot = LayoutSnapshot(items = listOf(folder, nested, sibling, child, peer))
+        val moved = snapshot.moveFolderItem(nested.id, sibling.id)
+        assertTrue(moved.isValid())
+        assertEquals(snapshot.items.map { it.id }, moved.items.map { it.id })
+        assertEquals(sibling.id, moved.items.first { it.id == nested.id }.parentFolderId)
+        assertEquals(child, moved.items.first { it.id == child.id })
+        val reordered = moved.moveFolderItem(peer.id, nested.id, child.id)
+        assertEquals(listOf(peer.id, child.id), reordered.items.filter { it.parentFolderId == nested.id }
+            .sortedBy { it.position }.map { it.id })
+    }
+
+    @Test fun rejectsMovesThatWouldCreateCyclesOrUseUnrelatedAnchors() {
+        val descendant = nested.copy(id = "descendant", parentFolderId = nested.id)
+        val snapshot = LayoutSnapshot(items = listOf(folder, nested, descendant))
+        assertThrows(IllegalArgumentException::class.java) { snapshot.moveFolderItem(nested.id, descendant.id) }
+        assertThrows(IllegalArgumentException::class.java) { snapshot.moveFolderItem(descendant.id, folder.id, folder.id) }
+    }
 }

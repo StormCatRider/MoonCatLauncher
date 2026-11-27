@@ -419,4 +419,9 @@
     <string name="mooncat_folder_app_missing">Aplicación no disponible en este perfil.</string>
     <string name="mooncat_folder_error">No se pudieron leer o guardar las carpetas.</string>
     <string name="mooncat_folder_up">Carpeta superior</string>
+    <string name="mooncat_folder_move">Mover elemento</string>
+    <string name="mooncat_folder_reorder">Reordenar elementos</string>
+    <string name="mooncat_folder_move_end">Mover al final</string>
+    <string name="mooncat_folder_move_before">Mover antes de…</string>
+    <string name="mooncat_folder_no_destination">No hay otra carpeta disponible para este elemento.</string>
 </resources>

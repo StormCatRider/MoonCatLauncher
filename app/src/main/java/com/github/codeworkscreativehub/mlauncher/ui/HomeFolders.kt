@@ -1,6 +1,9 @@
 package com.github.codeworkscreativehub.mlauncher.ui
 
+import android.content.ClipData
 import android.os.UserManager
+import android.view.DragEvent
+import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
@@ -12,7 +15,9 @@ import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.ItemType
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LauncherItem
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.LauncherLayout
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LayoutSnapshot
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.moveFolderItem
 import com.github.codeworkscreativehub.mlauncher.mooncat.storage.LayoutStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.UUID
@@ -95,7 +100,29 @@ internal class HomeFolders(
         if (!prefs.homeLocked) {
             builder.setPositiveButton(R.string.mooncat_folder_edit) { _, _ -> editFolder(folder) }
         }
-        show(builder)
+        val opened = show(builder)
+        val list = opened.listView
+        if (!prefs.homeLocked && list != null) {
+            list.setOnItemLongClickListener { _, row, position, _ ->
+                val child = children[position]
+                !saving && row.startDragAndDrop(
+                    ClipData.newPlainText("", ""), View.DragShadowBuilder(row), child, 0
+                )
+            }
+            list.setOnDragListener { _, event ->
+                val child = event.localState as? LauncherItem
+                if (child == null || prefs.homeLocked) return@setOnDragListener false
+                if (event.action == DragEvent.ACTION_DROP) {
+                    val targetIndex = list.pointToPosition(event.x.toInt(), event.y.toInt())
+                    val target = children.getOrNull(targetIndex) ?: return@setOnDragListener false
+                    if (target.id != child.id) {
+                        if (target.type == ItemType.FOLDER) move(child, target)
+                        else move(child, folder, target.id)
+                    }
+                }
+                true
+            }
+        }
     }
 
     private fun editFolder(folder: LauncherItem) {
@@ -105,7 +132,9 @@ internal class HomeFolders(
             getLocalizedString(R.string.select_app),
             getLocalizedString(R.string.mooncat_folder_new),
             getLocalizedString(R.string.mooncat_folder_rename),
-            getLocalizedString(R.string.mooncat_folder_remove)
+            getLocalizedString(R.string.mooncat_folder_remove),
+            getLocalizedString(R.string.mooncat_folder_move),
+            getLocalizedString(R.string.mooncat_folder_reorder)
         )
         show(MaterialAlertDialogBuilder(home.requireContext()).setTitle(folder.label).setItems(labels) { _, index ->
             when (index) {
@@ -117,8 +146,53 @@ internal class HomeFolders(
                     edit { current -> current.copy(items = current.items.map { if (it.id == folder.id) it.copy(label = name) else it }) }
                 }
                 3 -> if (children.isEmpty()) remove(folder) else removeChild(children)
+                4 -> chooseChild(children, R.string.mooncat_folder_move, ::chooseDestination)
+                5 -> chooseChild(children, R.string.mooncat_folder_reorder) { child ->
+                    val siblings = children.sortedBy { it.position }
+                    val targets = siblings.filterNot { it.id == child.id }
+                    val labels = targets.map(::displayLabel) + getLocalizedString(R.string.mooncat_folder_move_end)
+                    show(MaterialAlertDialogBuilder(home.requireContext())
+                        .setTitle(R.string.mooncat_folder_move_before)
+                        .setItems(labels.toTypedArray()) { _, position ->
+                            move(child, folder, targets.getOrNull(position)?.id)
+                        })
+                }
             }
         })
+    }
+
+    private fun chooseChild(children: List<LauncherItem>, title: Int, select: (LauncherItem) -> Unit) {
+        val ordered = children.sortedBy { it.position }
+        show(MaterialAlertDialogBuilder(home.requireContext())
+            .setTitle(title)
+            .setItems(ordered.map(::displayLabel).toTypedArray()) { _, index ->
+                select(ordered[index])
+            })
+    }
+
+    private fun chooseDestination(child: LauncherItem) {
+        val items = snapshot?.items.orEmpty()
+        val destinations = items.filter {
+            it.type == ItemType.FOLDER && it.id != child.parentFolderId &&
+                LauncherLayout.canMoveInto(child, it.id, items)
+        }
+        if (destinations.isEmpty()) {
+            reportError(R.string.mooncat_folder_no_destination)
+            return
+        }
+        val byId = items.associateBy { it.id }
+        val paths = destinations.map { folder ->
+            generateSequence(folder) { byId[it.parentFolderId] }.toList().asReversed().joinToString(" / ") { it.label }
+        }
+        show(MaterialAlertDialogBuilder(home.requireContext())
+            .setTitle(R.string.mooncat_folder_move)
+            .setItems(paths.toTypedArray()) { _, index -> move(child, destinations[index]) })
+    }
+
+    private fun move(child: LauncherItem, destination: LauncherItem, beforeId: String? = null) {
+        edit(afterSave = { open(destination) }) { current ->
+            current.moveFolderItem(child.id, destination.id, beforeId)
+        }
     }
 
     private fun pickApp(folder: LauncherItem) {
@@ -200,13 +274,14 @@ internal class HomeFolders(
         }
     }
 
-    private fun edit(transform: (LayoutSnapshot) -> LayoutSnapshot) {
+    private fun edit(afterSave: () -> Unit = {}, transform: (LayoutSnapshot) -> LayoutSnapshot) {
         if (snapshot == null || prefs.homeLocked || saving) return
         saving = true
         home.viewLifecycleOwner.lifecycleScope.launch {
             try {
                 snapshot = withContext(Dispatchers.IO) { store.update(transform) }
                 refresh()
+                afterSave()
             } catch (error: CancellationException) {
                 throw error
             } catch (_: Exception) {

@@ -521,4 +521,9 @@
     <string name="mooncat_folder_app_missing">App unavailable in this profile.</string>
     <string name="mooncat_folder_error">Could not read or save folders.</string>
     <string name="mooncat_folder_up">Parent folder</string>
+    <string name="mooncat_folder_move">Move item</string>
+    <string name="mooncat_folder_reorder">Reorder items</string>
+    <string name="mooncat_folder_move_end">Move to end</string>
+    <string name="mooncat_folder_move_before">Move before…</string>
+    <string name="mooncat_folder_no_destination">No other folder is available for this item.</string>
 </resources>
