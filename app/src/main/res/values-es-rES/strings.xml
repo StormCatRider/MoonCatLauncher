@@ -428,4 +428,8 @@
     <string name="mooncat_folder_inline">En el inicio</string>
     <string name="mooncat_folder_popup">Ventana emergente</string>
     <string name="mooncat_folder_full">Pantalla completa</string>
+    <string name="mooncat_display_app">Presentación de la aplicación</string>
+    <string name="mooncat_display_folder">Presentación de las aplicaciones de la carpeta</string>
+    <string name="mooncat_display_page">Presentación de las aplicaciones de la página</string>
+    <string name="mooncat_display_inherit">Heredar modo de presentación</string>
 </resources>

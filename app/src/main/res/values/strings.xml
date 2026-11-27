@@ -530,4 +530,8 @@
     <string name="mooncat_folder_inline">Inline</string>
     <string name="mooncat_folder_popup">Pop-up</string>
     <string name="mooncat_folder_full">Full screen</string>
+    <string name="mooncat_display_app">App display</string>
+    <string name="mooncat_display_folder">Folder app display</string>
+    <string name="mooncat_display_page">Page app display</string>
+    <string name="mooncat_display_inherit">Inherit display mode</string>
 </resources>

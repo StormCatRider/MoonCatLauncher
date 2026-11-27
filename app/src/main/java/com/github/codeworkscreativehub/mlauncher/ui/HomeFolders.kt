@@ -5,8 +5,10 @@ import android.graphics.drawable.ColorDrawable
 import android.os.UserManager
 import android.view.DragEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.EditText
+import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -20,6 +22,7 @@ import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
 import com.github.codeworkscreativehub.mlauncher.helper.utils.PrivateSpaceManager
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.ItemType
+import com.github.codeworkscreativehub.mlauncher.mooncat.model.DisplayMode
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.FolderOpenMode
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LauncherItem
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.LauncherLayout
@@ -148,18 +151,77 @@ internal class HomeFolders(
             selectApp()
             return
         }
-        val labels = arrayOf(getLocalizedString(R.string.select_app), getLocalizedString(R.string.mooncat_folder_new))
-        show(MaterialAlertDialogBuilder(home.requireContext()).setItems(labels) { _, index ->
-            if (index == 0) selectApp() else nameFolder { name ->
-                val folder = LauncherItem(UUID.randomUUID().toString(), name, ItemType.FOLDER, HOME_PAGE, position = slot)
-                edit { current ->
-                    require(current.items.none {
-                        it.pageId == HOME_PAGE && it.parentFolderId == null && it.position == slot
-                    })
-                    current.copy(items = current.items + folder)
+        val app = prefs.getHomeAppModel(slot)
+        val serial = if (app.activityPackage.isBlank() || isGrouped(slot)) -1 else users.getSerialNumberForUser(app.user)
+        val labels = listOf(R.string.select_app, R.string.mooncat_folder_new, R.string.mooncat_display_page) +
+            if (serial >= 0) listOf(R.string.mooncat_display_app) else emptyList()
+        show(MaterialAlertDialogBuilder(home.requireContext()).setItems(labels.map { getLocalizedString(it) }.toTypedArray()) { _, index ->
+            when (index) {
+                0 -> selectApp()
+                1 -> nameFolder { name ->
+                    val folder = LauncherItem(UUID.randomUUID().toString(), name, ItemType.FOLDER, HOME_PAGE, position = slot)
+                    edit { current ->
+                        require(current.items.none {
+                            it.pageId == HOME_PAGE && it.parentFolderId == null && it.position == slot
+                        })
+                        current.copy(items = current.items + folder)
+                    }
+                }
+                2 -> choosePageDisplay(slot)
+                3 -> chooseDisplay(R.string.mooncat_display_app, prefs.homeAppDisplayMode(app, serial)) { mode ->
+                    prefs.setHomeAppDisplayMode(app, serial, mode)
+                    refresh()
                 }
             }
         })
+    }
+
+    fun displayMode(app: AppListItem, slot: Int): DisplayMode =
+        appDisplayOverride(app) ?: pageDisplayMode(slot)
+
+    private fun appDisplayOverride(app: AppListItem): DisplayMode? {
+        if (app.activityPackage.isBlank()) return null
+        val serial = users.getSerialNumberForUser(app.user)
+        return if (serial < 0) null else prefs.homeAppDisplayMode(app, serial)
+    }
+
+    private fun pageDisplayMode(slot: Int): DisplayMode =
+        prefs.homePageDisplayMode(home.displayPageForSlot(slot)) ?: prefs.homeDisplayMode
+
+    private fun choosePageDisplay(slot: Int) {
+        val page = home.displayPageForSlot(slot)
+        chooseDisplay(R.string.mooncat_display_page, prefs.homePageDisplayMode(page)) { mode ->
+            prefs.setHomePageDisplayMode(page, mode)
+            refresh()
+        }
+    }
+
+    private fun chooseDisplay(title: Int, selected: DisplayMode?, change: (DisplayMode?) -> Unit) {
+        val labels = listOf(
+            R.string.mooncat_display_inherit, R.string.mooncat_display_text_only,
+            R.string.mooncat_display_icon_and_text, R.string.mooncat_display_monochrome, R.string.mooncat_display_icon_only
+        )
+        show(MaterialAlertDialogBuilder(home.requireContext())
+            .setTitle(title)
+            .setSingleChoiceItems(labels.map { getLocalizedString(it) }.toTypedArray(), (selected?.ordinal ?: -1) + 1) { dialog, index ->
+                dialog.dismiss()
+                if (!prefs.homeLocked) change(DisplayMode.entries.getOrNull(index - 1))
+            })
+    }
+
+    private fun folderContentMode(folder: LauncherItem): DisplayMode {
+        val byId = snapshot?.items.orEmpty().associateBy { it.id }
+        val ancestors = generateSequence(folder) { byId[it.parentFolderId] }.toList()
+        return ancestors.firstNotNullOfOrNull { it.displayMode } ?: pageDisplayMode(ancestors.last().position)
+    }
+
+    private fun renderChild(row: TextView, item: LauncherItem, inherited: DisplayMode) {
+        row.contentDescription = null
+        row.setCompoundDrawables(null, null, null, null)
+        row.text = displayLabel(item)
+        val app = resolveApp(item) ?: return
+        val mode = LauncherLayout.resolveAppDisplayMode(item.displayMode, appDisplayOverride(app), inherited)
+        home.renderFolderApp(row, app, mode)
     }
 
     fun toggle(slotFolder: LauncherItem) {
@@ -177,6 +239,7 @@ internal class HomeFolders(
         val root = folderAt(slot) ?: return row
         if (root.id != inlineRootId) return row
         val folder = snapshot?.items?.firstOrNull { it.id == inlineFolderId } ?: root
+        val inherited = folderContentMode(folder)
         val context = row.context
         val density = context.resources.displayMetrics.density
         val column = LinearLayout(context).apply {
@@ -201,6 +264,7 @@ internal class HomeFolders(
                         true
                     }
                 }
+                if (item != null) renderChild(this, item, inherited)
             })
         }
         if (folder.id != root.id) {
@@ -241,10 +305,19 @@ internal class HomeFolders(
 
     private fun open(folder: LauncherItem) {
         val children = childrenOf(folder)
-        val entries = children.map(::displayLabel)
+        val inherited = folderContentMode(folder)
+        val entries = object : ArrayAdapter<LauncherItem>(
+            home.requireContext(), android.R.layout.simple_list_item_1, children
+        ) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val row = super.getView(position, convertView, parent) as TextView
+                renderChild(row, children[position], inherited)
+                return row
+            }
+        }
         val builder = MaterialAlertDialogBuilder(home.requireContext())
             .setTitle(folder.label)
-            .setItems(entries.toTypedArray()) { _, index ->
+            .setAdapter(entries) { _, index ->
                 select(children[index])
             }
             .setNegativeButton(android.R.string.cancel, null)
@@ -302,7 +375,10 @@ internal class HomeFolders(
             getLocalizedString(R.string.mooncat_folder_remove),
             getLocalizedString(R.string.mooncat_folder_move),
             getLocalizedString(R.string.mooncat_folder_reorder),
-            getLocalizedString(R.string.mooncat_folder_open_mode)
+            getLocalizedString(R.string.mooncat_folder_open_mode),
+            getLocalizedString(R.string.mooncat_display_folder),
+            getLocalizedString(R.string.mooncat_display_app),
+            getLocalizedString(R.string.mooncat_display_page)
         )
         show(MaterialAlertDialogBuilder(home.requireContext()).setTitle(folder.label).setItems(labels) { _, index ->
             when (index) {
@@ -326,8 +402,24 @@ internal class HomeFolders(
                         })
                 }
                 6 -> chooseOpenMode(folder)
+                7 -> editItemDisplay(folder, R.string.mooncat_display_folder)
+                8 -> chooseChild(children.filter { it.type != ItemType.FOLDER }, R.string.mooncat_display_app) {
+                    editItemDisplay(it, R.string.mooncat_display_app)
+                }
+                9 -> {
+                    val byId = snapshot?.items.orEmpty().associateBy { it.id }
+                    choosePageDisplay(generateSequence(folder) { byId[it.parentFolderId] }.last().position)
+                }
             }
         })
+    }
+
+    private fun editItemDisplay(item: LauncherItem, title: Int) {
+        chooseDisplay(title, item.displayMode) { mode ->
+            edit { current ->
+                current.copy(items = current.items.map { if (it.id == item.id) it.copy(displayMode = mode) else it })
+            }
+        }
     }
 
     private fun chooseOpenMode(folder: LauncherItem) {

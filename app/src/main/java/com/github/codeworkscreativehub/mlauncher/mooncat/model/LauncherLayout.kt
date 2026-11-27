@@ -37,6 +37,9 @@ data class LauncherItem(
 )
 
 object LauncherLayout {
+    fun resolveAppDisplayMode(item: DisplayMode?, app: DisplayMode?, inherited: DisplayMode): DisplayMode =
+        item ?: app ?: inherited
+
     fun initialPages() = listOf(
         LauncherPage("home", "home", PageType.HOME, 0),
         LauncherPage("widgets", "widgets", PageType.WIDGETS, 1)

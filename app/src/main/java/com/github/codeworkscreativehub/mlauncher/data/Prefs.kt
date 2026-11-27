@@ -422,6 +422,23 @@ class Prefs(val context: Context) {
         get() = prefsNormal.getString(CUSTOM_ICON_PACK_HOME, emptyString()).toString()
         set(value) = prefsNormal.edit { putString(CUSTOM_ICON_PACK_HOME, value) }
 
+    fun homePageDisplayMode(page: Int): DisplayMode? = readHomeDisplayMode("HOME_PAGE_MODE_$page")
+
+    fun setHomePageDisplayMode(page: Int, mode: DisplayMode?) = writeHomeDisplayMode("HOME_PAGE_MODE_$page", mode)
+
+    fun homeAppDisplayMode(app: AppListItem, serial: Long): DisplayMode? =
+        readHomeDisplayMode("HOME_APP_MODE_${app.activityPackage}/${app.activityClass}/$serial")
+
+    fun setHomeAppDisplayMode(app: AppListItem, serial: Long, mode: DisplayMode?) =
+        writeHomeDisplayMode("HOME_APP_MODE_${app.activityPackage}/${app.activityClass}/$serial", mode)
+
+    private fun readHomeDisplayMode(key: String): DisplayMode? =
+        DisplayMode.entries.firstOrNull { it.name == prefsNormal.getString(key, null) }
+
+    private fun writeHomeDisplayMode(key: String, mode: DisplayMode?) {
+        prefsNormal.edit { if (mode == null) remove(key) else putString(key, mode.name) }
+    }
+
     var iconPackAppList: Constants.IconPacks
         get() {
             return getEnumSetting(ICON_PACK_APP_LIST, Constants.IconPacks.Disabled)

@@ -39,6 +39,9 @@ class LauncherLayoutTest {
         assertEquals(DisplayMode.ICON_ONLY, LauncherLayout.resolveDisplayMode(app, null, page))
         assertEquals(DisplayMode.ICON_AND_TEXT, LauncherLayout.resolveDisplayMode(app, parent, page))
         assertEquals(DisplayMode.MONOCHROME_AND_TEXT, LauncherLayout.resolveDisplayMode(app.copy(displayMode = DisplayMode.MONOCHROME_AND_TEXT), parent, page))
+        assertEquals(DisplayMode.TEXT_ONLY, LauncherLayout.resolveAppDisplayMode(DisplayMode.TEXT_ONLY, DisplayMode.ICON_ONLY, DisplayMode.ICON_AND_TEXT))
+        assertEquals(DisplayMode.ICON_ONLY, LauncherLayout.resolveAppDisplayMode(null, DisplayMode.ICON_ONLY, DisplayMode.ICON_AND_TEXT))
+        assertEquals(DisplayMode.ICON_AND_TEXT, LauncherLayout.resolveAppDisplayMode(null, null, DisplayMode.ICON_AND_TEXT))
     }
 
     @Test fun nestedFoldersRoundTripWithProfileIdentity() {

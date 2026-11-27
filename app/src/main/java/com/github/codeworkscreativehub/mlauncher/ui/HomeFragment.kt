@@ -816,7 +816,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     val folder = homeFolders.folderAt(i)
                     val grouped = homeFolders.isGrouped(i)
                     text = folder?.label ?: if (grouped) getLocalizedString(R.string.select_app) else prefs.getAppDisplayName(app)
-                    if (folder == null && !grouped) applyHomeAppIcon(app, prefs.homeDisplayMode)
+                    if (folder == null && !grouped) applyHomeAppIcon(app, homeFolders.displayMode(app, i))
                     getHomeAppsGestureListener()
                     setOnClickListener(this@HomeFragment)
                     if (!prefs.extendHomeAppsArea) {
@@ -985,6 +985,10 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     }
 
 
+    internal fun renderFolderApp(row: TextView, app: AppListItem, mode: DisplayMode) {
+        row.applyHomeAppIcon(app, mode)
+    }
+
     private fun TextView.applyHomeAppIcon(app: AppListItem, mode: DisplayMode): Drawable? {
         if (app.activityPackage.isBlank() || mode == DisplayMode.TEXT_ONLY) return null
 
@@ -1065,7 +1069,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     setPadding(0, padding, 0, padding)
                     setTextColor(prefs.appColor)
                     val packageName = homeApp.activityPackage
-                    val displayMode = prefs.homeDisplayMode
+                    val displayMode = homeFolders.displayMode(homeApp, i)
                     val originalIcon = if (folder == null && !grouped) applyHomeAppIcon(homeApp, displayMode) else null
                     if (originalIcon != null) {
                         val label = if (displayMode == DisplayMode.ICON_ONLY) "" else prefs.getAppDisplayName(homeApp)
@@ -1158,6 +1162,15 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
 
     private var currentPage = 0
     private lateinit var pageRanges: List<IntRange>
+
+    internal fun displayPageForSlot(slot: Int): Int {
+        val count = prefs.homePagesNum.coerceAtLeast(1)
+        val base = prefs.homeAppsNum / count
+        val extra = prefs.homeAppsNum % count
+        val split = (base + 1) * extra
+        return if (slot < split) slot / (base + 1)
+        else (extra + (slot - split) / base.coerceAtLeast(1)).coerceAtMost(count - 1)
+    }
 
     private fun updatePagesAndAppsPerPage(totalApps: Int, totalPages: Int) {
         AppLogger.d(homeScreenPager, "updatePagesAndAppsPerPage: totalApps=$totalApps, totalPages=$totalPages")
