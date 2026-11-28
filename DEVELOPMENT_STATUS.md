@@ -133,3 +133,20 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 - 5 pruebas unitarias cubren categorías automáticas y propias, nombres únicos, borrado, asignaciones a categorías inexistentes y la búsqueda local. Pasaron las 41 pruebas y `ProdDebug`.
 - Verificado en el emulador API 37: categorías automáticas con recuento, filtro por categoría, cuadrícula de 3 columnas con el menú a lo ancho, una categoría propia que sustituye a la automática, y la búsqueda de una tarea desde el cajón.
 - Pendiente: buscar archivos autorizados por el usuario.
+
+## Páginas y widgets (0.3.0)
+
+- Ajustes → Funciones → Páginas de inicio permite nombrar cada página, elegir cuántas apps tiene cada una y elegir qué muestra la tecla Inicio: cualquier página o la página de widgets. «Repartir por igual» vuelve al reparto anterior. Si cambia el número de apps o de páginas, el reparto propio deja de aplicarse y se reparte por igual, sin perder apps.
+- El nombre de la página aparece junto al indicador de páginas cuando está activado, y el indicador anuncia «Página N de M» a los lectores de pantalla.
+- La tecla Inicio se detecta con el intento HOME que Android entrega al launcher en ejecución. Volver con Atrás desde una app no cambia de página.
+- El aviso de privacidad para widgets de terceros ya existía en el selector de widgets y se mantiene.
+- 4 pruebas unitarias cubren el reparto uniforme igual al anterior, el reparto propio y su invalidación, el ajuste de tamaños y los nombres y la página inicial.
+- Verificado en el emulador API 37: dos páginas, nombre «Trabajo», 3 + 1 apps, Inicio desde Reloj abre la página de widgets, Atrás vuelve al inicio sin bucle, e Inicio abre la página 2 al elegirla.
+
+## Cita, versículo diario y donaciones
+
+- Acerca de muestra Juan 3, 15-17, elegido por el propietario: Douay-Rheims en inglés y Torres Amat en español, ambas traducciones católicas de dominio público.
+- La palabra diaria se sustituyó por 31 versículos bíblicos en rotación diaria, con el mismo versículo en ambos idiomas. Una lista importada por el usuario sigue teniendo prioridad. Se eliminó la lista de palabras de mLauncher.
+- Se quitaron los enlaces de donación de mLauncher (GitHub Sponsors, BuyMeACoffee, Liberapay). Los canales propios de Moon Cat se añadirán cuando existan.
+- Los textos bíblicos están pendientes de revisión por el propietario frente a una edición impresa.
+- Pasaron las 45 pruebas y `ProdDebug`. En el emulador se vieron la cita en Acerca de y el versículo del día en el inicio.

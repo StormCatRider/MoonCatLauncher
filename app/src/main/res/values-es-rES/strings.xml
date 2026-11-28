@@ -80,7 +80,7 @@
     <string name="alarm_settings">Alarma</string>
     <string name="bedtime_start_time">Hora de inicio de la hora de acostarse</string>
     <string name="bedtime_end_time">Hora de acostarse Fin de la hora</string>
-    <string name="show_daily_word">Mostrar palabra diaria</string>
+    <string name="show_daily_word">Mostrar versículo diario</string>
     <string name="show_battery">Mostrar nivel de batería</string>
     <string name="show_battery_icon">Mostrar icono de batería</string>
     <string name="show_private_spaces">Mostrar iconos de espacios privados</string>
@@ -97,7 +97,7 @@
     <string name="date_text_size">Tamaño del texto de la fecha</string>
     <string name="clock_text_size">Tamaño del texto del reloj</string>
     <string name="alarm_text_size">Tamaño del texto de la alarma</string>
-    <string name="daily_word_text_size">Tamaño de texto de palabras diarias</string>
+    <string name="daily_word_text_size">Tamaño del versículo diario</string>
     <string name="battery_text_size">Tamaño del texto de la batería</string>
     <string name="layout_positioning">Diseño &amp; Posicionamiento</string>
     <string name="app_padding_size">Interlineado</string>
@@ -120,7 +120,7 @@
     <string name="date_alignment">Fecha</string>
     <string name="clock_alignment">Reloj</string>
     <string name="alarm_alignment">Alarma</string>
-    <string name="daily_word_alignment">Palabra diaria</string>
+    <string name="daily_word_alignment">Versículo diario</string>
     <string name="home_alignment">Aplicaciones de inicio</string>
     <string name="drawer_alignment">Aplicaciones del cajón</string>
     <string name="element_colors">Colores de los elementos</string>
@@ -129,7 +129,7 @@
     <string name="clock_color">Reloj</string>
     <string name="date_color">Fecha</string>
     <string name="alarm_color">Alarma</string>
-    <string name="daily_word_color">Palabra diaria</string>
+    <string name="daily_word_color">Versículo diario</string>
     <string name="battery_color">Batería</string>
     <string name="rainbow_shortcuts">Atajos arcoíris</string>
     <string name="shortcuts_color">Atajos</string>
@@ -203,13 +203,13 @@
     <string name="advanced_settings_theme_clear">Claro</string>
     <string name="advanced_settings_theme_clear_title">Restablecer tema</string>
     <string name="advanced_settings_theme_clear_description">¿Estás seguro de que quieres restablecer todos los ajustes del tema?</string>
-    <string name="advanced_settings_wotd_title">Palabra del día</string>
-    <string name="advanced_settings_wotd_description">Importa una lista personalizada de la Palabra del Día.</string>
+    <string name="advanced_settings_wotd_title">Versículo diario</string>
+    <string name="advanced_settings_wotd_description">Importa tu propia lista de versículos o textos diarios.</string>
     <string name="advanced_settings_wotd_download">Descargar</string>
     <string name="advanced_settings_wotd_import">Importar</string>
     <string name="advanced_settings_wotd_clear">Claro</string>
-    <string name="advanced_settings_wotd_clear_title">Restablecer Palabra del día</string>
-    <string name="advanced_settings_wotd_clear_description">¿Está seguro de que desea restablecer la matriz de la Palabra del Día?</string>
+    <string name="advanced_settings_wotd_clear_title">Restablecer versículo diario</string>
+    <string name="advanced_settings_wotd_clear_description">¿Quitar tu lista importada y volver a los versículos bíblicos incluidos?</string>
     <string name="advanced_settings_clear_yes">Sí</string>
     <string name="advanced_settings_clear_no">No</string>
     <string name="advanced_settings_help_feedback_title">Ayuda &amp; Comentarios</string>
@@ -514,7 +514,7 @@
     <string name="mooncat_perm_widgets">Widgets</string>
     <string name="mooncat_perm_widgets_reason">Aloja los widgets que añades. Los widgets de terceros pueden usar Internet con sus propios permisos.</string>
     <string name="mooncat_perm_background">Trabajo en segundo plano</string>
-    <string name="mooncat_perm_work_manager_reason">Lo exige WorkManager de Android para actualizar el widget local de palabra del día.</string>
+    <string name="mooncat_perm_work_manager_reason">Lo exige WorkManager de Android para actualizar el widget local de versículo diario.</string>
     <string name="mooncat_perm_network_state">Estado de la red</string>
     <string name="mooncat_perm_network_state_reason">Lo exige WorkManager para saber si hay una red. No concede acceso a Internet.</string>
     <string name="mooncat_perm_internal">Protección interna</string>
@@ -621,4 +621,19 @@
     <string name="mooncat_cat_view_grid">Cuadrícula de %1$d columnas</string>
     <string name="mooncat_search_local_results">Notas y tareas: %1$d</string>
     <string name="mooncat_search_local_title">Notas y tareas</string>
+    <string name="mooncat_pages_title">Páginas de inicio</string>
+    <string name="mooncat_pages_summary">Nombres, apps por página y la página que abre Inicio</string>
+    <string name="mooncat_pages_page">Página %1$d</string>
+    <string name="mooncat_pages_apps">Apps: %1$d</string>
+    <string name="mooncat_pages_start">Inicio abre: %1$s</string>
+    <string name="mooncat_pages_start_title">Página que se muestra al pulsar Inicio</string>
+    <string name="mooncat_pages_widget_page">Página de widgets</string>
+    <string name="mooncat_pages_even">Repartir por igual</string>
+    <string name="mooncat_pages_choose_count">Número de apps</string>
+    <string name="mooncat_pages_count_title">Apps en la página %1$d</string>
+    <string name="mooncat_pages_name_title">Nombre de la página</string>
+    <string name="mooncat_pages_name_hint">Por ejemplo, Trabajo</string>
+    <string name="mooncat_pages_position">Página %1$d de %2$d</string>
+    <string name="mooncat_about_quote">«Para que todo aquel que crea en él, no perezca, sino que logre la vida eterna. Que amó tanto Dios al mundo, que no paró hasta dar a su Hijo unigénito; a fin de que todos los que creen en él no perezcan, sino que vivan vida eterna. Pues no envió Dios su Hijo al mundo para condenar al mundo, sino para que por su medio el mundo se salve.»</string>
+    <string name="mooncat_about_quote_reference">Juan 3, 15-17 (Torres Amat)</string>
 </resources>

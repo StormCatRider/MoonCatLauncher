@@ -652,7 +652,7 @@ fun loadWordList(prefs: Prefs): List<String> {
     return if (customWordListString != emptyString()) {
         prefs.wordList.split("||")
     } else {
-        getLocalizedStringArray(R.array.word_of_the_day).toList()
+        getLocalizedStringArray(R.array.mooncat_daily_verses).toList() // Moon Cat: daily Bible verses
     }
 }
 

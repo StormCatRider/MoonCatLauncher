@@ -108,7 +108,7 @@
     <string name="alarm_settings">Alarm</string>
     <string name="bedtime_start_time">Bedtime Start Time</string>
     <string name="bedtime_end_time">Bedtime End Time</string>
-    <string name="show_daily_word">Show Daily Word</string>
+    <string name="show_daily_word">Show Daily Verse</string>
     <string name="show_battery">Show Battery</string>
     <string name="show_battery_icon">Show Battery Icon</string>
     <string name="show_private_spaces">Show Private Spaces Icon</string>
@@ -130,7 +130,7 @@
     <string name="date_text_size">Date Text Size</string>
     <string name="clock_text_size">Clock Text Size</string>
     <string name="alarm_text_size">Alarm Text Size</string>
-    <string name="daily_word_text_size">Daily Word Text Size</string>
+    <string name="daily_word_text_size">Daily Verse Text Size</string>
     <string name="battery_text_size">Battery Text Size</string>
 
     <string name="layout_positioning">Layout &amp; Positioning</string>
@@ -159,7 +159,7 @@
     <string name="date_alignment">Date</string>
     <string name="clock_alignment">Clock</string>
     <string name="alarm_alignment">Alarm</string>
-    <string name="daily_word_alignment">Daily Word</string>
+    <string name="daily_word_alignment">Daily Verse</string>
     <string name="home_alignment">Home Apps</string>
     <string name="drawer_alignment">Drawer Apps</string>
 
@@ -170,7 +170,7 @@
     <string name="clock_color">Clock</string>
     <string name="date_color">Date</string>
     <string name="alarm_color">Alarm</string>
-    <string name="daily_word_color">Daily Word</string>
+    <string name="daily_word_color">Daily Verse</string>
     <string name="battery_color">Battery</string>
     <string name="rainbow_shortcuts">Rainbow Shortcuts</string>
     <string name="shortcuts_color">Shortcuts</string>
@@ -269,15 +269,15 @@
     <string name="advanced_settings_theme_clear_title">Reset Theme</string>
     <string name="advanced_settings_theme_clear_description">Are you sure you want to reset all theme settings?</string>
 
-    <string name="advanced_settings_wotd_title">Word of the Day</string>
-    <string name="advanced_settings_wotd_description">Import custom Word of the Day list.</string>
+    <string name="advanced_settings_wotd_title">Daily Verse</string>
+    <string name="advanced_settings_wotd_description">Import your own list of daily verses or texts.</string>
 
     <string name="advanced_settings_wotd_download">Download</string>
     <string name="advanced_settings_wotd_import">Import</string>
     <string name="advanced_settings_wotd_clear">Clear</string>
 
-    <string name="advanced_settings_wotd_clear_title">Reset Word Of The Day</string>
-    <string name="advanced_settings_wotd_clear_description">Are you sure you want to reset the Word Of The Day array?</string>
+    <string name="advanced_settings_wotd_clear_title">Reset Daily Verse</string>
+    <string name="advanced_settings_wotd_clear_description">Remove your imported list and go back to the included Bible verses?</string>
 
     <string name="advanced_settings_clear_yes">Yes</string>
     <string name="advanced_settings_clear_no">No</string>
@@ -616,7 +616,7 @@
     <string name="mooncat_perm_widgets">Widgets</string>
     <string name="mooncat_perm_widgets_reason">Hosts the widgets you add. Third-party widgets may use the Internet with their own permissions.</string>
     <string name="mooncat_perm_background">Background work</string>
-    <string name="mooncat_perm_work_manager_reason">Required by Android WorkManager to refresh the local Word of the Day widget.</string>
+    <string name="mooncat_perm_work_manager_reason">Required by Android WorkManager to refresh the local Daily Verse widget.</string>
     <string name="mooncat_perm_network_state">Network status</string>
     <string name="mooncat_perm_network_state_reason">Required by WorkManager to know whether a network exists. It does not grant Internet access.</string>
     <string name="mooncat_perm_internal">Internal protection</string>
@@ -723,4 +723,19 @@
     <string name="mooncat_cat_view_grid">Grid, %1$d columns</string>
     <string name="mooncat_search_local_results">Notes and tasks: %1$d</string>
     <string name="mooncat_search_local_title">Notes and tasks</string>
+    <string name="mooncat_pages_title">Home pages</string>
+    <string name="mooncat_pages_summary">Names, apps per page and the page Home opens</string>
+    <string name="mooncat_pages_page">Page %1$d</string>
+    <string name="mooncat_pages_apps">Apps: %1$d</string>
+    <string name="mooncat_pages_start">Home opens: %1$s</string>
+    <string name="mooncat_pages_start_title">Page shown when pressing Home</string>
+    <string name="mooncat_pages_widget_page">Widget page</string>
+    <string name="mooncat_pages_even">Split evenly</string>
+    <string name="mooncat_pages_choose_count">Number of apps</string>
+    <string name="mooncat_pages_count_title">Apps on page %1$d</string>
+    <string name="mooncat_pages_name_title">Page name</string>
+    <string name="mooncat_pages_name_hint">For example, Work</string>
+    <string name="mooncat_pages_position">Page %1$d of %2$d</string>
+    <string name="mooncat_about_quote">“That whosoever believeth in him, may not perish; but may have life everlasting. For God so loved the world, as to give his only begotten Son; that whosoever believeth in him, may not perish, but may have life everlasting. For God sent not his Son into the world, to judge the world, but that the world may be saved by him.”</string>
+    <string name="mooncat_about_quote_reference">John 3:15–17 (Douay-Rheims)</string>
 </resources>

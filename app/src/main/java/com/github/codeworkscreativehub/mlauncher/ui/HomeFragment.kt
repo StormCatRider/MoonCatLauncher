@@ -59,6 +59,8 @@ import com.github.codeworkscreativehub.common.showShortToast
 import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
 import com.github.codeworkscreativehub.mlauncher.mooncat.productivity.ProductivityDialogs
+import com.github.codeworkscreativehub.mlauncher.mooncat.pages.HomePages
+import com.github.codeworkscreativehub.mlauncher.mooncat.pages.PageStore
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Constants
 import com.github.codeworkscreativehub.mlauncher.data.Constants.Action
@@ -477,6 +479,12 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                     updateAppCountWithUsageStats(it)
                 } else {
                     updateAppCount(it)
+                }
+            }
+            homePressed.observe(viewLifecycleOwner) { press ->
+                if (press != null && !press.handled) {
+                    press.handled = true
+                    goToStartPage()
                 }
             }
             homeAppsChanged.observe(viewLifecycleOwner) {
@@ -1166,13 +1174,20 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     private var currentPage = 0
     private lateinit var pageRanges: List<IntRange>
 
-    internal fun displayPageForSlot(slot: Int): Int {
-        val count = prefs.homePagesNum.coerceAtLeast(1)
-        val base = prefs.homeAppsNum / count
-        val extra = prefs.homeAppsNum % count
-        val split = (base + 1) * extra
-        return if (slot < split) slot / (base + 1)
-        else (extra + (slot - split) / base.coerceAtLeast(1)).coerceAtMost(count - 1)
+    internal fun displayPageForSlot(slot: Int): Int =
+        HomePages.pageForSlot(PageStore(requireContext()).load(), prefs.homeAppsNum, prefs.homePagesNum.coerceAtLeast(1), slot)
+
+    /** Shows the page chosen for Home, or opens the widget page when that is the choice. */
+    private fun goToStartPage() {
+        val start = HomePages.effectiveStart(PageStore(requireContext()).load(), prefs.homePagesNum)
+        if (start == HomePages.WIDGET_PAGE) {
+            showWidgetPage()
+            return
+        }
+        if (::pageRanges.isInitialized && start in pageRanges.indices && start != currentPage) {
+            currentPage = start
+            updateAppsVisibility()
+        }
     }
 
     private fun updatePagesAndAppsPerPage(totalApps: Int, totalPages: Int) {
@@ -1184,19 +1199,9 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             return
         }
 
-        val baseAppsPerPage = totalApps / totalPages
-        val extraApps = totalApps % totalPages
-        AppLogger.d(homeScreenPager, "Base apps per page: $baseAppsPerPage, extra apps: $extraApps")
-
-        var startIdx = 0
-        pageRanges = List(totalPages) { page ->
-            val appsThisPage = baseAppsPerPage + if (page < extraApps) 1 else 0
-            val endIdx = startIdx + appsThisPage
-            val range = startIdx until endIdx
-            AppLogger.d(homeScreenPager, "Page $page → range $range (appsThisPage=$appsThisPage)")
-            startIdx = endIdx
-            range
-        }
+        // Moon Cat: the user may choose how many apps each page holds; otherwise they are split evenly.
+        pageRanges = HomePages.ranges(PageStore(requireContext()).load(), totalApps, totalPages)
+        AppLogger.d(homeScreenPager, "Page ranges: $pageRanges")
 
         if (currentPage >= pageRanges.size) {
             currentPage = 0
@@ -1226,6 +1231,11 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         pageSelectorIcons[currentPage] = R.drawable.ic_current_page
 
         val spannable = SpannableStringBuilder()
+        val pageName = HomePages.name(PageStore(requireContext()).load(), currentPage)
+        if (pageName.isNotEmpty()) spannable.append(pageName).append("  ")
+        binding.homeScreenPager.contentDescription =
+            getLocalizedString(R.string.mooncat_pages_position, currentPage + 1, totalPages) +
+                if (pageName.isNotEmpty()) ", $pageName" else ""
         pageSelectorIcons.forEach { drawableRes ->
             val drawable = ContextCompat.getDrawable(requireContext(), drawableRes)?.apply {
                 setBounds(0, 0, intrinsicWidth, intrinsicHeight)

@@ -471,6 +471,14 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
     }
 
+    /** The Home key delivers a new HOME intent to the running launcher: show the chosen start page. */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_HOME) && ::viewModel.isInitialized) {
+            viewModel.homePressed.value = com.github.codeworkscreativehub.mlauncher.mooncat.pages.HomePress()
+        }
+    }
+
     override fun onResume() {
         backToHomeScreen()
         super.onResume()

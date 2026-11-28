@@ -67,6 +67,7 @@ import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
 import com.github.codeworkscreativehub.mlauncher.mooncat.privacy.PermissionInspector
 import com.github.codeworkscreativehub.mlauncher.mooncat.productivity.ProductivityDialogs
+import com.github.codeworkscreativehub.mlauncher.mooncat.pages.HomePageDialogs
 import com.github.codeworkscreativehub.mlauncher.data.AppCategory
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Constants
@@ -940,6 +941,13 @@ class SettingsFragment : BaseFragment() {
                             }
                         )
                     }
+
+                    SettingsSelect(
+                        title = getLocalizedString(R.string.mooncat_pages_title),
+                        option = getLocalizedString(R.string.mooncat_pages_summary),
+                        fontSize = titleFontSize,
+                        onClick = { HomePageDialogs(requireContext()).show() }
+                    )
 
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -2842,6 +2850,15 @@ class SettingsFragment : BaseFragment() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Quotation chosen by the owner (John 3:15-17), in public-domain Catholic translations.
+                    TitleWithHtmlLinks(
+                        title = getLocalizedString(R.string.mooncat_about_quote) + "\n— " +
+                            getLocalizedString(R.string.mooncat_about_quote_reference),
+                        titleFontSize = descriptionFontSize
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     TitleWithHtmlLinks(
                         title = getLocalizedString(R.string.settings_source_code),
                         descriptions = listOf(
@@ -2854,19 +2871,8 @@ class SettingsFragment : BaseFragment() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    if (!resources.getBoolean(R.bool.is_play_store)) {
-                        TitleWithHtmlLinks(
-                            title = getLocalizedString(R.string.settings_donations),
-                            descriptions = listOf(
-                                getLocalizedString(R.string.sponsor_link),
-                                getLocalizedString(R.string.coffee_link),
-                                getLocalizedString(R.string.libera_link)
-                            ),
-                            titleFontSize = titleFontSize,
-                            descriptionFontSize = descriptionFontSize
-                        )
-                    }
-
+                    // The upstream mLauncher donation links were removed at the owner's request.
+                    // Moon Cat's own donation channels will be added here once they exist.
 
                     Spacer(modifier = Modifier.weight(1f))
 

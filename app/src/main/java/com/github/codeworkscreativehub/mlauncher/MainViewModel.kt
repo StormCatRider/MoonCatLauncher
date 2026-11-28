@@ -107,6 +107,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Fires when home apps changed in the background, e.g. a removed shortcut was cleared. */
     val homeAppsChanged = MutableLiveData<Long>()
+
+    /** Fires when the Home key brings the launcher forward; handled once by the home screen. */
+    val homePressed = MutableLiveData<com.github.codeworkscreativehub.mlauncher.mooncat.pages.HomePress>()
     val homePagesNum = MutableLiveData(prefs.homePagesNum)
     val opacityNum = MutableLiveData(prefs.opacityNum)
     val filterStrength = MutableLiveData(prefs.filterStrength)
