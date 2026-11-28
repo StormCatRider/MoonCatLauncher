@@ -457,6 +457,8 @@ private fun isSleepModeAlarmByTime(hour: Int, minute: Int, prefs: Prefs): Boolea
 
 fun wordOfTheDay(prefs: Prefs): String {
     val dailyWordsArray = loadWordList(prefs)
+    // Moon Cat ships no daily texts until the owner provides the verses; show nothing instead of crashing.
+    if (dailyWordsArray.isEmpty()) return emptyString()
     val dayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
     val wordIndex =
         (dayOfYear - 1) % dailyWordsArray.size // Subtracting 1 to align with array indexing
@@ -650,9 +652,10 @@ fun loadWordList(prefs: Prefs): List<String> {
     val customWordListString = prefs.wordList
     // If the user has imported their own list, use it
     return if (customWordListString != emptyString()) {
-        prefs.wordList.split("||")
+        prefs.wordList.split("||").filter { it.isNotBlank() }
     } else {
-        getLocalizedStringArray(R.array.mooncat_daily_verses).toList() // Moon Cat: daily Bible verses
+        // Moon Cat: daily Bible verses, empty until the owner supplies them.
+        getLocalizedStringArray(R.array.mooncat_daily_verses).filter { it.isNotBlank() }
     }
 }
 

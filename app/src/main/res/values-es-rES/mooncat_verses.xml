@@ -1,42 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Versículos diarios de Moon Cat Launcher, uno por día en rotación.
-  Texto según la traducción católica de Torres Amat (dominio público). Los salmos siguen la numeración de la Vulgata.
-  El orden coincide con values/mooncat_verses.xml para que ambos idiomas muestren el mismo versículo cada día.
-  Pendiente de revisión por el propietario frente a una edición impresa antes de publicar.
+  Versículos bíblicos diarios de Moon Cat Launcher, uno por día en rotación.
+  Vacío a propósito: el propietario proporcionará los versículos y su traducción.
+  Añade un <item> por versículo, en el mismo orden que values/mooncat_verses.xml (inglés).
+  Mientras la lista esté vacía, el inicio no muestra texto diario.
 -->
 <resources>
-    <string-array name="mooncat_daily_verses">
-        <item>«El Señor es quien me gobierna: nada me faltará.»\n— Salmo 22, 1</item>
-        <item>«Yo soy el camino, la verdad y la vida.»\n— Juan 14, 6</item>
-        <item>«Venid a mí todos los que andáis agobiados con trabajos y cargas, que yo os aliviaré.»\n— Mateo 11, 28</item>
-        <item>«Todo lo puedo en aquel que me conforta.»\n— Filipenses 4, 13</item>
-        <item>«El Señor es mi luz y mi salvación: ¿a quién temeré?»\n— Salmo 26, 1</item>
-        <item>«Yo soy la luz del mundo: el que me sigue no camina a oscuras, sino que tendrá la luz de la vida.»\n— Juan 8, 12</item>
-        <item>«Bienaventurados los que tienen puro su corazón, porque ellos verán a Dios.»\n— Mateo 5, 8</item>
-        <item>«Bienaventurados los pacíficos, porque serán llamados hijos de Dios.»\n— Mateo 5, 9</item>
-        <item>«Quien no tiene amor, no conoce a Dios, puesto que Dios es caridad.»\n— 1 Juan 4, 8</item>
-        <item>«He aquí la esclava del Señor, hágase en mí según tu palabra.»\n— Lucas 1, 38</item>
-        <item>«Buscad, pues, primero el reino de Dios y su justicia, y todas las demás cosas se os darán por añadidura.»\n— Mateo 6, 33</item>
-        <item>«El precepto mío es que os améis unos a otros, como yo os he amado a vosotros.»\n— Juan 15, 12</item>
-        <item>«Si Dios está por nosotros, ¿quién contra nosotros?»\n— Romanos 8, 31</item>
-        <item>«Antorcha para mis pies es tu palabra, y luz para mis senderos.»\n— Salmo 118, 105</item>
-        <item>«Yo mismo estaré continuamente con vosotros hasta la consumación de los siglos.»\n— Mateo 28, 20</item>
-        <item>«Yo soy la resurrección y la vida: quien cree en mí, aunque hubiere muerto, vivirá.»\n— Juan 11, 25</item>
-        <item>«Ahora permanecen estas tres virtudes: la fe, la esperanza y la caridad; pero de las tres, la caridad es la más excelente.»\n— 1 Corintios 13, 13</item>
-        <item>«Estad quietos, y reconoced que yo soy Dios.»\n— Salmo 45, 11</item>
-        <item>«Pedid, y se os dará; buscad, y hallaréis; llamad, y se os abrirá.»\n— Mateo 7, 7</item>
-        <item>«Un nuevo mandamiento os doy: que os améis unos a otros, del modo que yo os he amado.»\n— Juan 13, 34</item>
-        <item>«Tratad a los hombres de la misma manera que quisierais que ellos os tratasen a vosotros.»\n— Lucas 6, 31</item>
-        <item>«Gustad, y ved cuán suave es el Señor: bienaventurado el hombre que en él confía.»\n— Salmo 33, 9</item>
-        <item>«Vosotros sois la luz del mundo.»\n— Mateo 5, 14</item>
-        <item>«No temas, que yo estoy contigo; no te desvíes, que yo soy tu Dios.»\n— Isaías 41, 10</item>
-        <item>«Confía en el Señor de todo tu corazón, y no te apoyes en tu prudencia.»\n— Proverbios 3, 5</item>
-        <item>«Yo soy el pan de vida: el que viene a mí no tendrá hambre, y el que cree en mí no tendrá jamás sed.»\n— Juan 6, 35</item>
-        <item>«Porque para Dios nada es imposible.»\n— Lucas 1, 37</item>
-        <item>«Jesucristo es el mismo hoy que ayer, y lo será por los siglos de los siglos.»\n— Hebreos 13, 8</item>
-        <item>«Yo soy el buen pastor. El buen pastor sacrifica su vida por sus ovejas.»\n— Juan 10, 11</item>
-        <item>«Amarás a tu prójimo como a ti mismo.»\n— Mateo 22, 39</item>
-        <item>«Vivid siempre alegres. Orad sin intermisión. En todo dad gracias a Dios.»\n— 1 Tesalonicenses 5, 16-18</item>
-    </string-array>
+    <string-array name="mooncat_daily_verses" />
 </resources>

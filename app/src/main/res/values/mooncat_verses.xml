@@ -1,42 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Daily verses for Moon Cat Launcher, one per day in rotation.
-  English: Douay-Rheims (public domain). Psalm numbers follow the Vulgate, as in that translation.
-  The order matches values-es-rES/mooncat_verses.xml so both languages show the same verse each day.
-  Pending owner review against a printed edition before release.
+  Daily Bible verses for Moon Cat Launcher, one per day in rotation.
+  Intentionally empty: the owner will supply the verses and their translation.
+  Add one <item> per verse here (English) and the same verses, in the same order, in
+  values-es-rES/mooncat_verses.xml (Spanish) so both languages show the same verse each day.
+  While the list is empty the home screen shows no daily text.
 -->
 <resources>
-    <string-array name="mooncat_daily_verses">
-        <item>“The Lord ruleth me: and I shall want nothing.”\n— Psalm 22:1</item>
-        <item>“I am the way, and the truth, and the life.”\n— John 14:6</item>
-        <item>“Come to me, all you that labour, and are burdened, and I will refresh you.”\n— Matthew 11:28</item>
-        <item>“I can do all these things in him who strengtheneth me.”\n— Philippians 4:13</item>
-        <item>“The Lord is my light and my salvation, whom shall I fear?”\n— Psalm 26:1</item>
-        <item>“I am the light of the world: he that followeth me, walketh not in darkness, but shall have the light of life.”\n— John 8:12</item>
-        <item>“Blessed are the clean of heart: for they shall see God.”\n— Matthew 5:8</item>
-        <item>“Blessed are the peacemakers: for they shall be called the children of God.”\n— Matthew 5:9</item>
-        <item>“He that loveth not, knoweth not God: for God is charity.”\n— 1 John 4:8</item>
-        <item>“Behold the handmaid of the Lord; be it done to me according to thy word.”\n— Luke 1:38</item>
-        <item>“Seek ye therefore first the kingdom of God, and his justice, and all these things shall be added unto you.”\n— Matthew 6:33</item>
-        <item>“This is my commandment, that you love one another, as I have loved you.”\n— John 15:12</item>
-        <item>“If God be for us, who is against us?”\n— Romans 8:31</item>
-        <item>“Thy word is a lamp to my feet, and a light to my paths.”\n— Psalm 118:105</item>
-        <item>“Behold I am with you all days, even to the consummation of the world.”\n— Matthew 28:20</item>
-        <item>“I am the resurrection and the life: he that believeth in me, although he be dead, shall live.”\n— John 11:25</item>
-        <item>“And now there remain faith, hope, and charity, these three: but the greatest of these is charity.”\n— 1 Corinthians 13:13</item>
-        <item>“Be still and see that I am God.”\n— Psalm 45:11</item>
-        <item>“Ask, and it shall be given you: seek, and you shall find: knock, and it shall be opened to you.”\n— Matthew 7:7</item>
-        <item>“A new commandment I give unto you: That you love one another, as I have loved you.”\n— John 13:34</item>
-        <item>“And as you would that men should do to you, do you also to them in like manner.”\n— Luke 6:31</item>
-        <item>“O taste, and see that the Lord is sweet: blessed is the man that hopeth in him.”\n— Psalm 33:9</item>
-        <item>“You are the light of the world.”\n— Matthew 5:14</item>
-        <item>“Fear not, for I am with thee: turn not aside, for I am thy God.”\n— Isaiah 41:10</item>
-        <item>“Have confidence in the Lord with all thy heart, and lean not upon thy own prudence.”\n— Proverbs 3:5</item>
-        <item>“I am the bread of life: he that cometh to me shall not hunger: and he that believeth in me shall never thirst.”\n— John 6:35</item>
-        <item>“Because no word shall be impossible with God.”\n— Luke 1:37</item>
-        <item>“Jesus Christ, yesterday, and to day; and the same for ever.”\n— Hebrews 13:8</item>
-        <item>“I am the good shepherd. The good shepherd giveth his life for his sheep.”\n— John 10:11</item>
-        <item>“Thou shalt love thy neighbour as thyself.”\n— Matthew 22:39</item>
-        <item>“Always rejoice. Pray without ceasing. In all things give thanks.”\n— 1 Thessalonians 5:16–18</item>
-    </string-array>
+    <string-array name="mooncat_daily_verses" />
 </resources>

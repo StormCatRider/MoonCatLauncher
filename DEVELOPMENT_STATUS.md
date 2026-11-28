@@ -146,7 +146,7 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 ## Cita, versículo diario y donaciones
 
 - Acerca de muestra Juan 3, 15-17, elegido por el propietario: Douay-Rheims en inglés y Torres Amat en español, ambas traducciones católicas de dominio público.
-- La palabra diaria se sustituyó por 31 versículos bíblicos en rotación diaria, con el mismo versículo en ambos idiomas. Una lista importada por el usuario sigue teniendo prioridad. Se eliminó la lista de palabras de mLauncher.
+- La palabra diaria pasa a ser el versículo diario. Se eliminó la lista de palabras de mLauncher. A petición del propietario, la lista de versículos (`res/values*/mooncat_verses.xml`) queda vacía hasta que él proporcione los textos. Mientras esté vacía, el inicio y el widget no muestran texto diario, sin errores. Una lista importada por el usuario sigue teniendo prioridad.
 - Se quitaron los enlaces de donación de mLauncher (GitHub Sponsors, BuyMeACoffee, Liberapay). Los canales propios de Moon Cat se añadirán cuando existan.
-- Los textos bíblicos están pendientes de revisión por el propietario frente a una edición impresa.
-- Pasaron las 45 pruebas y `ProdDebug`. En el emulador se vieron la cita en Acerca de y el versículo del día en el inicio.
+- El texto de Juan 3, 15-17 en Acerca de está pendiente de revisión por el propietario frente a una edición impresa.
+- Pasaron las 45 pruebas y `ProdDebug`. En el emulador se vio la cita en Acerca de y se comprobó que, sin versículos, el inicio arranca sin texto diario y sin errores.

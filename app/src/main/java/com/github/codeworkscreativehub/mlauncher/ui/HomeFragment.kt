@@ -329,6 +329,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
 
             alarm.text = getNextAlarm(requireContext(), prefs, viewModel.showAlarmDate.value ?: true)
             dailyWord.text = wordOfTheDay(prefs)
+            if (dailyWord.text.isBlank()) dailyWord.isVisible = false
         }
     }
 
@@ -520,7 +521,8 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
                 updateTimeAndInfo()
             }
             showDailyWord.observe(viewLifecycleOwner) {
-                binding.dailyWord.isVisible = it
+                // Hidden while there is no daily text to show (no verses supplied or imported yet).
+                binding.dailyWord.isVisible = it && wordOfTheDay(prefs).isNotBlank()
             }
 
             clockAlignment.observe(viewLifecycleOwner) { clockGravity ->
