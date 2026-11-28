@@ -58,6 +58,7 @@ import com.github.codeworkscreativehub.mlauncher.helper.hasContactsPermission
 import com.github.codeworkscreativehub.mlauncher.helper.ismlauncherDefault
 import com.github.codeworkscreativehub.mlauncher.helper.openAppInfo
 import com.github.codeworkscreativehub.mlauncher.helper.utils.PrivateSpaceManager
+import com.github.codeworkscreativehub.mlauncher.mooncat.drawer.DrawerCategoryController
 import com.github.codeworkscreativehub.mlauncher.ui.adapter.AppDrawerAdapter
 import com.github.codeworkscreativehub.mlauncher.ui.adapter.ContactDrawerAdapter
 
@@ -69,6 +70,7 @@ class AppDrawerFragment : BaseFragment() {
     private lateinit var contactsAdapter: ContactDrawerAdapter
 
     private var currentFilteredSection: String? = null
+    private var categoryController: DrawerCategoryController? = null
 
     private var _binding: FragmentAppDrawerBinding? = null
     private val binding get() = _binding!!
@@ -278,6 +280,28 @@ class AppDrawerFragment : BaseFragment() {
         binding.contactsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.appsRecyclerView.adapter = appAdapter
         binding.contactsRecyclerView.adapter = contactAdapter
+
+        if (flag == AppDrawerFlag.LaunchApp && appAdapter != null) {
+            listOf(binding.categoryBar, binding.localResults).forEach {
+                it.setTextColor(prefs.appColor)
+                it.textSize = (prefs.appSize * 0.8f).coerceAtLeast(14f)
+            }
+            categoryController = DrawerCategoryController(
+                fragment = this,
+                adapter = appAdapter,
+                recycler = binding.appsRecyclerView,
+                bar = binding.categoryBar,
+                localResults = binding.localResults,
+                currentQuery = { binding.search.query?.toString().orEmpty() },
+                openNotes = {
+                    try {
+                        findNavController().navigate(R.id.notesManagerFragment)
+                    } catch (e: Exception) {
+                        AppLogger.e("Drawer", "Could not open notes: ${e.message}")
+                    }
+                }
+            ).also { it.start() }
+        }
 
         var lastSectionLetter: String? = null
 
@@ -534,6 +558,7 @@ class AppDrawerFragment : BaseFragment() {
                         0 -> appAdapter?.filter?.filter(it.trim())
                         1 -> contactAdapter?.filter?.filter(it.trim())
                     }
+                    categoryController?.onQueryChanged(it)
                 }
                 return false
             }
@@ -721,7 +746,7 @@ class AppDrawerFragment : BaseFragment() {
         // 🔹 Observe apps
         viewModel.appList.observe(viewLifecycleOwner) { rawAppList ->
             if (flag == AppDrawerFlag.HiddenApps) return@observe
-            if (rawAppList == appAdapter.appsList || binding.menuView.displayedChild != 0) return@observe
+            if (rawAppList == appAdapter.allApps || binding.menuView.displayedChild != 0) return@observe
 
             AppLogger.d("Apps", "Loaded ${rawAppList?.size ?: 0} raw apps")
             rawAppList?.let { list ->
@@ -812,6 +837,7 @@ class AppDrawerFragment : BaseFragment() {
             AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_anim_from_bottom)
         binding.appsRecyclerView.layoutAnimation = animation
         appAdapter.setAppList(apps.toMutableList())
+        categoryController?.onAppsChanged()
 
         // ✅ ENABLE dynamic AZ letters
         updateAZSidebarForApps(apps)

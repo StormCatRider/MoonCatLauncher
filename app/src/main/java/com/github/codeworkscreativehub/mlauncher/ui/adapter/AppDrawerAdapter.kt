@@ -142,6 +142,7 @@ class AppDrawerAdapter(
 
             appFilteredList.removeAt(holder.absoluteAdapterPosition)
             appsList.remove(appModel)
+            allApps.remove(appModel)
             notifyItemRemoved(holder.absoluteAdapterPosition)
 
             AppLogger.d("AppListDebug", "📤 notifyItemRemoved at ${holder.absoluteAdapterPosition}")
@@ -286,9 +287,44 @@ class AppDrawerAdapter(
 
     @SuppressLint("NotifyDataSetChanged")
     fun setAppList(appsList: MutableList<AppListItem>) {
-        this.appsList = appsList
-        this.appFilteredList = appsList
+        allApps = appsList
+        applyCategory()
+    }
+
+    /** Every app given to the drawer, before the category filter. */
+    var allApps: MutableList<AppListItem> = mutableListOf()
+        private set
+
+    /** Limits [appsList] to one drawer category; search and the A–Z filter then work inside it. */
+    var categoryPredicate: ((AppListItem) -> Boolean)? = null
+        set(value) {
+            field = value
+            applyCategory()
+        }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun applyCategory() {
+        val predicate = categoryPredicate
+        appsList = if (predicate == null) allApps else allApps.filter(predicate).toMutableList()
+        appFilteredList = appsList
         notifyDataSetChanged()
+    }
+
+    /** 1 shows the classic list; more columns show a text grid. */
+    var columns: Int = 1
+        @SuppressLint("NotifyDataSetChanged")
+        set(value) {
+            if (field == value) return
+            field = value
+            notifyDataSetChanged()
+        }
+
+    /** In the grid, an open menu or rename panel takes the whole row so its buttons stay usable. */
+    fun isFullSpan(position: Int): Boolean {
+        if (columns <= 1) return true
+        if (position == openedContextMenuPosition) return true
+        val key = renamingKey ?: return false
+        return appFilteredList.getOrNull(position)?.settingsKey == key
     }
 
     fun launchFirstInList() {
@@ -474,9 +510,11 @@ class AppDrawerAdapter(
             // 5️⃣ App title
             appTitle.text = prefs.getAppAlias(settingsKey).takeIf { it.isNotBlank() } ?: appListItem.activityLabel
             val params = appTitle.layoutParams as FrameLayout.LayoutParams
-            params.gravity = appLabelGravity
+            val grid = columns > 1 && !isFullSpan(absoluteAdapterPosition)
+            params.gravity = if (grid) android.view.Gravity.CENTER_HORIZONTAL else appLabelGravity
             appTitle.layoutParams = params
-            val padding = dp2px(resources, 24)
+            appTitle.ellipsize = if (grid) android.text.TextUtils.TruncateAt.END else null
+            val padding = dp2px(resources, if (grid) 6 else 24)
             appTitle.updatePadding(left = padding, right = padding)
 
             // ----------------------------
@@ -537,6 +575,8 @@ class AppDrawerAdapter(
                             appHideLayout.isVisible = true
                             sidebarContainer?.isVisible = false
                             openedContextMenuPosition = currentPos
+                            // The grid gives the open item a full row, which needs a new layout pass.
+                            if (columns > 1) notifyItemChanged(currentPos)
 
                         } catch (e: Exception) {
                             e.printStackTrace()

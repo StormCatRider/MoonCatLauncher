@@ -134,11 +134,39 @@
         android:textSize="16sp"
         android:visibility="gone" />
 
+    <!-- Moon Cat: drawer category filter, shown only when launching apps -->
+    <com.github.creativecodecat.components.views.FontAppCompatTextView
+        android:id="@+id/categoryBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appDrawerTip"
+        android:layout_alignParentEnd="true"
+        android:background="?attr/selectableItemBackground"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <!-- Moon Cat: matching notes and tasks for the current search -->
+    <com.github.creativecodecat.components.views.FontAppCompatTextView
+        android:id="@+id/localResults"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/categoryBar"
+        android:layout_alignParentEnd="true"
+        android:background="?attr/selectableItemBackground"
+        android:minHeight="48dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="24dp"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
     <ViewSwitcher
         android:id="@+id/menuView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/appDrawerTip"
+        android:layout_below="@id/localResults"
         android:layout_alignParentBottom="true"
         android:clipToPadding="false">
 

@@ -123,3 +123,13 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 - 6 pruebas unitarias cubren horarios diurnos y nocturnos, horarios inválidos, la pausa solo de las apps elegidas y solo con el enfoque activo, y la limpieza, límites y orden de las tareas. Pasaron las 36 pruebas y `ProdDebug`.
 - Verificado en el emulador API 37: crear tareas con y sin fecha, completarlas, la marca del calendario, la cuenta atrás del Pomodoro con el temporizador del reloj del sistema, el aviso al abrir una app en pausa y «Abrir de todos modos». Esta prueba encontró y corrigió un fallo: «Abrir de todos modos» no hacía nada porque el cajón ya se había cerrado.
 - Limitación conocida: el widget de apps de inicio abre las apps sin pasar por el modo enfoque.
+
+## Cajón y búsqueda (0.4.0)
+
+- Una línea bajo la búsqueda del cajón («Todas las apps ▾») filtra por categoría. Las categorías automáticas salen de la categoría que cada app declara a Android, así que se calculan en el dispositivo. Las categorías propias funcionan como carpetas del cajón: se crean, se renombran, se borran y se eligen sus apps. Una app puede moverse a cualquier categoría o volver a la automática. La búsqueda y el filtro A–Z funcionan dentro de la categoría elegida.
+- Vista en lista o en cuadrícula de texto de 2 a 4 columnas (Categorías → Vista). En la cuadrícula, el menú de una app y el panel de renombrar ocupan toda la fila para que sus botones sigan siendo usables.
+- Al escribir dos o más letras, el cajón indica cuántas notas y tareas coinciden, sin distinguir mayúsculas ni acentos. Al tocarlo se listan y se abren.
+- Las categorías y la vista se guardan en las preferencias del launcher, así que entran en el respaldo cifrado. Los datos inválidos se descartan al leer.
+- 5 pruebas unitarias cubren categorías automáticas y propias, nombres únicos, borrado, asignaciones a categorías inexistentes y la búsqueda local. Pasaron las 41 pruebas y `ProdDebug`.
+- Verificado en el emulador API 37: categorías automáticas con recuento, filtro por categoría, cuadrícula de 3 columnas con el menú a lo ancho, una categoría propia que sustituye a la automática, y la búsqueda de una tarea desde el cajón.
+- Pendiente: buscar archivos autorizados por el usuario.
