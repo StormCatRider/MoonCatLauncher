@@ -95,3 +95,12 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 
 - El logo del propietario se conserva en `branding/logo-source.png`. `branding/generate-icons.ps1` genera el icono adaptativo, el logo de la app sin esquinas blancas y el icono de tienda de 512 px.
 - El icono adaptativo usa la ilustración como capa de fondo y un vector del gato sobre la luna como capa monocroma para los iconos temáticos. Acerca de ya no usa el icono de mLauncher. `aapt` confirmó el icono adaptativo en el APK ProdDebug. Falta verlo en un dispositivo.
+
+## Inspector de permisos (0.6.0)
+
+- Ajustes → Avanzado → Permisos y privacidad muestra qué puede usar el launcher y por qué, con una explicación en español e inglés para cada permiso y acceso especial: inicio predeterminado, contactos, acceso de uso, notificaciones, accesibilidad y administrador del dispositivo.
+- El estado se lee en el dispositivo a partir de la información del paquete instalado y del estado de cada acceso especial. Cada entrada configurable abre la pantalla de ajustes de Android correspondiente, porque el launcher no puede revocar sus propios permisos.
+- La vista básica muestra los permisos sensibles y los accesos especiales. La vista avanzada muestra todos los permisos con su nombre técnico.
+- Una línea comprueba en tiempo de ejecución que la instalación no solicita Internet ni ubicación. Los permisos sin explicación se marcan como sensibles.
+- 4 pruebas unitarias verifican que cada permiso del APK ProdDebug tiene explicación y que no se catalogan capacidades prohibidas. Pasaron las 29 pruebas y `ProdDebug`.
+- Falta verificar la interfaz en un dispositivo. El emulador API 37 local estaba en uso por otro proceso sin modo de solo lectura.

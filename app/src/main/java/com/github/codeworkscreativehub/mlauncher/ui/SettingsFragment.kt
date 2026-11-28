@@ -65,6 +65,7 @@ import com.github.codeworkscreativehub.mlauncher.BuildConfig
 import com.github.codeworkscreativehub.mlauncher.MainActivity
 import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
+import com.github.codeworkscreativehub.mlauncher.mooncat.privacy.PermissionInspector
 import com.github.codeworkscreativehub.mlauncher.data.AppCategory
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Constants
@@ -2711,6 +2712,18 @@ class SettingsFragment : BaseFragment() {
                         onClick = {
                             exitLauncher(requireContext())
                         },
+                    )
+
+                    SettingsHomeItem(
+                        title = getLocalizedString(R.string.mooncat_perm_title),
+                        description = getLocalizedString(R.string.mooncat_perm_entry_description),
+                        iconRes = R.drawable.padlock,
+                        titleFontSize = titleFontSize,
+                        descriptionFontSize = descriptionFontSize,
+                        iconSize = iconSize,
+                        onClick = {
+                            PermissionInspector(requireActivity()).show()
+                        }
                     )
 
                     SettingsHomeItem(
