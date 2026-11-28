@@ -20,6 +20,7 @@ import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
+import com.github.codeworkscreativehub.mlauncher.helper.utils.BiometricHelper
 import com.github.codeworkscreativehub.mlauncher.helper.utils.PrivateSpaceManager
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.ItemType
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.DisplayMode
@@ -47,6 +48,7 @@ internal class HomeFolders(
     private val store = LayoutStore(home.requireContext())
     private val users = requireNotNull(home.requireContext().getSystemService(UserManager::class.java))
     private val privateSpace = PrivateSpaceManager(home.requireContext())
+    private val auth = BiometricHelper(home.requireActivity())
     private var snapshot: LayoutSnapshot? = null
     private var saving = false
     private var dialog: AlertDialog? = null
@@ -146,6 +148,17 @@ internal class HomeFolders(
         dialog = null
     }
 
+    /** Leaving the home screen closes protected folders, so returning asks again. */
+    fun hideProtected() {
+        val shown = snapshot?.items?.firstOrNull { it.id == (inlineFolderId ?: inlineRootId) }
+        if (shown != null && lockedChain(shown)) {
+            inlineRootId = null
+            inlineFolderId = null
+            refresh()
+        }
+        close()
+    }
+
     fun chooseSlotAction(slot: Int, selectApp: () -> Unit) {
         if (snapshot == null || saving) {
             selectApp()
@@ -224,14 +237,32 @@ internal class HomeFolders(
         home.renderFolderApp(row, app, mode)
     }
 
+    // Each opening of a protected folder asks again; closing never does.
+    private fun unlockThen(folder: LauncherItem, action: () -> Unit) {
+        if (!folder.locked) action()
+        else auth.protect(getLocalizedString(R.string.mooncat_folder_unlock_subtitle).format(folder.label), action)
+    }
+
+    private fun lockedChain(folder: LauncherItem): Boolean {
+        val byId = snapshot?.items.orEmpty().associateBy { it.id }
+        return generateSequence(folder) { byId[it.parentFolderId] }.any { it.locked }
+    }
+
     fun toggle(slotFolder: LauncherItem) {
-        if (slotFolder.folderOpenMode != FolderOpenMode.INLINE) {
-            open(slotFolder)
+        if (slotFolder.folderOpenMode == FolderOpenMode.INLINE && slotFolder.id == inlineRootId) {
+            inlineRootId = null
+            inlineFolderId = null
+            refresh()
             return
         }
-        inlineRootId = slotFolder.id.takeUnless { it == inlineRootId }
-        inlineFolderId = inlineRootId
-        refresh()
+        unlockThen(slotFolder) {
+            if (slotFolder.folderOpenMode != FolderOpenMode.INLINE) open(slotFolder)
+            else {
+                inlineRootId = slotFolder.id
+                inlineFolderId = slotFolder.id
+                refresh()
+            }
+        }
     }
 
     fun visibleSlot(slot: Int, row: View): View {
@@ -276,8 +307,10 @@ internal class HomeFolders(
         for (child in childrenOf(folder)) {
             add(displayLabel(child), child) {
                 if (child.type == ItemType.FOLDER && child.folderOpenMode == FolderOpenMode.INLINE) {
-                    inlineFolderId = child.id
-                    refresh()
+                    unlockThen(child) {
+                        inlineFolderId = child.id
+                        refresh()
+                    }
                 } else select(child)
             }
         }
@@ -296,7 +329,7 @@ internal class HomeFolders(
         snapshot?.items.orEmpty().filter { it.parentFolderId == folder.id }.sortedBy { it.position }
 
     private fun select(child: LauncherItem) {
-        if (child.type == ItemType.FOLDER) open(child)
+        if (child.type == ItemType.FOLDER) unlockThen(child) { open(child) }
         else {
             val app = resolveApp(child)
             if (app == null) reportError(R.string.mooncat_folder_app_missing) else viewModel.launchApp(app, home)
@@ -378,7 +411,8 @@ internal class HomeFolders(
             getLocalizedString(R.string.mooncat_folder_open_mode),
             getLocalizedString(R.string.mooncat_display_folder),
             getLocalizedString(R.string.mooncat_display_app),
-            getLocalizedString(R.string.mooncat_display_page)
+            getLocalizedString(R.string.mooncat_display_page),
+            getLocalizedString(if (folder.locked) R.string.mooncat_folder_unprotect else R.string.mooncat_folder_protect)
         )
         show(MaterialAlertDialogBuilder(home.requireContext()).setTitle(folder.label).setItems(labels) { _, index ->
             when (index) {
@@ -410,8 +444,22 @@ internal class HomeFolders(
                     val byId = snapshot?.items.orEmpty().associateBy { it.id }
                     choosePageDisplay(generateSequence(folder) { byId[it.parentFolderId] }.last().position)
                 }
+                10 -> toggleProtection(folder)
             }
         })
+    }
+
+    private fun toggleProtection(folder: LauncherItem) {
+        if (!folder.locked && !BiometricHelper.canAuthenticate(home.requireActivity())) {
+            reportError(R.string.mooncat_folder_protect_unavailable)
+            return
+        }
+        // Both turning protection on and off are confirmed, so a borrowed unlocked phone cannot change it silently.
+        auth.protect(getLocalizedString(R.string.mooncat_folder_unlock_subtitle).format(folder.label)) {
+            edit { current ->
+                current.copy(items = current.items.map { if (it.id == folder.id) it.copy(locked = !folder.locked) else it })
+            }
+        }
     }
 
     private fun editItemDisplay(item: LauncherItem, title: Int) {
@@ -471,8 +519,11 @@ internal class HomeFolders(
     }
 
     private fun move(child: LauncherItem, destination: LauncherItem, beforeId: String? = null) {
+        // Moving into another protected folder must not reveal its contents without confirmation.
+        val staysClosed = destination.id != child.parentFolderId && lockedChain(destination)
         edit(afterSave = {
-            if (inlineRootId != null && destination.folderOpenMode == FolderOpenMode.INLINE) {
+            if (staysClosed) Unit
+            else if (inlineRootId != null && destination.folderOpenMode == FolderOpenMode.INLINE) {
                 val byId = snapshot?.items.orEmpty().associateBy { it.id }
                 val root = generateSequence(destination) { byId[it.parentFolderId] }.last()
                 if (root.folderOpenMode == FolderOpenMode.INLINE) {

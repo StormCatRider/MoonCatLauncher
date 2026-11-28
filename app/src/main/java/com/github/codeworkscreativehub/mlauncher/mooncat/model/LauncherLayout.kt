@@ -33,7 +33,9 @@ data class LauncherItem(
     val userSerial: Long? = null,
     val displayMode: DisplayMode? = null,
     val folderOpenMode: FolderOpenMode = FolderOpenMode.INLINE,
-    val originalHomeSlot: Int? = null
+    val originalHomeSlot: Int? = null,
+    // Requires biometric or screen-lock confirmation before the folder opens. Folders only.
+    val locked: Boolean = false
 )
 
 object LauncherLayout {

@@ -18,6 +18,7 @@ data class LayoutSnapshot(
         val byId = items.associateBy { it.id }
         for (item in items) {
             if (item.id.isBlank() || item.label.isBlank() || item.pageId !in pageIds || item.position < 0) return false
+            if (item.locked && item.type != ItemType.FOLDER) return false
             if (item.type == ItemType.APPLICATION && (item.packageName.isNullOrBlank() || item.activityName.isNullOrBlank())) return false
             val homeSlot = item.originalHomeSlot
             if (homeSlot != null && (homeSlot < 0 || item.parentFolderId == null ||

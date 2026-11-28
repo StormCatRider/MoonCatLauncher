@@ -5,12 +5,11 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.github.codeworkscreativehub.common.getLocalizedString
+import com.github.codeworkscreativehub.common.showLongToast
 import com.github.codeworkscreativehub.mlauncher.R
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 
 class BiometricHelper(private val activity: FragmentActivity) {
-    private lateinit var callbackApp: CallbackApp
-    private lateinit var callbackSettings: CallbackSettings
 
     interface CallbackApp {
         fun onAuthenticationSucceeded(appListItem: AppListItem)
@@ -24,77 +23,60 @@ class BiometricHelper(private val activity: FragmentActivity) {
         fun onAuthenticationError(errorCode: Int, errorMessage: CharSequence?)
     }
 
-    fun startBiometricAuth(appListItem: AppListItem, callbackApp: CallbackApp) {
-        this.callbackApp = callbackApp
+    fun startBiometricAuth(appListItem: AppListItem, callbackApp: CallbackApp) = authenticate(
+        getLocalizedString(R.string.text_biometric_login_app, appListItem.activityLabel),
+        onSuccess = { callbackApp.onAuthenticationSucceeded(appListItem) },
+        onFailed = callbackApp::onAuthenticationFailed,
+        onError = callbackApp::onAuthenticationError
+    )
 
-        val authenticationCallback = object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                callbackApp.onAuthenticationSucceeded(appListItem)
-            }
+    fun startBiometricSettingsAuth(callbackApp: CallbackSettings) = authenticate(
+        getLocalizedString(R.string.text_biometric_login_sub),
+        onSuccess = callbackApp::onAuthenticationSucceeded,
+        onFailed = callbackApp::onAuthenticationFailed,
+        onError = callbackApp::onAuthenticationError
+    )
 
-            override fun onAuthenticationFailed() {
-                callbackApp.onAuthenticationFailed()
-            }
+    /** Protects an action such as opening a locked folder. Failures and cancellations do nothing. */
+    fun protect(subtitle: String, onSuccess: () -> Unit) =
+        authenticate(subtitle, onSuccess, onFailed = {}, onError = { _, _ -> })
 
-            override fun onAuthenticationError(errorCode: Int, errorMessage: CharSequence) {
-                callbackApp.onAuthenticationError(errorCode, errorMessage)
-            }
+    /**
+     * Without any screen lock Android cannot verify the user, and anyone holding the phone can
+     * already reach everything. Blocking would only lock the owner out of the launcher (for
+     * example after removing their PIN), so the action proceeds with a visible warning.
+     */
+    private fun authenticate(
+        subtitle: String,
+        onSuccess: () -> Unit,
+        onFailed: () -> Unit,
+        onError: (Int, CharSequence?) -> Unit
+    ) {
+        if (!canAuthenticate(activity)) {
+            activity.showLongToast(getLocalizedString(R.string.mooncat_lock_inactive))
+            onSuccess()
+            return
         }
-
-        val executor = ContextCompat.getMainExecutor(activity)
-        val biometricPrompt = BiometricPrompt(activity, executor, authenticationCallback)
-
-        val authenticators =
-            BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
-        val canAuthenticate =
-            BiometricManager.from(activity).canAuthenticate(authenticators)
-
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(getLocalizedString(R.string.text_biometric_login))
-            .setSubtitle(getLocalizedString(R.string.text_biometric_login_app, appListItem.activityLabel))
-            .setAllowedAuthenticators(authenticators)
-            .setConfirmationRequired(false)
-            .build()
-
-        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
-            biometricPrompt.authenticate(promptInfo)
-        }
+        val prompt = BiometricPrompt(activity, ContextCompat.getMainExecutor(activity), object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) = onSuccess()
+            override fun onAuthenticationFailed() = onFailed()
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) = onError(errorCode, errString)
+        })
+        prompt.authenticate(
+            BiometricPrompt.PromptInfo.Builder()
+                .setTitle(getLocalizedString(R.string.text_biometric_login))
+                .setSubtitle(subtitle)
+                .setAllowedAuthenticators(AUTHENTICATORS)
+                .setConfirmationRequired(false)
+                .build()
+        )
     }
 
-    fun startBiometricSettingsAuth(callbackApp: CallbackSettings) {
-        this.callbackSettings = callbackApp
-
-        val authenticationCallback = object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                callbackSettings.onAuthenticationSucceeded()
-            }
-
-            override fun onAuthenticationFailed() {
-                callbackSettings.onAuthenticationFailed()
-            }
-
-            override fun onAuthenticationError(errorCode: Int, errorMessage: CharSequence) {
-                callbackSettings.onAuthenticationError(errorCode, errorMessage)
-            }
-        }
-
-        val executor = ContextCompat.getMainExecutor(activity)
-        val biometricPrompt = BiometricPrompt(activity, executor, authenticationCallback)
-
-        val authenticators =
+    companion object {
+        private const val AUTHENTICATORS =
             BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
-        val canAuthenticate =
-            BiometricManager.from(activity).canAuthenticate(authenticators)
 
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(getLocalizedString(R.string.text_biometric_login))
-            .setSubtitle(getLocalizedString(R.string.text_biometric_login_sub))
-            .setAllowedAuthenticators(authenticators)
-            .setConfirmationRequired(false)
-            .build()
-
-        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
-            biometricPrompt.authenticate(promptInfo)
-        }
+        fun canAuthenticate(activity: FragmentActivity): Boolean =
+            BiometricManager.from(activity).canAuthenticate(AUTHENTICATORS) == BiometricManager.BIOMETRIC_SUCCESS
     }
 }

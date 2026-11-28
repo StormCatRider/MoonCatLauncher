@@ -204,6 +204,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
 
     override fun onStop() {
         super.onStop()
+        homeFolders.hideProtected()
 
         context?.let { ctx ->
             try {

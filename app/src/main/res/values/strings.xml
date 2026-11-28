@@ -623,4 +623,9 @@
     <string name="mooncat_perm_internal_reason">Keeps the system messages of the launcher private to the app.</string>
     <string name="mooncat_perm_unknown">Unexplained permission</string>
     <string name="mooncat_perm_unknown_reason">This permission has no explanation yet. Please report it.</string>
+    <string name="mooncat_lock_inactive">No screen lock is set, so protection is inactive. Set a PIN, pattern or fingerprint in Android settings.</string>
+    <string name="mooncat_folder_unlock_subtitle">Open the folder “%1$s”</string>
+    <string name="mooncat_folder_protect">Protect with screen lock</string>
+    <string name="mooncat_folder_unprotect">Remove protection</string>
+    <string name="mooncat_folder_protect_unavailable">Set a screen lock in Android settings first.</string>
 </resources>

@@ -89,4 +89,14 @@ class LauncherLayoutTest {
         assertThrows(IllegalArgumentException::class.java) { snapshot.moveFolderItem(nested.id, descendant.id) }
         assertThrows(IllegalArgumentException::class.java) { snapshot.moveFolderItem(descendant.id, folder.id, folder.id) }
     }
+
+    @Test fun onlyFoldersCanBeProtectedAndOldLayoutsStayUnlocked() {
+        assertTrue(LayoutSnapshot(items = listOf(folder.copy(locked = true), nested)).isValid())
+        assertFalse(LayoutSnapshot(items = listOf(app.copy(packageName = "p", activityName = "a", locked = true))).isValid())
+        val adapter = Moshi.Builder().build().adapter(LayoutSnapshot::class.java)
+        val legacy = """{"items":[{"id":"f","label":"Old","type":"FOLDER","pageId":"home","position":0}]}"""
+        assertFalse(requireNotNull(adapter.fromJson(legacy)).items.single().locked)
+        val locked = LayoutSnapshot(items = listOf(folder.copy(locked = true)))
+        assertEquals(locked, adapter.fromJson(adapter.toJson(locked)))
+    }
 }

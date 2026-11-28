@@ -104,3 +104,10 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 - Una línea comprueba en tiempo de ejecución que la instalación no solicita Internet ni ubicación. Los permisos sin explicación se marcan como sensibles.
 - 4 pruebas unitarias verifican que cada permiso del APK ProdDebug tiene explicación y que no se catalogan capacidades prohibidas. Pasaron las 29 pruebas y `ProdDebug`.
 - Falta verificar la interfaz en un dispositivo. El emulador API 37 local estaba en uso por otro proceso sin modo de solo lectura.
+
+## Protección con el bloqueo de pantalla (0.6.0)
+
+- El menú de edición de una carpeta permite protegerla con el bloqueo de pantalla (huella, rostro, PIN o patrón). Cada apertura de la carpeta o de sus subcarpetas pide confirmación. Mover un elemento a una carpeta protegida ya no la abre, y al salir del inicio se cierran las carpetas protegidas abiertas en línea. Activar y quitar la protección también piden confirmación.
+- La distribución solo admite la marca de protección en carpetas. Los diseños anteriores se leen sin protección. Una prueba unitaria cubre ambos casos.
+- Corrección: sin bloqueo de pantalla en el teléfono, la autenticación no hacía nada, así que con el bloqueo de ajustes activado o con aplicaciones bloqueadas el usuario quedaba fuera, por ejemplo tras quitar su PIN. Ahora la acción continúa con un aviso de que la protección está inactiva, porque sin bloqueo de pantalla Android no puede verificar a nadie.
+- El bloqueo de ajustes heredado cubre la única ruta de navegación a Ajustes. Pasaron las 30 pruebas y `ProdDebug`. Falta verificar en un dispositivo.

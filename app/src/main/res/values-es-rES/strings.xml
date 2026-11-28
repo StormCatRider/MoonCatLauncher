@@ -521,4 +521,9 @@
     <string name="mooncat_perm_internal_reason">Mantiene privados los mensajes del sistema propios del launcher.</string>
     <string name="mooncat_perm_unknown">Permiso sin explicación</string>
     <string name="mooncat_perm_unknown_reason">Este permiso aún no tiene explicación. Por favor, infórmalo.</string>
+    <string name="mooncat_lock_inactive">No hay bloqueo de pantalla, así que la protección está inactiva. Configura un PIN, un patrón o una huella en los ajustes de Android.</string>
+    <string name="mooncat_folder_unlock_subtitle">Abrir la carpeta «%1$s»</string>
+    <string name="mooncat_folder_protect">Proteger con el bloqueo de pantalla</string>
+    <string name="mooncat_folder_unprotect">Quitar protección</string>
+    <string name="mooncat_folder_protect_unavailable">Primero configura un bloqueo de pantalla en los ajustes de Android.</string>
 </resources>
