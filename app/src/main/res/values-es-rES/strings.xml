@@ -649,4 +649,13 @@
     <string name="mooncat_files_no_app">Ninguna app puede abrir este archivo.</string>
     <string name="mooncat_files_unavailable">Esta carpeta ya no está disponible. Vuelve a añadirla en Ajustes.</string>
     <string name="mooncat_files_no_picker">Este dispositivo no tiene selector de carpetas.</string>
+    <string name="mooncat_a11y_private_space">Espacio privado</string>
+    <string name="mooncat_a11y_phone">Teléfono</string>
+    <string name="mooncat_a11y_messages">Mensajes</string>
+    <string name="mooncat_a11y_camera">Cámara</string>
+    <string name="mooncat_a11y_photos">Fotos</string>
+    <string name="mooncat_a11y_browser">Navegador</string>
+    <string name="mooncat_a11y_settings">Ajustes de Moon Cat</string>
+    <string name="mooncat_a11y_quick_action">Acción rápida</string>
+    <string name="mooncat_reduce_animations">Reducir animaciones</string>
 </resources>

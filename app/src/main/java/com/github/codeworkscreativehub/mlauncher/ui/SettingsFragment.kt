@@ -1255,6 +1255,20 @@ class SettingsFragment : BaseFragment() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Moon Cat: reduce animations (also on when Android removes animations)
+                    var reduceAnimations by remember {
+                        mutableStateOf(com.github.codeworkscreativehub.mlauncher.mooncat.a11y.ReducedMotion.userChoice(requireContext()))
+                    }
+                    SettingsSwitch(
+                        text = getLocalizedString(R.string.mooncat_reduce_animations),
+                        fontSize = titleFontSize,
+                        defaultState = reduceAnimations,
+                        onCheckedChange = {
+                            reduceAnimations = !reduceAnimations
+                            com.github.codeworkscreativehub.mlauncher.mooncat.a11y.ReducedMotion.setUserChoice(requireContext(), reduceAnimations)
+                        }
+                    )
+
                     // Layout & Density
                     SettingsTitle(
                         text = getLocalizedString(R.string.layout_positioning),

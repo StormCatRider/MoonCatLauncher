@@ -1176,12 +1176,18 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
     private var currentPage = 0
     private lateinit var pageRanges: List<IntRange>
 
+    // Page settings are parsed once per layout pass instead of once per slot.
+    private var pageConfigCache: com.github.codeworkscreativehub.mlauncher.mooncat.pages.PageConfig? = null
+
+    private fun pageConfig() = pageConfigCache ?: PageStore(requireContext()).load().also { pageConfigCache = it }
+
     internal fun displayPageForSlot(slot: Int): Int =
-        HomePages.pageForSlot(PageStore(requireContext()).load(), prefs.homeAppsNum, prefs.homePagesNum.coerceAtLeast(1), slot)
+        HomePages.pageForSlot(pageConfig(), prefs.homeAppsNum, prefs.homePagesNum.coerceAtLeast(1), slot)
 
     /** Shows the page chosen for Home, or opens the widget page when that is the choice. */
     private fun goToStartPage() {
-        val start = HomePages.effectiveStart(PageStore(requireContext()).load(), prefs.homePagesNum)
+        pageConfigCache = null
+        val start = HomePages.effectiveStart(pageConfig(), prefs.homePagesNum)
         if (start == HomePages.WIDGET_PAGE) {
             showWidgetPage()
             return
@@ -1202,7 +1208,8 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         }
 
         // Moon Cat: the user may choose how many apps each page holds; otherwise they are split evenly.
-        pageRanges = HomePages.ranges(PageStore(requireContext()).load(), totalApps, totalPages)
+        pageConfigCache = null // page settings may have changed while away
+        pageRanges = HomePages.ranges(pageConfig(), totalApps, totalPages)
         AppLogger.d(homeScreenPager, "Page ranges: $pageRanges")
 
         if (currentPage >= pageRanges.size) {
@@ -1233,7 +1240,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
         pageSelectorIcons[currentPage] = R.drawable.ic_current_page
 
         val spannable = SpannableStringBuilder()
-        val pageName = HomePages.name(PageStore(requireContext()).load(), currentPage)
+        val pageName = HomePages.name(pageConfig(), currentPage)
         if (pageName.isNotEmpty()) spannable.append(pageName).append("  ")
         binding.homeScreenPager.contentDescription =
             getLocalizedString(R.string.mooncat_pages_position, currentPage + 1, totalPages) +

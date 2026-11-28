@@ -504,7 +504,8 @@ class MainActivity : AppCompatActivity() {
     private fun migration() {
         migration.migratePreferencesOnVersionUpdate(prefs)
         migration.migrateMessages(prefs)
-        migration.deleteOldCacheFiles(applicationContext)
+        // Only deletes leftover files, so it does not need to block the first frame.
+        Thread { migration.deleteOldCacheFiles(applicationContext) }.start()
     }
 
 }

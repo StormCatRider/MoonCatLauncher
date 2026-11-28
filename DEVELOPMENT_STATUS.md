@@ -152,3 +152,14 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 - Se quitaron los enlaces de donación de mLauncher (GitHub Sponsors, BuyMeACoffee, Liberapay). Los canales propios de Moon Cat se añadirán cuando existan.
 - Falta que el propietario confirme o proporcione el texto en inglés.
 - Pasaron las 45 pruebas y `ProdDebug`. En el emulador se vio la cita en Acerca de y se comprobó que, sin versículos, el inicio arranca sin texto diario y sin errores.
+
+## Optimización y accesibilidad (0.8.0)
+
+- Las compilaciones de depuración activan StrictMode para registrar lecturas y escrituras de disco en el hilo principal. En el arranque y al abrir el cajón bajaron de 34 a 20 avisos. Los restantes son lecturas de ajustes imprescindibles para dibujar el inicio y para el idioma, y la única búsqueda de la fuente del sistema.
+- La caché de la lista de apps y contactos se lee y escribe fuera del hilo principal. El resultado guardado solo se publica si no llegó antes una lista más reciente, y ambos se publican en el hilo principal para evitar carreras.
+- La fuente del sistema se busca una sola vez en lugar de en cada uso. El borrado de cachés antiguas ya no bloquea el primer fotograma. Los ajustes de páginas se leen una vez por pasada de dibujo, no una por posición, y las notas y tareas una vez por apertura del cajón.
+- El arranque en frío de la compilación de depuración en el emulador se mantuvo en torno a 1,6 s antes y después: lo dominan la creación de vistas y la carga de la app, no estas lecturas. Falta medir una compilación release en un teléfono real.
+- Accesibilidad: los iconos del inicio y del widget de accesos se anunciaban como «Mostrar». Ahora tienen nombres propios (Ajustes de Moon Cat, Acción rápida, Teléfono, Mensajes, Cámara, Fotos, Navegador, Espacio privado). Su área táctil pasó de 26 a 48 dp sin cambiar su tamaño visible; se midieron 126 px (48 dp) en el emulador.
+- Nueva opción Apariencia → Reducir animaciones. Quita las transiciones entre pantallas, la animación de la lista del cajón y el deslizamiento de los paneles. También se activa sola si Android tiene «Quitar animaciones». Se comprobó que se guarda y que el cajón funciona con la opción activada.
+- La compilación release ya tenía activados R8 y la reducción de recursos.
+- Pasaron las 47 pruebas y `ProdDebug`.

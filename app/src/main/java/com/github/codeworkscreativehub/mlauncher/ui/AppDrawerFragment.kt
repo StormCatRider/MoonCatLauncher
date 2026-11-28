@@ -59,6 +59,7 @@ import com.github.codeworkscreativehub.mlauncher.helper.ismlauncherDefault
 import com.github.codeworkscreativehub.mlauncher.helper.openAppInfo
 import com.github.codeworkscreativehub.mlauncher.helper.utils.PrivateSpaceManager
 import com.github.codeworkscreativehub.mlauncher.mooncat.drawer.DrawerCategoryController
+import com.github.codeworkscreativehub.mlauncher.mooncat.a11y.ReducedMotion
 import com.github.codeworkscreativehub.mlauncher.ui.adapter.AppDrawerAdapter
 import com.github.codeworkscreativehub.mlauncher.ui.adapter.ContactDrawerAdapter
 
@@ -833,9 +834,9 @@ class AppDrawerFragment : BaseFragment() {
 
 
     private fun populateAppList(apps: List<AppListItem>, appAdapter: AppDrawerAdapter) {
-        val animation =
-            AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_anim_from_bottom)
-        binding.appsRecyclerView.layoutAnimation = animation
+        binding.appsRecyclerView.layoutAnimation =
+            if (ReducedMotion.isOn(requireContext())) null
+            else AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_anim_from_bottom)
         appAdapter.setAppList(apps.toMutableList())
         categoryController?.onAppsChanged()
 
@@ -847,9 +848,9 @@ class AppDrawerFragment : BaseFragment() {
         contacts: List<ContactListItem>,
         contactAdapter: ContactDrawerAdapter
     ) {
-        val animation =
-            AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_anim_from_bottom)
-        binding.contactsRecyclerView.layoutAnimation = animation
+        binding.contactsRecyclerView.layoutAnimation =
+            if (ReducedMotion.isOn(requireContext())) null
+            else AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_anim_from_bottom)
         contactAdapter.setContactList(contacts.toMutableList())
 
         // ✅ ENABLE dynamic AZ letters

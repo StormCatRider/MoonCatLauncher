@@ -16,6 +16,14 @@ open class BaseFragment : Fragment() {
 
     private val systemBarObserver: SystemBarObserver by lazy { SystemBarObserver(prefs) }
 
+    /** Screen transitions are skipped when the user asked to reduce animations. */
+    override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): android.view.animation.Animation? {
+        val context = context ?: return super.onCreateAnimation(transit, enter, nextAnim)
+        return if (nextAnim != 0 && com.github.codeworkscreativehub.mlauncher.mooncat.a11y.ReducedMotion.isOn(context))
+            com.github.codeworkscreativehub.mlauncher.mooncat.a11y.ReducedMotion.none()
+        else super.onCreateAnimation(transit, enter, nextAnim)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Attach the observer; lazy properties will initialize here

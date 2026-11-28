@@ -416,10 +416,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         appsMemoryCache?.let {
             appList.postValue(it)
         } ?: run {
-            // try file cache
-            loadAppsFromFileCache()?.let { cached ->
-                appsMemoryCache = cached.toMutableList()
-                appList.postValue(cached)
+            // try file cache, off the main thread; never overwrite a fresher list that arrived first
+            viewModelScope.launch(Dispatchers.IO) {
+                loadAppsFromFileCache()?.let { cached ->
+                    withContext(Dispatchers.Main) {
+                        if (appsMemoryCache == null) {
+                            appsMemoryCache = cached.toMutableList()
+                            appList.value = cached
+                        }
+                    }
+                }
             }
         }
 
@@ -434,7 +440,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         includeRecentApps
                     )
                     appsMemoryCache = fresh
-                    saveAppsToFileCache(fresh)
+                    withContext(Dispatchers.IO) { saveAppsToFileCache(fresh) }
                     // publish on main
                     withContext(Dispatchers.Main) {
                         appList.value = fresh
@@ -464,10 +470,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         contactsMemoryCache?.let {
             contactList.postValue(it)
         } ?: run {
-            // try file cache
-            loadContactsFromFileCache()?.let { cached ->
-                contactsMemoryCache = cached.toMutableList()
-                contactList.postValue(cached)
+            // try file cache, off the main thread; never overwrite a fresher list that arrived first
+            viewModelScope.launch(Dispatchers.IO) {
+                loadContactsFromFileCache()?.let { cached ->
+                    withContext(Dispatchers.Main) {
+                        if (contactsMemoryCache == null) {
+                            contactsMemoryCache = cached.toMutableList()
+                            contactList.value = cached
+                        }
+                    }
+                }
             }
         }
 
@@ -477,7 +489,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 try {
                     val fresh = getContactsList(appContext, includeHiddenContacts)
                     contactsMemoryCache = fresh
-                    saveContactsToFileCache(fresh)
+                    withContext(Dispatchers.IO) { saveContactsToFileCache(fresh) }
                     withContext(Dispatchers.Main) {
                         contactList.value = fresh
                     }

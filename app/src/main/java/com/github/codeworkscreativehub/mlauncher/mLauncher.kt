@@ -24,6 +24,13 @@ class Mlauncher : Application() {
             if (appContext != null) return // already initialized
             appContext = context
 
+            // Debug builds log slow work on the main thread so it can be found and moved off it.
+            if (BuildConfig.DEBUG) {
+                android.os.StrictMode.setThreadPolicy(
+                    android.os.StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build()
+                )
+            }
+
             val prefs = Prefs(context)
 
             // 🌓 Set theme mode once at app startup

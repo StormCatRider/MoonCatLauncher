@@ -716,7 +716,12 @@ fun parseBlacklistXML(context: Context): List<String> {
     return packageNames
 }
 
-fun getTrueSystemFont(): Typeface {
+/** The system font never changes while the app runs, so it is looked up on disk only once. */
+private val cachedSystemFont: Typeface by lazy { findTrueSystemFont() }
+
+fun getTrueSystemFont(): Typeface = cachedSystemFont
+
+private fun findTrueSystemFont(): Typeface {
     val possibleSystemFonts = listOf(
         "/system/fonts/Roboto-Regular.ttf",      // Stock Android (Pixel, AOSP)
         "/system/fonts/NotoSans-Regular.ttf",    // Some Android One devices

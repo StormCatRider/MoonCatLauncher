@@ -143,7 +143,8 @@ class FontBottomSheetDialogLocked(context: Context) : AppCompatDialog(context), 
 
         // Slide up animation from bottom
         sheet.translationY = -sheet.height.toFloat()
-        sheet.animate().translationY(0f).setDuration(250).start()
+        sheet.animate().translationY(0f)
+            .setDuration(if (com.github.codeworkscreativehub.mlauncher.mooncat.a11y.ReducedMotion.isOn(context)) 0 else 250).start()
     }
 
     override fun applyFont(typeface: Typeface?) {

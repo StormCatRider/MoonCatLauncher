@@ -11,7 +11,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_margin="8dp"
-        android:contentDescription="@string/show"
+        android:contentDescription="@string/mooncat_a11y_phone"
         android:elevation="6dp"
         android:src="@drawable/ic_phone" />
 
@@ -20,7 +20,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_margin="8dp"
-        android:contentDescription="@string/show"
+        android:contentDescription="@string/mooncat_a11y_messages"
         android:elevation="6dp"
         android:src="@drawable/ic_messages" />
 
@@ -29,7 +29,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_margin="8dp"
-        android:contentDescription="@string/show"
+        android:contentDescription="@string/mooncat_a11y_camera"
         android:elevation="6dp"
         android:src="@drawable/ic_camera" />
 
@@ -38,7 +38,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_margin="8dp"
-        android:contentDescription="@string/show"
+        android:contentDescription="@string/mooncat_a11y_photos"
         android:elevation="6dp"
         android:src="@drawable/ic_photos" />
 
@@ -47,7 +47,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_margin="8dp"
-        android:contentDescription="@string/show"
+        android:contentDescription="@string/mooncat_a11y_browser"
         android:elevation="6dp"
         android:src="@drawable/ic_browser" />
 
@@ -56,7 +56,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_margin="8dp"
-        android:contentDescription="@string/show"
+        android:contentDescription="@string/mooncat_a11y_settings"
         android:elevation="6dp"
         android:src="@drawable/ic_settings" />
 
@@ -65,7 +65,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_margin="8dp"
-        android:contentDescription="@string/show"
+        android:contentDescription="@string/mooncat_a11y_quick_action"
         android:elevation="6dp"
         android:src="@drawable/app_launcher" />
 
