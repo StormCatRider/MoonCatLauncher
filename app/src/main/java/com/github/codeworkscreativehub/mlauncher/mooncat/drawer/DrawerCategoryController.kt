@@ -19,6 +19,8 @@ import com.github.codeworkscreativehub.common.showLongToast
 import com.github.codeworkscreativehub.mlauncher.R
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Prefs
+import com.github.codeworkscreativehub.mlauncher.mooncat.files.FileSearchIndex
+import com.github.codeworkscreativehub.mlauncher.mooncat.files.FoundFile
 import com.github.codeworkscreativehub.mlauncher.mooncat.productivity.Productivity
 import com.github.codeworkscreativehub.mlauncher.mooncat.productivity.ProductivityDialogs
 import com.github.codeworkscreativehub.mlauncher.mooncat.productivity.ProductivityStore
@@ -78,6 +80,7 @@ class DrawerCategoryController(
         localResults.setOnClickListener { showLocalResults() }
         updateBar()
         refreshAndroidCategories()
+        FileSearchIndex.refreshIfStale(context, fragment.viewLifecycleOwner.lifecycleScope)
     }
 
     /** Called when the drawer gets a new app list. */
@@ -335,13 +338,19 @@ class DrawerCategoryController(
     private sealed class LocalResult(val label: String) {
         class Note(label: String) : LocalResult(label)
         class Task(label: String) : LocalResult(label)
+        class File(label: String, val file: FoundFile) : LocalResult(label)
     }
 
+    // Read once per drawer opening rather than on every keystroke.
+    private val noteTexts by lazy { Prefs(context).loadMessages().map { it.text } }
+    private val taskList by lazy { Productivity.sorted(ProductivityStore(context).load().tasks) }
+
     private fun localMatches(query: String): List<LocalResult> {
-        val notes = LocalSearch.search(query, Prefs(context).loadMessages()) { it.text }.map { LocalResult.Note("✎ " + it.text) }
-        val tasks = LocalSearch.search(query, Productivity.sorted(ProductivityStore(context).load().tasks)) { it.text }
+        val tasks = LocalSearch.search(query, taskList) { it.text }
             .map { LocalResult.Task((if (it.done) "☑ " else "☐ ") + it.text) }
-        return (tasks + notes).take(LocalSearch.MAX_RESULTS)
+        val notes = LocalSearch.search(query, noteTexts) { it }.map { LocalResult.Note("✎ $it") }
+        val files = FileSearchIndex.search(query).map { LocalResult.File("▤ " + it.entry.name, it) }
+        return (tasks + notes + files).take(LocalSearch.MAX_RESULTS)
     }
 
     fun onQueryChanged(query: String) {
@@ -361,9 +370,10 @@ class DrawerCategoryController(
         MaterialAlertDialogBuilder(context)
             .setTitle(R.string.mooncat_search_local_title)
             .setItems(results.map { it.label.take(120) }.toTypedArray()) { _, which ->
-                when (results[which]) {
+                when (val result = results[which]) {
                     is LocalResult.Note -> openNotes()
                     is LocalResult.Task -> ProductivityDialogs(fragment.requireActivity()).showTasks()
+                    is LocalResult.File -> FileSearchIndex.open(context, result.file)
                 }
             }
             .setNegativeButton(R.string.mooncat_prod_close, null)

@@ -71,6 +71,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var backupController: BackupController
         private set
 
+    /** Folders the user authorized for the drawer's file-name search. */
+    lateinit var fileSearch: com.github.codeworkscreativehub.mlauncher.mooncat.files.FileSearchController
+        private set
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
             KeyEvent.KEYCODE_MENU -> {
@@ -303,6 +307,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         backupController = BackupController(this)
+        fileSearch = com.github.codeworkscreativehub.mlauncher.mooncat.files.FileSearchController(this)
 
         val systemBarObserver = SystemBarObserver(prefs)
         lifecycle.addObserver(systemBarObserver)

@@ -619,8 +619,8 @@
     <string name="mooncat_cat_view">Vista</string>
     <string name="mooncat_cat_view_list">Lista</string>
     <string name="mooncat_cat_view_grid">Cuadrícula de %1$d columnas</string>
-    <string name="mooncat_search_local_results">Notas y tareas: %1$d</string>
-    <string name="mooncat_search_local_title">Notas y tareas</string>
+    <string name="mooncat_search_local_results">Notas, tareas y archivos: %1$d</string>
+    <string name="mooncat_search_local_title">Notas, tareas y archivos</string>
     <string name="mooncat_pages_title">Páginas de inicio</string>
     <string name="mooncat_pages_summary">Nombres, apps por página y la página que abre Inicio</string>
     <string name="mooncat_pages_page">Página %1$d</string>
@@ -634,6 +634,19 @@
     <string name="mooncat_pages_name_title">Nombre de la página</string>
     <string name="mooncat_pages_name_hint">Por ejemplo, Trabajo</string>
     <string name="mooncat_pages_position">Página %1$d de %2$d</string>
-    <string name="mooncat_about_quote">«Que amó tanto Dios al mundo, que no paró hasta dar a su hijo unigénito; a fin de que todos los que creen en él, no perezcan, sino que vivan vida eterna. Pues no envió Dios su Hijo al mundo para condenar al mundo, sino para que por su medio el mundo se salve.»</string>
+    <string name="mooncat_about_quote">«Que amó tanto Dios al mundo, que no paró hasta dar a su Hijo unigénito; a fin de que todos los que creen en él, no perezcan, sino que vivan vida eterna. Pues no envió Dios su Hijo al mundo para condenar al mundo, sino para que por su medio el mundo se salve.»</string>
     <string name="mooncat_about_quote_reference">Juan 3, 16-17</string>
+    <string name="created_by"><![CDATA[Basado en <a href="https://github.com/CodeWorksCreativeHub/mLauncher">mLauncher de CodeWorks Creative Hub</a>]]></string>
+    <string name="forked_link"><![CDATA[Derivado de <a href="https://github.com/tanujnotes/Olauncher">Olauncher</a> (<a href="https://www.gnu.org/licenses/gpl-3.0.html">GPL-3.0</a>)]]></string>
+    <string name="privacy_policy_link"><![CDATA[<a href="https://github.com/StormCatRider/MoonCatLauncher/blob/main/PRIVACY.md">Política de privacidad de Moon Cat Launcher</a>]]></string>
+    <string name="mooncat_files_title">Buscar en archivos</string>
+    <string name="mooncat_files_summary">Carpetas cuyos nombres de archivo puede buscar el cajón</string>
+    <string name="mooncat_files_explain">Elige carpetas con el selector de carpetas de Android. Moon Cat solo lee los nombres de los archivos de esas carpetas, los guarda en memoria en este dispositivo y nunca lee su contenido. No necesita permiso de almacenamiento y puedes quitar una carpeta cuando quieras.</string>
+    <string name="mooncat_files_add">Añadir carpeta</string>
+    <string name="mooncat_files_remove">Quitar</string>
+    <string name="mooncat_files_remove_confirm">¿Dejar de buscar en %1$s? Moon Cat renunciará a su acceso a esta carpeta.</string>
+    <string name="mooncat_files_about">Cómo funciona</string>
+    <string name="mooncat_files_no_app">Ninguna app puede abrir este archivo.</string>
+    <string name="mooncat_files_unavailable">Esta carpeta ya no está disponible. Vuelve a añadirla en Ajustes.</string>
+    <string name="mooncat_files_no_picker">Este dispositivo no tiene selector de carpetas.</string>
 </resources>

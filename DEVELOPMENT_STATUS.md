@@ -132,7 +132,9 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 - Las categorías y la vista se guardan en las preferencias del launcher, así que entran en el respaldo cifrado. Los datos inválidos se descartan al leer.
 - 5 pruebas unitarias cubren categorías automáticas y propias, nombres únicos, borrado, asignaciones a categorías inexistentes y la búsqueda local. Pasaron las 41 pruebas y `ProdDebug`.
 - Verificado en el emulador API 37: categorías automáticas con recuento, filtro por categoría, cuadrícula de 3 columnas con el menú a lo ancho, una categoría propia que sustituye a la automática, y la búsqueda de una tarea desde el cajón.
-- Pendiente: buscar archivos autorizados por el usuario.
+- Búsqueda en archivos: Ajustes → Funciones → Buscar en archivos permite autorizar hasta 5 carpetas con el selector de Android. El launcher solo indexa nombres de archivo en memoria (hasta 5000, profundidad 6), nunca lee su contenido, no pide permiso de almacenamiento y libera el acceso al quitar la carpeta. Los resultados aparecen junto a notas y tareas y se abren con la app que elija el usuario. Una carpeta restaurada desde un respaldo en otro teléfono se ignora hasta volver a autorizarla. Android no permite autorizar la raíz ni Descargas.
+- 2 pruebas unitarias cubren el recorrido por niveles, carpetas ilegibles, ciclos y límites. Verificado en el emulador: se autorizó Documentos, se encontró «Receta_pan_mooncat.txt» en una subcarpeta, se abrió con el selector de apps y se quitó la carpeta.
+- Acerca de ya está traducido al español: «Basado en», «Derivado de» y la política de privacidad, que ahora enlaza a la rama main.
 
 ## Páginas y widgets (0.3.0)
 

@@ -816,6 +816,13 @@ class SettingsFragment : BaseFragment() {
                         )
                     }
 
+                    SettingsSelect(
+                        title = getLocalizedString(R.string.mooncat_files_title),
+                        option = getLocalizedString(R.string.mooncat_files_summary),
+                        fontSize = titleFontSize,
+                        onClick = { (activity as? MainActivity)?.fileSearch?.showManager() }
+                    )
+
                     Spacer(modifier = Modifier.height(12.dp))
 
                     // Home Management
