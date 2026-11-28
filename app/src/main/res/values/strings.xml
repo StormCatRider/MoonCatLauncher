@@ -736,6 +736,6 @@
     <string name="mooncat_pages_name_title">Page name</string>
     <string name="mooncat_pages_name_hint">For example, Work</string>
     <string name="mooncat_pages_position">Page %1$d of %2$d</string>
-    <string name="mooncat_about_quote">“That whosoever believeth in him, may not perish; but may have life everlasting. For God so loved the world, as to give his only begotten Son; that whosoever believeth in him, may not perish, but may have life everlasting. For God sent not his Son into the world, to judge the world, but that the world may be saved by him.”</string>
-    <string name="mooncat_about_quote_reference">John 3:15–17 (Douay-Rheims)</string>
+    <string name="mooncat_about_quote">“For God so loved the world, as to give his only begotten Son; that whosoever believeth in him, may not perish, but may have life everlasting. For God sent not his Son into the world, to judge the world, but that the world may be saved by him.”</string>
+    <string name="mooncat_about_quote_reference">John 3:16–17 (Douay-Rheims)</string>
 </resources>

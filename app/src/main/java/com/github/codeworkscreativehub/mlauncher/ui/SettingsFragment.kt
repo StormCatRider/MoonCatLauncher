@@ -2850,7 +2850,7 @@ class SettingsFragment : BaseFragment() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Quotation chosen by the owner (John 3:15-17), in public-domain Catholic translations.
+                    // Quotation chosen by the owner (John 3:16-17), in public-domain Catholic translations.
                     TitleWithHtmlLinks(
                         title = getLocalizedString(R.string.mooncat_about_quote) + "\n— " +
                             getLocalizedString(R.string.mooncat_about_quote_reference),

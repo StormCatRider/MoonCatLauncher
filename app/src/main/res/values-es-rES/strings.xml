@@ -634,6 +634,6 @@
     <string name="mooncat_pages_name_title">Nombre de la página</string>
     <string name="mooncat_pages_name_hint">Por ejemplo, Trabajo</string>
     <string name="mooncat_pages_position">Página %1$d de %2$d</string>
-    <string name="mooncat_about_quote">«Para que todo aquel que crea en él, no perezca, sino que logre la vida eterna. Que amó tanto Dios al mundo, que no paró hasta dar a su Hijo unigénito; a fin de que todos los que creen en él no perezcan, sino que vivan vida eterna. Pues no envió Dios su Hijo al mundo para condenar al mundo, sino para que por su medio el mundo se salve.»</string>
-    <string name="mooncat_about_quote_reference">Juan 3, 15-17 (Torres Amat)</string>
+    <string name="mooncat_about_quote">«Que amó tanto Dios al mundo, que no paró hasta dar a su hijo unigénito; a fin de que todos los que creen en él, no perezcan, sino que vivan vida eterna. Pues no envió Dios su Hijo al mundo para condenar al mundo, sino para que por su medio el mundo se salve.»</string>
+    <string name="mooncat_about_quote_reference">Juan 3, 16-17</string>
 </resources>
