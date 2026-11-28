@@ -66,6 +66,7 @@ import com.github.codeworkscreativehub.mlauncher.MainActivity
 import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
 import com.github.codeworkscreativehub.mlauncher.mooncat.privacy.PermissionInspector
+import com.github.codeworkscreativehub.mlauncher.mooncat.productivity.ProductivityDialogs
 import com.github.codeworkscreativehub.mlauncher.data.AppCategory
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Constants
@@ -431,6 +432,16 @@ class SettingsFragment : BaseFragment() {
                         descriptionFontSize = descriptionFontSize,
                         iconSize = iconSize,
                         onClick = { currentScreen = "notes" }
+                    )
+
+                    SettingsHomeItem(
+                        title = getLocalizedString(R.string.mooncat_prod_title),
+                        description = getLocalizedString(R.string.mooncat_prod_entry_description),
+                        iconRes = R.drawable.ic_alarm_clock,
+                        titleFontSize = titleFontSize,
+                        descriptionFontSize = descriptionFontSize,
+                        iconSize = iconSize,
+                        onClick = { ProductivityDialogs(requireActivity()).showHub() }
                     )
 
                     // 5. Private Spaces (if supported)

@@ -111,3 +111,15 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 - La distribución solo admite la marca de protección en carpetas. Los diseños anteriores se leen sin protección. Una prueba unitaria cubre ambos casos.
 - Corrección: sin bloqueo de pantalla en el teléfono, la autenticación no hacía nada, así que con el bloqueo de ajustes activado o con aplicaciones bloqueadas el usuario quedaba fuera, por ejemplo tras quitar su PIN. Ahora la acción continúa con un aviso de que la protección está inactiva, porque sin bloqueo de pantalla Android no puede verificar a nadie.
 - El bloqueo de ajustes heredado cubre la única ruta de navegación a Ajustes. Pasaron las 30 pruebas y `ProdDebug`. Falta verificar en un dispositivo.
+
+## Productividad (0.7.0)
+
+- Ajustes → Productividad, o un gesto con la acción «Productividad», abre tareas, calendario, Pomodoro y modo enfoque. Las notas existentes se mantienen y se abren desde el mismo panel cuando se llega por gesto.
+- Tareas locales con fecha opcional: añadir, editar, completar, cambiar fecha, borrar y borrar completadas. Límite de 500 tareas de 500 caracteres.
+- Calendario mensual propio que marca los días con tareas pendientes, con vista por día y acceso a la app de calendario del usuario. No lee el calendario del sistema, así que no necesita `READ_CALENDAR`.
+- Pomodoro con duraciones configurables. La alarma se programa en la app de reloj del usuario con `ACTION_SET_TIMER` (permiso `SET_ALARM` ya existente), así que suena aunque Android cierre el launcher. No se añadieron permisos.
+- Modo enfoque: durante una sesión Pomodoro o un horario semanal (incluidos horarios que cruzan la medianoche) el launcher pregunta antes de abrir las apps elegidas. Es un recordatorio dentro de Moon Cat, no un bloqueo del sistema, y la interfaz lo explica.
+- Los datos se guardan en las preferencias del launcher, así que entran en el respaldo cifrado y se borran con Borrar todos los datos. Los datos inválidos se descartan al leer.
+- 6 pruebas unitarias cubren horarios diurnos y nocturnos, horarios inválidos, la pausa solo de las apps elegidas y solo con el enfoque activo, y la limpieza, límites y orden de las tareas. Pasaron las 36 pruebas y `ProdDebug`.
+- Verificado en el emulador API 37: crear tareas con y sin fecha, completarlas, la marca del calendario, la cuenta atrás del Pomodoro con el temporizador del reloj del sistema, el aviso al abrir una app en pausa y «Abrir de todos modos». Esta prueba encontró y corrigió un fallo: «Abrir de todos modos» no hacía nada porque el cajón ya se había cerrado.
+- Limitación conocida: el widget de apps de inicio abre las apps sin pasar por el modo enfoque.

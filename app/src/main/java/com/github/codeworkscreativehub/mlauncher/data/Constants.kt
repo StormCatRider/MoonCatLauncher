@@ -325,6 +325,7 @@ object Constants {
         ShowAppList,
         ShowWidgetPage,
         ShowNotesManager,
+        ShowProductivity,
         ShowDigitalWellbeing,
         OpenQuickSettings,
         ShowRecents,
@@ -344,6 +345,7 @@ object Constants {
                 ShowAppList -> getLocalizedString(R.string.show_app_list)
                 ShowWidgetPage -> getLocalizedString(R.string.show_widget_page)
                 ShowNotesManager -> getLocalizedString(R.string.show_notes_manager)
+                ShowProductivity -> getLocalizedString(R.string.mooncat_prod_title)
                 ShowDigitalWellbeing -> getLocalizedString(R.string.show_digital_wellbeing)
                 OpenQuickSettings -> getLocalizedString(R.string.open_quick_settings)
                 ShowRecents -> getLocalizedString(R.string.show_recents)
@@ -366,6 +368,7 @@ object Constants {
                 ShowAppList -> getLocalizedString(R.string.show_app_list)
                 ShowWidgetPage -> getLocalizedString(R.string.show_widget_page)
                 ShowNotesManager -> getLocalizedString(R.string.show_notes_manager)
+                ShowProductivity -> getLocalizedString(R.string.mooncat_prod_title)
                 ShowDigitalWellbeing -> getLocalizedString(R.string.show_digital_wellbeing)
                 OpenQuickSettings -> getLocalizedString(R.string.open_quick_settings)
                 ShowRecents -> getLocalizedString(R.string.show_recents)

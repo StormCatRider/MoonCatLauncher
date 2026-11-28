@@ -17,6 +17,7 @@ import android.provider.ContactsContract
 import androidx.biometric.BiometricPrompt
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -43,6 +44,7 @@ import com.github.codeworkscreativehub.mlauncher.helper.ismlauncherDefault
 import com.github.codeworkscreativehub.mlauncher.helper.logActivitiesFromPackage
 import com.github.codeworkscreativehub.mlauncher.helper.utils.BiometricHelper
 import com.github.codeworkscreativehub.mlauncher.helper.utils.PrivateSpaceManager
+import com.github.codeworkscreativehub.mlauncher.mooncat.productivity.ProductivityDialogs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -270,7 +272,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun launchApp(appListItem: AppListItem, fragment: Fragment) {
-        biometricHelper = BiometricHelper(fragment.requireActivity())
+        val activity = fragment.activity ?: return
+        ProductivityDialogs.confirmLaunch(activity, appListItem.activityPackage, appListItem.activityLabel) {
+            launchAfterFocusCheck(appListItem, fragment, activity)
+        }
+    }
+
+    /** The drawer may already be closed when the focus dialog is answered, so use the activity. */
+    private fun launchAfterFocusCheck(appListItem: AppListItem, fragment: Fragment, activity: FragmentActivity) {
+        if (activity.isFinishing || activity.isDestroyed) return
+        biometricHelper = BiometricHelper(activity)
 
         val packageName = appListItem.activityPackage
         val currentLockedApps = prefs.lockedApps

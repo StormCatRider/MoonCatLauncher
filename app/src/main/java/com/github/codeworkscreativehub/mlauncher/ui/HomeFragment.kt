@@ -58,6 +58,7 @@ import com.github.codeworkscreativehub.common.openWebBrowser
 import com.github.codeworkscreativehub.common.showShortToast
 import com.github.codeworkscreativehub.mlauncher.MainViewModel
 import com.github.codeworkscreativehub.mlauncher.R
+import com.github.codeworkscreativehub.mlauncher.mooncat.productivity.ProductivityDialogs
 import com.github.codeworkscreativehub.mlauncher.data.AppListItem
 import com.github.codeworkscreativehub.mlauncher.data.Constants
 import com.github.codeworkscreativehub.mlauncher.data.Constants.Action
@@ -725,6 +726,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, View.OnLongClickListe
             Action.TogglePrivateSpace -> PrivateSpaceManager(requireContext()).togglePrivateSpaceLock(showToast = false, launchSettings = false)
             Action.ShowAppList -> showAppList(AppDrawerFlag.LaunchApp, includeHiddenApps = false)
             Action.ShowNotesManager -> showNotesManager()
+            Action.ShowProductivity -> ProductivityDialogs(requireActivity()) { showNotesManager() }.showHub()
             Action.ShowDigitalWellbeing -> requireContext().openDigitalWellbeing()
             Action.OpenQuickSettings -> expandQuickSettings(requireContext())
             Action.ShowRecents -> initActionService(requireContext())?.showRecents()
