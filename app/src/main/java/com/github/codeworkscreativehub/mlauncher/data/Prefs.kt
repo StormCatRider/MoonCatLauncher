@@ -14,6 +14,7 @@ import com.github.codeworkscreativehub.mlauncher.helper.emptyString
 import com.github.codeworkscreativehub.mlauncher.helper.getUserHandleFromString
 import com.github.codeworkscreativehub.mlauncher.helper.isSystemInDarkMode
 import com.github.codeworkscreativehub.mlauncher.mooncat.model.DisplayMode
+import com.github.codeworkscreativehub.mlauncher.mooncat.theme.ThemeColors
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -34,87 +35,22 @@ class Prefs(val context: Context) {
     internal val pinnedAppsKey = PINNED_APPS
 
     fun saveToTheme(colorNames: List<String>): String {
-        val allPrefs = prefsNormal.all
-        val filteredPrefs = mutableMapOf<String, String>()
-
-        for (colorName in colorNames) {
-            if (allPrefs.containsKey(colorName)) {
-                val colorInt = allPrefs[colorName] as? Int
-                if (colorInt != null) {
-                    val hexColor = String.format("#%08X", colorInt)
-                    filteredPrefs[colorName] = hexColor
-                }
-            }
-        }
-
-        val moshi = Moshi.Builder().build()
-
-        val type = Types.newParameterizedType(
-            Map::class.java,
-            String::class.java,
-            String::class.java
-        )
-        val adapter = moshi.adapter<Map<String, String>>(type).indent("  ") // pretty-print
-
-        return adapter.toJson(filteredPrefs)
+        val all = prefsNormal.all
+        val colors = colorNames.mapNotNull { name -> (all[name] as? Int)?.let { name to it } }.toMap()
+        return ThemeColors.format(colors)
     }
 
-    fun loadFromTheme(json: String) {
-        val moshi = Moshi.Builder().build()
-
-        val type = Types.newParameterizedType(
-            Map::class.java,
-            String::class.java,
-            Any::class.java
-        )
-
-        val adapter = moshi.adapter<Map<String, Any?>>(type)
-
-        val all = try {
-            adapter.fromJson(json)
-        } catch (e: Exception) {
-            AppLogger.e("Theme Import", "Failed to parse JSON", e)
-            context.showLongToast("Failed to parse theme JSON.")
-            return
-        } ?: emptyMap()
-
-        prefsNormal.edit {
-            for ((key, value) in all) {
-                try {
-                    when (value) {
-                        is String -> {
-                            if (value.matches(Regex("^#([A-Fa-f0-9]{8})$"))) {
-                                try {
-                                    putInt(key, value.toColorInt())
-                                } catch (e: IllegalArgumentException) {
-                                    context.showLongToast("Invalid color format for key: $key, value: $value")
-                                    AppLogger.e("Theme Import", "Invalid color format for key: $key, value: $value", e)
-                                    continue
-                                }
-                            } else {
-                                context.showLongToast("Unsupported HEX format for key: $key, value: $value")
-                                AppLogger.e("Theme Import", "Unsupported HEX format for key: $key, value: $value")
-                            }
-                        }
-
-                        null -> {
-                            context.showLongToast("Null value found for key: $key")
-                            AppLogger.e("Theme Import", "Null value found for key: $key")
-                            continue
-                        }
-
-                        else -> {
-                            context.showLongToast("Unsupported value type for key: $key, value: $value")
-                            AppLogger.e("Theme Import", "Unsupported value type for key: $key, value: $value")
-                            continue
-                        }
-                    }
-                } catch (e: Exception) {
-                    context.showLongToast("Error processing key: $key, value: $value")
-                    AppLogger.e("Theme Import", "Error processing key: $key, value: $value", e)
-                }
-            }
+    /** Validates the whole file first and writes only known color keys in one commit. */
+    fun loadFromTheme(json: String, colorNames: List<String>): Boolean {
+        val colors = try {
+            ThemeColors.parse(json, colorNames.toSet())
+        } catch (error: ThemeColors.InvalidThemeException) {
+            AppLogger.e("Theme Import", "Rejected theme file", error)
+            return false
         }
+        val editor = prefsNormal.edit()
+        colors.forEach { (key, color) -> editor.putInt(key, color) }
+        return editor.commit()
     }
 
     var appVersion: Int

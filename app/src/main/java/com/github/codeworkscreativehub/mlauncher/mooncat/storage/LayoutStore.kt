@@ -14,6 +14,16 @@ class LayoutStore(context: Context) {
         updated
     }
 
+    /** Replaces the stored layout with an already validated snapshot, e.g. from a restored backup. */
+    fun replace(snapshot: LayoutSnapshot) = synchronized(writeLock) {
+        check(save(snapshot)) { "Layout write failed" }
+    }
+
+    /** Returns the stored layout, or null on a fresh installation. */
+    fun loadStored(): LayoutSnapshot? = if (prefs.contains(KEY)) load() else null
+
+    fun clear(): Boolean = synchronized(writeLock) { prefs.edit().clear().commit() }
+
     // Missing data is a fresh installation; malformed data is an error, not a silent reset.
     fun load(): LayoutSnapshot {
         val raw = prefs.getString(KEY, null) ?: return LayoutSnapshot()

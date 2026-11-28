@@ -38,6 +38,8 @@ import com.github.codeworkscreativehub.mlauncher.data.Prefs
 import com.github.codeworkscreativehub.mlauncher.helper.getDeviceInfo
 import com.github.codeworkscreativehub.mlauncher.helper.hasContactsPermission
 import com.github.codeworkscreativehub.mlauncher.helper.utils.AppReloader
+import com.github.codeworkscreativehub.mlauncher.mooncat.storage.LayoutStore
+import com.github.codeworkscreativehub.mlauncher.mooncat.theme.ThemeDialogs
 import com.github.codeworkscreativehub.mlauncher.services.HapticFeedbackService
 import com.github.creativecodecat.components.views.FontBottomSheetDialogLocked
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -84,6 +86,11 @@ class DialogManager(val context: Context, val activity: Activity) {
             }
         }
 
+        (activity as? MainActivity)?.backupController?.let { backups ->
+            layout.addView(createItem(getLocalizedString(R.string.mooncat_backup_create)) { backups.startBackup() })
+            layout.addView(createItem(getLocalizedString(R.string.mooncat_backup_restore)) { backups.startRestore() })
+        }
+
         layout.addView(createItem(getLocalizedString(R.string.advanced_settings_backup_restore_clear)) {
             confirmClearData()
         })
@@ -110,6 +117,8 @@ class DialogManager(val context: Context, val activity: Activity) {
     private fun clearData() {
         prefs = Prefs(context)
         prefs.clear()
+        // Folders and the home layout live in their own private store.
+        LayoutStore(context).clear()
 
         AppReloader.restartApp(context)
     }
@@ -150,6 +159,10 @@ class DialogManager(val context: Context, val activity: Activity) {
                 }
             }
         }
+
+        layout.addView(createItem(getLocalizedString(R.string.mooncat_theme_library)) {
+            ThemeDialogs(activity).showLibrary()
+        })
 
         // Add Export and Import options
         layout.addView(createItem(getLocalizedString(R.string.advanced_settings_theme_export)) {

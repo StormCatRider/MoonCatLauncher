@@ -20,6 +20,17 @@ Se retiraron scripts y automatizaciones del fork para Discord, Crowdin, changelo
 - Falta verificar en dispositivo el arrastre dentro de carpetas y completar la personalización restante de Moon Home.
 - El número de versión del paquete sigue en `0.1.0` mientras se completa Moon Home.
 
+## Respaldo cifrado (adelanto de 0.6.0)
+
+- Ajustes → Avanzado → Datos locales ofrece crear y restaurar un respaldo cifrado. El archivo se elige con el selector de documentos de Android, sin permisos de almacenamiento.
+- Formato `MCLB` versión 1: PBKDF2-HMAC-SHA256 con 600 000 iteraciones y sal aleatoria de 16 bytes, AES-256-GCM con nonce de 12 bytes y la cabecera autenticada. Contraseña mínima de 8 caracteres.
+- Cada preferencia conserva su tipo. La restauración descifra y valida todo el contenido, incluida la distribución, antes de modificar datos, y sustituye las preferencias en un único `commit`.
+- Borrar todos los datos ahora vacía también el almacén de carpetas y distribución, que antes se conservaba.
+- 7 pruebas unitarias cubren ida y vuelta con tipos, contraseña incorrecta, manipulación de cabecera y cuerpo, truncado, versión no admitida, tamaño máximo, contraseña corta y contenido inválido. Pasaron las 17 pruebas y `ProdDebug`.
+- En el emulador API 37 sin red se creó la carpeta Lunar y se respaldó. El archivo de 776 bytes no contenía texto legible. Después se borraron los datos, se comprobó que la distribución quedó vacía, se rechazó una contraseña incorrecta sin cambios y se restauró con la correcta. Lunar volvió tras el reinicio.
+- La prueba detectó que el campo de contraseña mostraba el texto. Se corrigió y se verificó que queda oculto. La confirmación con la tecla Listo del teclado compila y pasa las pruebas, pero falta verificarla en un dispositivo.
+- La bienvenida ya no afirma que la accesibilidad sea necesaria para continuar.
+
 ## 0.1.0 Foundation
 
 La rama de trabajo es `feature/mooncat-foundation`. El proyecto conserva Android 9 como mínimo, el identificador `app.mooncat.launcher` y la licencia GPL-3.0 con las atribuciones de mLauncher.
@@ -71,5 +82,16 @@ El informe de fusión atribuye `ACCESS_NETWORK_STATE`, `FOREGROUND_SERVICE`, `RE
 
 - Auditar los APK de distribución de Play y Beta cuando se preparen y repetir la prueba de arranque, rol de inicio y widgets en Android 9 durante la verificación de compatibilidad.
 - Integrar las carpetas y la distribución persistente de Moon Home. Continuar con Moon Spaces, Moon Search, Moon Studio, Moon Shield y Moon Focus.
-- Implementar respaldos manuales cifrados y validar una restauración antes de sustituir datos. Completar accesibilidad, rendimiento y las pruebas beta antes de preparar APK y AAB de distribución.
+- Completar accesibilidad, rendimiento y las pruebas beta antes de preparar APK y AAB de distribución.
 - La cita de Acerca de queda a la espera del texto del propietario.
+
+## Temas (adelanto de 0.5.0)
+
+- La importación de temas heredada escribía cualquier clave del archivo en los ajustes. Un archivo con una clave que no fuera de color podía guardar un entero donde la app espera otro tipo y provocar un cierre en cada arranque. Ahora se valida el archivo completo, solo se aceptan las claves de color conocidas con formato `#AARRGGBB` y se escribe en un único `commit`. La lectura se limita a 64 KiB.
+- Ajustes → Avanzado → Theme Creations → Mis temas ofrece los temas Lunar, Claro y AMOLED, vista previa antes de aplicar, guardar el tema actual con nombre, duplicar, renombrar y eliminar. Admite hasta 50 temas con nombres únicos sin distinguir mayúsculas. Los temas guardados forman parte de las preferencias, así que entran en el respaldo cifrado y se borran con Borrar todos los datos.
+- 8 pruebas unitarias nuevas cubren el formato, la exclusión de claves desconocidas, el rechazo completo de archivos inválidos, los presets y los límites de nombres. Pasaron las 25 pruebas y `ProdDebug`. Falta verificar la interfaz de Mis temas en un dispositivo.
+
+## Logo
+
+- El logo del propietario se conserva en `branding/logo-source.png`. `branding/generate-icons.ps1` genera el icono adaptativo, el logo de la app sin esquinas blancas y el icono de tienda de 512 px.
+- El icono adaptativo usa la ilustración como capa de fondo y un vector del gato sobre la luna como capa monocroma para los iconos temáticos. Acerca de ya no usa el icono de mLauncher. `aapt` confirmó el icono adaptativo en el APK ProdDebug. Falta verlo en un dispositivo.

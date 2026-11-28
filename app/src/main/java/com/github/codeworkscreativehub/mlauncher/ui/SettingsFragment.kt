@@ -510,7 +510,7 @@ class SettingsFragment : BaseFragment() {
                             R.string.about_settings_title,
                             getLocalizedString(R.string.app_name)
                         ),
-                        iconRes = R.drawable.ic_toast,
+                        iconRes = R.drawable.app_launcher,
                         titleFontSize = titleFontSize,
                         descriptionFontSize = descriptionFontSize,
                         iconSize = iconSize,

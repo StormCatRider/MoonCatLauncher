@@ -32,6 +32,9 @@ import com.github.codeworkscreativehub.mlauncher.helper.emptyString
 import com.github.codeworkscreativehub.mlauncher.helper.ismlauncherDefault
 import com.github.codeworkscreativehub.mlauncher.helper.utils.AppReloader
 import com.github.codeworkscreativehub.mlauncher.helper.utils.SystemBarObserver
+import com.github.codeworkscreativehub.mlauncher.mooncat.backup.BackupController
+import com.github.codeworkscreativehub.mlauncher.mooncat.theme.ThemeColors
+import com.github.codeworkscreativehub.common.getLocalizedString
 import com.github.codeworkscreativehub.mlauncher.ui.onboarding.OnboardingActivity
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -64,6 +67,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var pickCustomFont: ActivityResultLauncher<Array<String>>
 
     private lateinit var setDefaultHomeScreenLauncher: ActivityResultLauncher<Intent>
+
+    lateinit var backupController: BackupController
+        private set
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return when (keyCode) {
@@ -239,19 +245,22 @@ class MainActivity : AppCompatActivity() {
 
                 result.data?.data?.let { uri ->
                     try {
-                        applicationContext.contentResolver.openInputStream(uri).use { inputStream ->
-                            val stringBuilder = StringBuilder()
-                            BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                                var line: String? = reader.readLine()
-                                while (line != null) {
-                                    stringBuilder.append(line)
-                                    line = reader.readLine()
-                                }
+                        val json = applicationContext.contentResolver.openInputStream(uri)?.use { inputStream ->
+                            // Read one character past the limit so oversized files are rejected, not truncated.
+                            val buffer = CharArray(ThemeColors.MAX_FILE_CHARS + 1)
+                            val reader = InputStreamReader(inputStream, Charsets.UTF_8)
+                            var total = 0
+                            while (total < buffer.size) {
+                                val read = reader.read(buffer, total, buffer.size - total)
+                                if (read < 0) break
+                                total += read
                             }
-
-                            val string = stringBuilder.toString()
-                            val prefs = Prefs(applicationContext)
-                            prefs.loadFromTheme(string)
+                            String(buffer, 0, total)
+                        }
+                        if (json != null && Prefs(applicationContext).loadFromTheme(json, colorNames)) {
+                            AppReloader.restartApp(applicationContext)
+                        } else {
+                            showLongToast(getLocalizedString(R.string.mooncat_theme_import_invalid))
                         }
                     } catch (e: FileNotFoundException) {
                         e.printStackTrace()
@@ -292,6 +301,8 @@ class MainActivity : AppCompatActivity() {
                     viewModel.setDefaultLauncher(false)
                 }
             }
+
+        backupController = BackupController(this)
 
         val systemBarObserver = SystemBarObserver(prefs)
         lifecycle.addObserver(systemBarObserver)

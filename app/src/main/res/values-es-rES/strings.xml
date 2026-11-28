@@ -16,7 +16,7 @@
     <string name="reason_usage_permission">Concede acceso de uso para ver tus aplicaciones más usadas y el tiempo de pantalla en este dispositivo.</string>
     <string name="grant_location_permission">Para continuar, por favor, otorgue permiso de ubicación.</string>
     <string name="reason_location_permission">Esta aplicación necesita acceso a la ubicación para proporcionar información meteorológica precisa según tu ubicación actual. No recopilamos ni compartimos ningún dato personal.</string>
-    <string name="grant_accessibility_permission">Para continuar, por favor, otorgue el permiso de accesibilidad.</string>
+    <string name="grant_accessibility_permission">El acceso de accesibilidad es opcional.</string>
     <string name="reason_accessibility_permission">La accesibilidad es opcional y permite que Moon Cat Launcher ejecute acciones del sistema, como bloquear la pantalla o abrir los ajustes rápidos.</string>
     <string name="permission_granted">¡Permiso concedido! Puede continuar.</string>
     <string name="this_can_be_disabled_later">* Este permiso podría desactivarse posteriormente.</string>
@@ -403,7 +403,7 @@
         <item>Trabajar</item>
     </string-array>
     <string name="mooncat_local_data_title">Datos locales</string>
-    <string name="mooncat_local_data_description">Borra los datos del launcher guardados en este dispositivo</string>
+    <string name="mooncat_local_data_description">Respaldo cifrado, restauración o borrado de los datos del launcher en este dispositivo</string>
     <string name="mooncat_widget_privacy">Los widgets de terceros pueden conectarse a Internet independientemente de Moon Cat Launcher.</string>
     <string name="mooncat_home_display_mode">Apariencia de las aplicaciones de inicio</string>
     <string name="mooncat_display_text_only">Solo texto</string>
@@ -432,4 +432,44 @@
     <string name="mooncat_display_folder">Presentación de las aplicaciones de la carpeta</string>
     <string name="mooncat_display_page">Presentación de las aplicaciones de la página</string>
     <string name="mooncat_display_inherit">Heredar modo de presentación</string>
+    <string name="mooncat_backup_create">Crear respaldo cifrado</string>
+    <string name="mooncat_backup_restore">Restaurar respaldo cifrado</string>
+    <string name="mooncat_backup_password">Contraseña del respaldo</string>
+    <string name="mooncat_backup_password_confirm">Repite la contraseña</string>
+    <string name="mooncat_backup_password_warning">El respaldo contiene tus ajustes, la distribución del inicio, las carpetas, las notas y las listas de aplicaciones ocultas. Se cifra en este dispositivo con tu contraseña. Una contraseña perdida no se puede recuperar.</string>
+    <string name="mooncat_backup_password_short">Usa al menos %1$d caracteres.</string>
+    <string name="mooncat_backup_password_mismatch">Las contraseñas no coinciden.</string>
+    <string name="mooncat_backup_working">Procesando el respaldo…</string>
+    <string name="mooncat_backup_created">Respaldo cifrado guardado.</string>
+    <string name="mooncat_backup_create_failed">No se pudo guardar el respaldo.</string>
+    <string name="mooncat_backup_restore_confirm">Respaldo creado el %1$s con la versión %2$s. Restaurar sustituye todos los ajustes actuales y la distribución del inicio. El launcher se reiniciará.</string>
+    <string name="mooncat_backup_restore_apply">Sustituir y reiniciar</string>
+    <string name="mooncat_backup_restore_failed">No se pudo restaurar el respaldo. Los ajustes actuales no cambiaron.</string>
+    <string name="mooncat_backup_wrong_password">Contraseña incorrecta o archivo dañado. No se cambió nada.</string>
+    <string name="mooncat_backup_not_backup">Este archivo no es un respaldo de Moon Cat Launcher o usa una versión no compatible.</string>
+    <string name="mooncat_backup_too_large">El archivo es demasiado grande para ser un respaldo.</string>
+    <string name="mooncat_theme_import_invalid">Este archivo no es un tema válido. No se cambió ningún color.</string>
+    <string name="mooncat_theme_library">Mis temas</string>
+    <string name="mooncat_theme_preset_lunar">Lunar</string>
+    <string name="mooncat_theme_preset_light">Claro</string>
+    <string name="mooncat_theme_preset_amoled">AMOLED</string>
+    <string name="mooncat_theme_save_current">Guardar tema actual</string>
+    <string name="mooncat_theme_apply">Aplicar</string>
+    <string name="mooncat_theme_duplicate">Duplicar</string>
+    <string name="mooncat_theme_manage">Administrar</string>
+    <string name="mooncat_theme_rename">Renombrar</string>
+    <string name="mooncat_theme_delete">Eliminar</string>
+    <string name="mooncat_theme_delete_confirm">¿Eliminar el tema «%1$s»?</string>
+    <string name="mooncat_theme_name">Nombre del tema</string>
+    <string name="mooncat_theme_name_taken">Ya existe un tema con ese nombre.</string>
+    <string name="mooncat_theme_replace">Ya existe un tema llamado «%1$s». ¿Sustituirlo por los colores actuales?</string>
+    <string name="mooncat_theme_replace_confirm">Sustituir</string>
+    <string name="mooncat_theme_saved">Tema guardado.</string>
+    <string name="mooncat_theme_limit">Puedes guardar hasta %1$d temas.</string>
+    <string name="mooncat_theme_error">No se pudo guardar el tema.</string>
+    <string name="mooncat_theme_preview_date">viernes, 27 de noviembre</string>
+    <string name="mooncat_theme_preview_app1">Teléfono</string>
+    <string name="mooncat_theme_preview_app2">Mensajes</string>
+    <string name="mooncat_theme_preview_app3">Cámara</string>
+    <string name="mooncat_theme_preview_note">Comprar pan</string>
 </resources>

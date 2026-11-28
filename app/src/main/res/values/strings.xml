@@ -20,7 +20,7 @@
     <string name="reason_usage_permission">Grant usage access to see your most used apps and screen time on this device.</string>
     <string name="grant_location_permission">To continue, please grant Location permission.</string>
     <string name="reason_location_permission">This app needs Location Access to provide accurate weather updates based on your current location. We do not collect or share any personal data.</string>
-    <string name="grant_accessibility_permission">To continue, please grant Accessibility permission.</string>
+    <string name="grant_accessibility_permission">Accessibility access is optional.</string>
     <string name="reason_accessibility_permission">Accessibility is optional and lets Moon Cat Launcher perform system actions such as locking the screen or opening Quick Settings.</string>
     <string name="permission_granted">Permission Granted! You can continue.</string>
 
@@ -505,7 +505,7 @@
 
 
     <string name="mooncat_local_data_title">Local data</string>
-    <string name="mooncat_local_data_description">Clear launcher data stored on this device</string>
+    <string name="mooncat_local_data_description">Encrypted backup, restore or clear launcher data on this device</string>
     <string name="mooncat_widget_privacy">Third-party widgets can connect to the Internet independently of Moon Cat Launcher.</string>
     <string name="mooncat_home_display_mode">Home app display</string>
     <string name="mooncat_display_text_only">Text only</string>
@@ -534,4 +534,44 @@
     <string name="mooncat_display_folder">Folder app display</string>
     <string name="mooncat_display_page">Page app display</string>
     <string name="mooncat_display_inherit">Inherit display mode</string>
+    <string name="mooncat_backup_create">Create encrypted backup</string>
+    <string name="mooncat_backup_restore">Restore encrypted backup</string>
+    <string name="mooncat_backup_password">Backup password</string>
+    <string name="mooncat_backup_password_confirm">Repeat password</string>
+    <string name="mooncat_backup_password_warning">The backup contains your settings, home layout, folders, notes and hidden-app lists. It is encrypted on this device with your password. A lost password cannot be recovered.</string>
+    <string name="mooncat_backup_password_short">Use at least %1$d characters.</string>
+    <string name="mooncat_backup_password_mismatch">Passwords do not match.</string>
+    <string name="mooncat_backup_working">Processing backup…</string>
+    <string name="mooncat_backup_created">Encrypted backup saved.</string>
+    <string name="mooncat_backup_create_failed">Could not save the backup.</string>
+    <string name="mooncat_backup_restore_confirm">Backup created on %1$s with version %2$s. Restoring replaces all current settings and the home layout. The launcher will restart.</string>
+    <string name="mooncat_backup_restore_apply">Replace and restart</string>
+    <string name="mooncat_backup_restore_failed">Could not restore the backup. Current settings were not changed.</string>
+    <string name="mooncat_backup_wrong_password">Wrong password, or the file is damaged. Nothing was changed.</string>
+    <string name="mooncat_backup_not_backup">This file is not a Moon Cat Launcher backup or uses an unsupported version.</string>
+    <string name="mooncat_backup_too_large">The file is too large to be a backup.</string>
+    <string name="mooncat_theme_import_invalid">This file is not a valid theme. No colors were changed.</string>
+    <string name="mooncat_theme_library">My themes</string>
+    <string name="mooncat_theme_preset_lunar">Lunar</string>
+    <string name="mooncat_theme_preset_light">Light</string>
+    <string name="mooncat_theme_preset_amoled">AMOLED</string>
+    <string name="mooncat_theme_save_current">Save current theme</string>
+    <string name="mooncat_theme_apply">Apply</string>
+    <string name="mooncat_theme_duplicate">Duplicate</string>
+    <string name="mooncat_theme_manage">Manage</string>
+    <string name="mooncat_theme_rename">Rename</string>
+    <string name="mooncat_theme_delete">Delete</string>
+    <string name="mooncat_theme_delete_confirm">Delete the theme “%1$s”?</string>
+    <string name="mooncat_theme_name">Theme name</string>
+    <string name="mooncat_theme_name_taken">A theme with that name already exists.</string>
+    <string name="mooncat_theme_replace">A theme named “%1$s” already exists. Replace it with the current colors?</string>
+    <string name="mooncat_theme_replace_confirm">Replace</string>
+    <string name="mooncat_theme_saved">Theme saved.</string>
+    <string name="mooncat_theme_limit">You can keep up to %1$d themes.</string>
+    <string name="mooncat_theme_error">Could not save the theme.</string>
+    <string name="mooncat_theme_preview_date">Friday, November 27</string>
+    <string name="mooncat_theme_preview_app1">Phone</string>
+    <string name="mooncat_theme_preview_app2">Messages</string>
+    <string name="mooncat_theme_preview_app3">Camera</string>
+    <string name="mooncat_theme_preview_note">Buy bread</string>
 </resources>
